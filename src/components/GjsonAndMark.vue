@@ -1,7 +1,8 @@
 <template>
   <div>    
-      <l-geo-json v-if="geojson" :geojson="geojson" />
-      <l-marker v-for="(coordinate, index) in markers" :lat-lng="coordinate" :visible="true" :key="index"/>
+      <l-geo-json v-if="geojson" :geojson="geojson" />      
+      <l-marker v-show="false" v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
+          :lat-lng="coordinate" :visible="true" :key="'marker_' +index"/>      
   </div>
 </template>
 
@@ -40,8 +41,7 @@ export default {
           this.geoJson.features.forEach(feature => {            
             coordinates.push(feature.geometry.coordinates);
           });
-          console.log(utils.flattenToPoints(coordinates));
-          return utils.flattenToPoints(coordinates);
+          return utils.flattenToPoints(coordinates, true);
       }
       return [];
     }
@@ -51,7 +51,7 @@ export default {
     };
   },
   mounted() {
-    
+    console.log("222", this.$refs.marker_0);   
   },
   methods: {    
     

@@ -76,11 +76,10 @@ export default {
         this.map.eachLayer( layer => {
           if(layer instanceof L.GeoJSON){
               currentLayers.push(layer);              
-          } else if (layer instanceof L.Marker){
-            console.log("layer", layer);        
-          }
+          } 
         });
-      return currentLayers;
+        console.log(this.$refs.marker_0);
+      return currentLayers;      
     }
   },
   watch: {

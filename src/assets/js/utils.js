@@ -14,10 +14,16 @@ const flattenDeep = points =>
  * @param: coordinates
  * @return: Array
  */
-const flattenToPoints = points =>
-    points.reduce((allPoints, point) => Array.isArray(point[0]) ?
-        allPoints.concat(flattenToPoints(point)) : allPoints.concat([point]), []);
-
+const flattenToPoints = (points, reverse = false) => {
+    let flattenResult = points.reduce((allPoints, point) => Array.isArray(point[0]) ?
+        allPoints.concat(flattenToPoints(point)) : allPoints.concat([
+            [...point]
+        ]), []);
+    if (reverse) {
+        return flattenResult.map(point => [...point].reverse());
+    }
+    return flattenResult;
+};
 
 /** 
  * 不管是幾維陣列，攤平成含所有線段的陣列
@@ -32,5 +38,6 @@ const flattenToLines = points =>
 
 export default {
     flattenToLines,
-    flattenToPoints
+    flattenToPoints,
+    flattenDeep
 }
