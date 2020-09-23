@@ -1,0 +1,56 @@
+{
+    "name": "mapseries",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build",
+        "lint": "vue-cli-service lint"
+    },
+    "dependencies": {
+        "babel-runtime": "^6.26.0",
+        "core-js": "^2.6.5",
+        "leaflet": "^1.7.1",
+        "leaflet-defaulticon-compatibility": "^0.1.1",
+        "leaflet-draw": "^1.0.4",
+        "leaflet.gridlayer.googlemutant": "^0.10.0",
+        "togeojson": "^0.16.0",
+        "vue": "^2.6.10",
+        "vue-codemirror": "^4.0.6",
+        "vue-router": "^3.0.3",
+        "vue2-leaflet": "^2.5.2",
+        "vue2-leaflet-googlemutant": "^2.0.0"
+    },
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "^3.11.0",
+        "@vue/cli-plugin-eslint": "^3.11.0",
+        "@vue/cli-service": "^3.11.0",
+        "babel-eslint": "^10.0.1",
+        "eslint": "^5.16.0",
+        "eslint-plugin-vue": "^5.0.0",
+        "vue-template-compiler": "^2.6.10"
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/essential",
+            "eslint:recommended"
+        ],
+        "rules": {},
+        "parserOptions": {
+            "parser": "babel-eslint"
+        }
+    },
+    "postcss": {
+        "plugins": {
+            "autoprefixer": {}
+        }
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions"
+    ]
+}
