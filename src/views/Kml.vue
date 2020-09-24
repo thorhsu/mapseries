@@ -1,24 +1,33 @@
 <template>
   <div class="container mt-4">
     <div class="map-container border rounded">
-      <ul class="nav row justify-content-center border-bottom">                        
-        <li class="nav-item">
-          <router-link
-            class="nav-link"
-            :class="{active: $route.params.kmlFile === 'example2' || !$route.params.kmlFile}"
-            :to="'/kml/example2'"
-          >example2</router-link>
-        </li>
-      </ul> 
+      <div class="col-12">
+        <ul class="nav row justify-content-center border-bottom">                        
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :class="{active: $route.params.kmlFile === 'example2' || !$route.params.kmlFile}"
+              :to="'/kml/example2'"
+            >example2</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :class="{active: $route.params.kmlFile === 'example1' || !$route.params.kmlFile}"
+              :to="'/kml/example1'"
+            >example1</router-link>
+          </li>
+        </ul> 
+      </div>
       <div class="row">
         <div class="col-12">
-          <Leaflet
-            v-if="!isLoading"
-            :fullscreenControl="true"
-            :zoomControl="true"
-            :geoJson="geoJson"
-          ></Leaflet>      
-
+            <Leaflet
+              v-if="!isLoading"
+              :fullscreenControl="true"
+              :zoomControl="true"
+              :geoJson="geoJson"
+            ></Leaflet>
+          
         </div>
       </div>     
       
@@ -52,7 +61,7 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {    
     const { kmlFile } = to.params;
-    this.getKmlTxt(kmlFile, true);
+    this.getGeoJson(kmlFile, true);
     next();
   },
   methods: {

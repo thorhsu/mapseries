@@ -8,11 +8,10 @@
       :options="{zoomControl: false}"
     >     
       <l-control position="topleft">
-        <button>test</button>
+        <button @click="editMode" >edit</button>
       </l-control> 
-      <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />
-      <GjsonAndMark :geoJson="geoJson" :map="map" />
-
+      <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />      
+      <GjsonAndMark  @addToEdit="addToEdit" :visible="true" :geoJson="geoJson" :map="map" />      
     </l-map>
   </div>
 </template>
@@ -27,9 +26,6 @@ import LDraw from 'leaflet-draw';
 import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
-
- 
-
 
 export default {
   name: "Leaflet",
@@ -75,17 +71,17 @@ export default {
       if(this.map)
         this.map.eachLayer( layer => {
           if(layer instanceof L.GeoJSON){
-              currentLayers.push(layer);              
+              currentLayers.push(layer);                   
           } 
         });
-        console.log(this.$refs.marker_0);
       return currentLayers;      
     }
   },
   watch: {
-    geoLayers: function(newVal, oldVal){
+    geoLayers: function(newVal, oldVal){      
+      console.log("length", newVal.length, oldVal);
       if(newVal.length > 0)        
-        this.map.fitBounds(newVal[0].getBounds());
+        this.map.fitBounds(newVal[newVal.length - 1].getBounds());
     }
   },
   data() {
@@ -98,6 +94,10 @@ export default {
       infowindow: null,
       markers: [], 
       map: null,
+      geojsons: [],
+      editableLayers: null,
+      mapLoaded: false,
+      editLayer: null,
     };
   },
   mounted() {
@@ -120,59 +120,40 @@ export default {
 
       this.map.addControl(drawControl);
 
-      const editableLayers = new window.L.FeatureGroup().addTo(this.map);
+      this.editableLayers = new window.L.FeatureGroup().addTo(this.map);
+      console.log("this.editableLayer", this.editableLayers);
       this.map.on(window.L.Draw.Event.CREATED, (e) => {
         // const type = e.layerType;
         const layer = e.layer;
-
-        // Do whatever else you need to. (save to db, add to map etc)
-        editableLayers.addLayer(layer);
-      });      
+        // 
+        this.editableLayers.addLayer(layer);
+      });  
+      this.mapLoaded = true;                
     });
-    
-    // this.initMap();
-    // this.setMarker();
   },
   methods: {    
-    resetCenter() {
-      // set center
-      this.map.panTo({ lat: this.center.lat, lng: this.center.lng });
-    },
-    clearMarkers() {
-      this.markers.forEach(marker => marker.setMap(null));
-      this.markers = [];
-    },
-    setMarker() {
-      const google = window.google
-      
-      // clear existing markers
-      this.clearMarkers();
+    editMode() {
+      this.editLayer = new L.EditToolbar.Edit(this.map, {
+          featureGroup: this.editableLayers,
+          selectedPathOptions: {
+              dashArray: '10, 10',
 
-      this.restaurants.forEach(location => {
-        const marker = new google.maps.Marker({
-          position: { lat: location.lat, lng: location.lng },
-          map: this.map
-        });
+              fill: true,
+              fillColor: '#fe57a1',
+              fillOpacity: 0.1,
 
-        // save markers
-        this.markers.push(marker);
-
-        const infowindow = new google.maps.InfoWindow({
-          content: `
-          <div id="content">
-            <p id="firstHeading" class="firstHeading">${location.name}</p>
-          </div>
-        `,
-          maxWidth: 200
-        });
-
-        marker.addListener("click", () => {
-          if (this.infowindow) this.infowindow.close();
-          infowindow.open(this.map, marker);
-          this.infowindow = infowindow;
-        });
+              // Whether to user the existing layers color
+              maintainColor: false
+          },
+          poly: {
+              allowIntersection: false
+          }
       });
-    }
+      this.editLayer.enable();    
+    },
+    addToEdit(layer) {
+      this.editableLayers.addLayer(layer);
+    }    
   }
 };
 </script>

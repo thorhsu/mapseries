@@ -1,8 +1,8 @@
 <template>
   <div>    
-      <l-geo-json v-if="geojson" :geojson="geojson" />      
-      <l-marker v-show="false" v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
-          :lat-lng="coordinate" :visible="true" :key="'marker_' +index"/>      
+      <l-geo-json :visible="true" v-if="geojson" :options="{onEachFeature: onEachFeature}" :geojson="geojson" />      
+      <l-marker :visible="true"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
+          :lat-lng="coordinate" :key="'marker_' +index"/>      
   </div>
 </template>
 
@@ -27,6 +27,10 @@ export default {
     map: {
       type: Object,
       default: () => {}
+    },
+    visible: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -41,21 +45,24 @@ export default {
           this.geoJson.features.forEach(feature => {            
             coordinates.push(feature.geometry.coordinates);
           });
-          return utils.flattenToPoints(coordinates, true);
+          return utils.removeDuplicatePoint(utils.flattenToPoints(coordinates, true));
       }
       return [];
     }
   },
   data() {
-    return {      
+    return {
+      showPointsLayer: false,      
     };
   },
   mounted() {
-    console.log("222", this.$refs.marker_0);   
   },
-  methods: {    
-    
-    
+  methods: {  
+    onEachFeature(feature, layer) {
+      this.$nextTick(() =>
+        this.$emit("addToEdit", layer)
+      );
+    }          
   }
 };
 </script>
