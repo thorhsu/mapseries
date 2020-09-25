@@ -1,7 +1,7 @@
 <template>
   <div>    
-      <l-geo-json :visible="true" v-if="geojson" :options="{onEachFeature: onEachFeature}" :geojson="geojson" />      
-      <l-marker :visible="true"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
+      <l-geo-json ref="geoLayer" :visible="visible" v-if="geojson" :options="{onEachFeature: onEachFeature}" :geojson="geojson" />      
+      <l-marker :visible="visible"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
           :lat-lng="coordinate" :key="'marker_' +index"/>      
   </div>
 </template>
@@ -52,16 +52,35 @@ export default {
   },
   data() {
     return {
-      showPointsLayer: false,      
+      showPointsLayer: false,          
     };
   },
   mounted() {
+    if(this.map) {    
+      this.map.eachLayer( layer => {    
+        if(layer instanceof L.GeoJSON){    
+          this.map.fitBounds(layer.getBounds());
+        } 
+      });
+      // 找出每個feature所代表的layer，送出去方便編輯模式
+      this.$refs.geoLayer.mapObject.eachLayer(layer => {
+        this.$emit("addToEdit", layer);
+      });
+    }
+  },
+  beforeUpdate() {
+  },
+  updated() {    
+    // 找出每個feature所代表的layer，送出去方便編輯模式
+    this.$refs.geoLayer.mapObject.eachLayer(layer => {
+        this.$emit("addToEdit", layer);
+    });
+  },
+  watch: {
   },
   methods: {  
-    onEachFeature(feature, layer) {
-      this.$nextTick(() =>
-        this.$emit("addToEdit", layer)
-      );
+    onEachFeature(feature, layer) { 
+      return layer;
     }          
   }
 };

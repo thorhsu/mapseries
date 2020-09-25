@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <div class="map-container border rounded">
       <div class="col-12">
-        <ul class="nav row justify-content-center border-bottom">                        
+        <ul class="nav row justify-content-center border-bottom">                                 
           <li class="nav-item">
             <router-link
               class="nav-link"
@@ -25,7 +25,7 @@
               v-if="!isLoading"
               :fullscreenControl="true"
               :zoomControl="true"
-              :geoJson="geoJson"
+              :geoJson.sync="geoJson"
             ></Leaflet>
           
         </div>

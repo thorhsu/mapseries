@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash';
 /** 
  * 不管是幾維陣列，攤平成一個所有座標點的一維陣列
  * ex. [[[[1,2],[2,3]]]] => [1,2,2,3]

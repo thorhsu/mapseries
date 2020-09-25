@@ -8,7 +8,9 @@
       :options="{zoomControl: false}"
     >     
       <l-control position="topleft">
-        <button @click="editMode" >edit</button>
+        <button @click="edit" >edit</button>
+        <button @click="clear" >clear</button>
+        <button @click="save" >save</button>
       </l-control> 
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />      
       <GjsonAndMark  @addToEdit="addToEdit" :visible="true" :geoJson="geoJson" :map="map" />      
@@ -26,6 +28,7 @@ import LDraw from 'leaflet-draw';
 import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
+import _ from 'lodash';
 
 export default {
   name: "Leaflet",
@@ -66,23 +69,10 @@ export default {
     }
   },
   computed: {    
-    geoLayers() {
-      let currentLayers = [];
-      if(this.map)
-        this.map.eachLayer( layer => {
-          if(layer instanceof L.GeoJSON){
-              currentLayers.push(layer);                   
-          } 
-        });
-      return currentLayers;      
-    }
+    
   },
   watch: {
-    geoLayers: function(newVal, oldVal){      
-      console.log("length", newVal.length, oldVal);
-      if(newVal.length > 0)        
-        this.map.fitBounds(newVal[newVal.length - 1].getBounds());
-    }
+    
   },
   data() {
     return {
@@ -92,7 +82,8 @@ export default {
         type: 'roadmap'
       },
       infowindow: null,
-      markers: [], 
+      markers: [],
+      editingLayers: [], 
       map: null,
       geojsons: [],
       editableLayers: null,
@@ -101,7 +92,7 @@ export default {
     };
   },
   mounted() {
-    this.$nextTick(() => {
+    // this.$nextTick(() => {
       this.map = this.$refs.map.mapObject;
       // 測試繪圖工具列
       const drawControl = new window.L.Control.Draw({
@@ -120,8 +111,7 @@ export default {
 
       this.map.addControl(drawControl);
 
-      this.editableLayers = new window.L.FeatureGroup().addTo(this.map);
-      console.log("this.editableLayer", this.editableLayers);
+      this.editableLayers = new window.L.FeatureGroup().addTo(this.map);      
       this.map.on(window.L.Draw.Event.CREATED, (e) => {
         // const type = e.layerType;
         const layer = e.layer;
@@ -129,15 +119,34 @@ export default {
         this.editableLayers.addLayer(layer);
       });  
       this.mapLoaded = true;                
-    });
+    // });
   },
-  methods: {    
-    editMode() {
+  methods: { 
+    clear() {
+      if(!this.editLayer)
+        return;
+      this.editLayer.revertLayers();
+      this.editLayer.disable();
+    },
+    save() {
+      if(!this.editLayer)
+        return;
+      this.editLayer.save();
+      this.editLayer.disable();
+      var geoJson = this.editableLayers.toGeoJSON();
+      // save後清空editablelayer
+      for(const layer of this.editingLayers) {        
+        this.editableLayers.removeLayer(layer);
+      }
+      this.editingLayers = [];
+      this.$emit("update:geoJson", geoJson);
+    }, 
+    edit() {      
       this.editLayer = new L.EditToolbar.Edit(this.map, {
           featureGroup: this.editableLayers,
+          // 進入edit mode後的樣式
           selectedPathOptions: {
               dashArray: '10, 10',
-
               fill: true,
               fillColor: '#fe57a1',
               fillOpacity: 0.1,
@@ -152,6 +161,8 @@ export default {
       this.editLayer.enable();    
     },
     addToEdit(layer) {
+      console.log("add to layer");
+      this.editingLayers.push(layer);
       this.editableLayers.addLayer(layer);
     }    
   }
