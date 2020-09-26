@@ -21,13 +21,16 @@
 
           <div class="form-rows">
             <label for="location-edit">施工地點</label>
+            <img src="../../assets/icons/upload.png" class="upload-icon" />
+            <span>上傳KML</span>
           </div>
         </div>
 
         <div class="form-row-cont">
           <div class="form-rows">
-            <label for="content-edit">內容說明</label>
-            <textarea id="content-edit" name="content"></textarea>
+            <label for="content-edit" class="
+            content-label">內容說明</label>
+            <textarea id="content-edit" name="content" rows="6"></textarea>
           </div>
         </div>
       </form>
@@ -81,10 +84,10 @@ export default {
     margin-bottom: 1.5vw;
     display: flex;
     position: relative;
+    align-items: center;
   }
   .form-rows label {
     padding-right: 1.7vw;
-    flex-basis: 105px;
   }
   .form-rows input {
     flex-grow: 1;
@@ -92,8 +95,11 @@ export default {
   .form-rows input[type=text] {
     padding: 5px 10px;
   }
+  .content-label {
+    align-self: flex-start;
+  }
   .form-rows textarea {
-    width: 98%;
+    flex-grow: 1;
     padding: 5px 10px;
   }
   .between-date {
@@ -126,6 +132,11 @@ export default {
     top: 20px;
     right: 20px;
   }
+  .upload-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
   .submit-button {
     background-color: #3FA893;
     border-radius: 35px;
@@ -144,6 +155,13 @@ export default {
   @media screen and (max-width: 1300px) {
     .form {
       display: block;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .form-rows {
+      flex-direction: column;
+      margin-bottom: 6vw;
+      align-items: initial;
     }
   }
 
