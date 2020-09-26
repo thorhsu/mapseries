@@ -1,10 +1,10 @@
 <template>
-  <div class="edit-popup-cont" v-show="edittingPopup">
+  <div class="form-popup-cont" v-show="openedPopup">
     <div class="popup-background"></div>
 
-    <div class="form-cont-edit">
+    <div class="popup-cont">
       <img src="../../assets/icons/close.svg" class="close-icon" 
-        @click="handleEditPopup"/>
+        @click="togglePopup"/>
       <form class="form">
         <div class="form-row-cont">
           <div class="form-rows">
@@ -24,9 +24,11 @@
           </div>
         </div>
 
-        <div class="form-rows">
-          <label for="content-edit">內容說明</label>
-          <textarea id="content-edit" name="content"></textarea>
+        <div class="form-row-cont">
+          <div class="form-rows">
+            <label for="content-edit">內容說明</label>
+            <textarea id="content-edit" name="content"></textarea>
+          </div>
         </div>
       </form>
       <div class="submit-button">
@@ -39,8 +41,8 @@
 
 <script>
 export default {
-  name: "eventTable",
-  props: ["events", "edittingPopup"],
+  name: "formPopup",
+  props: ["events", "openedPopup"],
   components: {},
   computed: {},
   data() {
@@ -53,14 +55,50 @@ export default {
     handleNewFormSubmit() {
       this.$emit("handleNewFormSubmit", this.newEvent)
     },
-    handleEditPopup() {
-      this.$emit("handleEditPopup", false)
+    togglePopup() {
+      this.$emit("togglePopup", false)
     },
   }
 };
 </script>
 
 <style scoped>
+
+  .form-cont {
+    background-color: white;
+    padding: 40px 50px;
+    border-radius: 10px;
+  }
+  .form {
+    display: flex;
+    padding-top: 35px;
+  }
+  .form-row-cont {
+    flex: 1;
+  }
+  .form-rows {
+    margin-right: 1.5vw;
+    margin-bottom: 1.5vw;
+    display: flex;
+    position: relative;
+  }
+  .form-rows label {
+    padding-right: 1.7vw;
+    flex-basis: 105px;
+  }
+  .form-rows input {
+    flex-grow: 1;
+  }
+  .form-rows input[type=text] {
+    padding: 5px 10px;
+  }
+  .form-rows textarea {
+    width: 98%;
+    padding: 5px 10px;
+  }
+  .between-date {
+    padding: 0 5px;
+  }
   .popup-background {
     background-color: #080808;
     position: absolute;
@@ -70,9 +108,9 @@ export default {
     right: 0;
     opacity: 0.7;
   }
-  .form-cont-edit {
+  .popup-cont {
     background-color: white;
-    padding: 3.5vw 3.5vw 2vw 3.5vw;
+    padding: 20px;
     border-radius: 10px;
     position: absolute;
     top: 0;
@@ -87,6 +125,26 @@ export default {
     position: absolute;
     top: 20px;
     right: 20px;
+  }
+  .submit-button {
+    background-color: #3FA893;
+    border-radius: 35px;
+    width: 200px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    font-size: 18px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 20px auto 0 auto;
+  }
+
+  @media screen and (max-width: 1300px) {
+    .form {
+      display: block;
+    }
   }
 
 </style>

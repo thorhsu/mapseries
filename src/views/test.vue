@@ -1,6 +1,5 @@
 <template>
   <div class="test-page">
-
     <BannerMenu 
       :title="banner.title" 
       :visible="functionMenu.visible" 
@@ -17,28 +16,25 @@
           <AddEventForm 
             :newEvent="newEvent"
             @handleNewFormSubmit="handleNewFormSubmit"
+            :openedPopup="openedPopup"
+            @togglePopup="togglePopup"
           />
         </div>
 
         <div class="shadow" style="border-radius: 10px;">
           <EventTable
             :events="events"
-            :edittingPopup="edittingPopup"
-            @handleEditPopup="handleEditPopup"
+            :openedPopup="openedPopup"
+            @togglePopup="togglePopup"
           />
         </div>
 
-        <EditFormPopup 
-          :edittingPopup="edittingPopup"
-          @handleEditPopup="handleEditPopup"
+        <FormPopup 
+          :openedPopup="openedPopup"
+          @togglePopup="togglePopup"
         />
       </div>
-    </div>
- 
-
-    
-
-    
+    </div>   
   </div>
 </template>
 
@@ -47,7 +43,7 @@ import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
 import AddEventForm from '@/components/test/addEventForm.vue'
 import EventTable from '@/components/test/eventTable.vue'
-import EditFormPopup from '@/components/test/editFormPopup.vue'
+import FormPopup from '@/components/test/formPopup.vue'
 
 export default {
   name: "test",
@@ -56,7 +52,7 @@ export default {
     FunctionMenu,
     AddEventForm,
     EventTable,
-    EditFormPopup
+    FormPopup
   },
   data() {
     return {
@@ -90,7 +86,7 @@ export default {
           eventName: '雲林辦事處測試'
         }
       ],
-      edittingPopup: false,
+      openedPopup: false,
       newEvent: {
         time: {
           start: "",
@@ -113,11 +109,10 @@ export default {
     changeVisible(value){
       this.functionMenu.visible = value
     },
-    handleEditPopup(value) {
-      this.edittingPopup = value
+    togglePopup(value) {
+      this.openedPopup = value
     },
     handleNewFormSubmit(newevent) {
-      console.log(newevent)
       this.events.push(newevent)
       this.newEvent = {
         time: {
@@ -149,37 +144,11 @@ export default {
     position: relative;
   }
 
-  /* Form */
-  
-
-  /* Table */
-  
-  /* Edit Popup */
-  
-
-  /* RWD */
-  @media screen and (max-width: 1300px) {
-    .form {
-      display: block;
+  @media screen and (max-width: 500px) {
+    .function-content {
+      padding: 15px;
     }
   }
-  @media screen and (max-width: 996px) {
-    .table-row {
-      padding: 0;
-    }
-    .table-rows hr {
-      width: 95%;
-    }
-  }
-  @media screen and (max-width: 768px) {
-    .table-row {
-      padding: 0 25px;
-      flex-direction: column;
-      align-items: start;
-    }
-    .event-actions[data-v-5752faac] {
-      align-self: center;
-      margin-top: 15px;
-    }
-  }
+  
+  
 </style>

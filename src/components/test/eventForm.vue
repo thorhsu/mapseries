@@ -1,56 +1,55 @@
 <template>
-  <div class="form-comp">
-    <div class="form-cont form-desktop">
-      <form class="form">
-        <div class="form-row-cont">
-          <div class="form-rows">
-            <label for="date">日期區間</label>
-            <input type="date" id="date-start" name="date-start" v-model="newEvent.time.start" required>
-            <span class="between-date"> ~ </span>
-            <input type="date" id="date-end" name="date-end" v-model="newEvent.time.end" required>
-          </div>
-
-          <div class="form-rows">
-            <label for="contractor">發包廠商</label>
-            <input type="text" id="contractor" name="contractor" v-model="newEvent.eventName" required>
-          </div>
-
-          <div class="form-rows">
-            <label for="location">施工地點</label>
-          </div>
+  <div class="form-cont">
+    <form class="form">
+      <div class="form-row-cont">
+        <div class="form-rows">
+          <label for="date">日期區間</label>
+          <input type="date" id="date-start" name="date-start" v-model="newEvent.time.start" required>
+          <span class="between-date"> ~ </span>
+          <input type="date" id="date-end" name="date-end" v-model="newEvent.time.end" required>
         </div>
 
-        <div class="form-row-cont">
-          <div class="form-rows">
-            <label for="content">內容說明</label>
-            <textarea id="content" name="content" v-model="newEvent.eventData" required></textarea>
-          </div>
+        <div class="form-rows">
+          <label for="contractor">發包廠商</label>
+          <input type="text" id="contractor" name="contractor" v-model="newEvent.eventName" required>
         </div>
-      </form>
-      <div class="submit-button" @click="handleNewFormSubmit">
-        <span>+</span>
-        <span class="button-text">新增工程表單</span>
+
+        <div class="form-rows">
+          <label for="location">施工地點</label>
+        </div>
       </div>
-    </div>
 
-    <div class="add-button-mobile" @click="togglePopup">
-      <span>&plus;</span>
+      <div class="form-row-cont">
+        <div class="form-rows">
+          <label for="content">內容說明</label>
+          <textarea id="content" name="content" v-model="newEvent.eventData" required></textarea>
+        </div>
+      </div>
+    </form>
+    <div class="submit-button" @click="handleNewFormSubmit">
+      <span>+</span>
+      <span class="button-text">新增工程表單</span>
     </div>
-
   </div>
 </template>
 
 <script>
-import FormPopup from './formPopup.vue'
-
 export default {
   name: "addEventForm",
-  props: ["newEvent", "openedPopup"],
+  props: ["newEvent"],
   components: {},
   computed: {},
   data() {
     return {
+      mobile: false,
+      mobilePopup: false
     };
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     changeVisible(){
@@ -59,9 +58,17 @@ export default {
     handleNewFormSubmit() {
       this.$emit("handleNewFormSubmit", this.newEvent)
     },
-    togglePopup() {
-      this.$emit("togglePopup", true)
+    handleResize() {
+      if (window.innerWidth < 600) {
+        this.mobile = true
+      }
+      else {
+        this.mobile = false
+      }
     },
+    handleMobilePopup() {
+      this.mobilePopup = !this.mobilePopup
+    }
   }
 };
 </script>
@@ -131,7 +138,6 @@ export default {
     bottom: 20px;
     right: 20px;
     cursor: pointer;
-    display: none;
   }
   .add-button-mobile span {
     font-size: 40px;
@@ -176,14 +182,6 @@ export default {
     }
     .form-rows {
       margin-right: 0;
-    }
-  }
-  @media screen and (max-width: 600px) {
-    .form-desktop {
-      display: none
-    }
-    .add-button-mobile {
-      display: flex;
     }
   }
 </style>
