@@ -133,12 +133,7 @@ export default {
         return;
       this.editLayer.save();
       this.editLayer.disable();
-      var geoJson = this.editableLayers.toGeoJSON();
-      // save後清空editablelayer
-      for(const layer of this.editingLayers) {        
-        this.editableLayers.removeLayer(layer);
-      }
-      this.editingLayers = [];
+      var geoJson = this.editableLayers.toGeoJSON();      
       this.updateGeojson(geoJson);      
     }, 
     edit() {      
@@ -166,7 +161,11 @@ export default {
       this.editableLayers.addLayer(layer);
     },
     updateGeojson(geojson) {
-            console.log(geojson);
+      // save後清空editablelayer
+      for(const layer of this.editingLayers) {        
+        this.editableLayers.removeLayer(layer);
+      }
+      this.editingLayers = [];
       this.$emit("update:geoJson", geojson);
     } 
   }

@@ -48,12 +48,17 @@ const removeDuplicatePoint = coordinates => {
         array4compare.push(strCoordinate);
         return true;
     });
+}
 
+function getArrayDepth(value) {
+    return Array.isArray(value) ?
+        1 + Math.max(...value.map(getArrayDepth)) : 0;
 }
 
 export default {
     flattenToLines,
     flattenToPoints,
     flattenDeep,
-    removeDuplicatePoint
+    removeDuplicatePoint,
+    getArrayDepth,
 }

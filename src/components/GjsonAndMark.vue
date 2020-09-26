@@ -146,16 +146,37 @@ export default {
     },
     toGeoJson() {
       let geojsonCopy = _.cloneDeep(this.geoJson);      
-      for(let feature of geojsonCopy.features) {
-        const coordinates = utils.flattenToPoints(feature.geometry.coordinates, false, false);
-        for(let coordinate of coordinates) {
-          if(JSON.stringify(this.oldLnglat) === JSON.stringify(coordinate)){
-            coordinate = [this.newLongtitude, this.newLatitude];
-            console.log(coordinate);
+      for(let feature of geojsonCopy.features) {        
+        const coordinatesDeepth = utils.getArrayDepth(feature.geometry.coordinates);        
+        for(let i = 0 ; i < feature.geometry.coordinates.length; i++){
+          let coordinate = []
+          switch(coordinatesDeepth){
+            case 1:
+              coordinate = feature.geometry.coordinates;
+              if(JSON.stringify(this.oldLnglat) === JSON.stringify(coordinate)){
+                coordinate = [this.newLongtitude, this.newLatitude];
+                feature.geometry.coordinates = coordinate;
+              }
+              break
+            case 2:
+              coordinate = feature.geometry.coordinates[i];
+              if(JSON.stringify(this.oldLnglat) === JSON.stringify(coordinate)){
+                coordinate = [this.newLongtitude, this.newLatitude];
+                feature.geometry.coordinates[i] = coordinate;
+              }
+              break;
+            case 3:              
+              for(let j = 0 ; j < feature.geometry.coordinates[i].length; j++){
+                coordinate = feature.geometry.coordinates[i][j];
+                if(JSON.stringify(this.oldLnglat) === JSON.stringify(coordinate)){
+                  coordinate = [this.newLongtitude, this.newLatitude];
+                  feature.geometry.coordinates[i][j] = coordinate;
+                }
+              }
+              break;              
           }
         }
       }
-
       this.$emit("updateGeojson", geojsonCopy);
     }
   }
