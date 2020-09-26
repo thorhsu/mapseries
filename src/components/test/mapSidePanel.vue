@@ -109,6 +109,7 @@ export default {
     border-radius: 10px;
     margin: 15px;
     padding-right: 10px;
+    float: left;
   }
   .sidePanel-title-cont {
     margin: 0 15px;
@@ -146,24 +147,23 @@ export default {
   }
 
   /* ScrollBar */
-  /* width */
   ::-webkit-scrollbar {
     width: 5px;
   }
-
-  /* Track */
   ::-webkit-scrollbar-track {
     background: #f1f1f1;
   }
-
-  /* Handle */
   ::-webkit-scrollbar-thumb {
     background: #D1D1D1;
     border-radius: 10px;
   }
-
-  /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #888;
+  }
+
+  @media screen and (max-width: 768px) {
+    .map-sidePanel-cont {
+      float: right;
+    }
   }
 </style>
