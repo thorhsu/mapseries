@@ -13,7 +13,7 @@
         <button @click="save" >save</button>
       </l-control> 
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />      
-      <GjsonAndMark  @addToEdit="addToEdit" :visible="true" :geoJson="geoJson" :map="map" />      
+      <GjsonAndMark  @addToEdit="addToEdit" :visible="true" :geoJson="geoJson" @updateGeojson="updateGeojson" :map="map" />      
     </l-map>
   </div>
 </template>
@@ -139,7 +139,7 @@ export default {
         this.editableLayers.removeLayer(layer);
       }
       this.editingLayers = [];
-      this.$emit("update:geoJson", geoJson);
+      this.updateGeojson(geoJson);      
     }, 
     edit() {      
       this.editLayer = new L.EditToolbar.Edit(this.map, {
@@ -164,7 +164,11 @@ export default {
       console.log("add to layer");
       this.editingLayers.push(layer);
       this.editableLayers.addLayer(layer);
-    }    
+    },
+    updateGeojson(geojson) {
+            console.log(geojson);
+      this.$emit("update:geoJson", geojson);
+    } 
   }
 };
 </script>
