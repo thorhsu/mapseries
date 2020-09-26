@@ -41,8 +41,6 @@
 </template>
 
 <script>
-import FormPopup from './formPopup.vue'
-
 export default {
   name: "addEventForm",
   props: ["newEvent", "openedPopup"],

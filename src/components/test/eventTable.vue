@@ -100,7 +100,7 @@
         <hr>
       </div>
 
-      <div class="paging-cont paging-desktop" v-if="!mobile">
+      <div class="paging-cont paging-desktop">
         <el-pagination
           :page-size="10"
           :pager-count="5"
