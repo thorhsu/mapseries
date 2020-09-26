@@ -12,7 +12,7 @@
         :dataList="functionMenu.data_list" 
       />
       <div class="function-content">
-        <div class="shadow" style="border-radius: 10px;">
+        <div class="content-Style shadow">
           <AddEventForm 
             :newEvent="newEvent"
             @handleNewFormSubmit="handleNewFormSubmit"
@@ -21,7 +21,7 @@
           />
         </div>
 
-        <div class="shadow" style="border-radius: 10px;">
+        <div class="content-Style shadow">
           <EventTable
             :events="events"
             :openedPopup="openedPopup"
@@ -131,11 +131,13 @@ export default {
   /* Page */
   .test-page {
     background-color: #DFE9F0;
+    position: relative;
   }
 
   /* Other Components */
   .function-outer {
     display: flex;
+    position: relative;
   }
   .function-content {
     width: 100%;
@@ -143,7 +145,19 @@ export default {
     padding: 35px;
     position: relative;
   }
+  .content-Style {
+    border-radius: 20px;
+    margin: 0 0 17.5px;
+  }
 
+  @media (max-width: 767px){
+    .function-content {
+      padding: 5%;
+    }
+    .content-Style {
+      margin: 0;
+    }
+  }
   @media screen and (max-width: 500px) {
     .function-content {
       padding: 15px;
