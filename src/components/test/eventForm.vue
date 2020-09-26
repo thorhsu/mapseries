@@ -1,56 +1,55 @@
 <template>
-  <div class="form-comp">
-    <div class="form-cont form-desktop">
-      <form class="form">
-        <div class="form-row-cont">
-          <div class="form-rows">
-            <label for="date">日期區間</label>
-            <input type="date" id="date-start" name="date-start" v-model="newEvent.time.start" required>
-            <span class="between-date"> ~ </span>
-            <input type="date" id="date-end" name="date-end" v-model="newEvent.time.end" required>
-          </div>
-
-          <div class="form-rows">
-            <label for="contractor">發包廠商</label>
-            <input type="text" id="contractor" name="contractor" v-model="newEvent.eventName" required>
-          </div>
-
-          <div class="form-rows">
-            <label for="location">施工地點</label>
-            <img src="../../assets/icons/upload.png" class="upload-icon" />
-            <span>上傳KML</span>
-          </div>
+  <div class="form-cont">
+    <form class="form">
+      <div class="form-row-cont">
+        <div class="form-rows">
+          <label for="date">日期區間</label>
+          <input type="date" id="date-start" name="date-start" v-model="newEvent.time.start" required>
+          <span class="between-date"> ~ </span>
+          <input type="date" id="date-end" name="date-end" v-model="newEvent.time.end" required>
         </div>
 
-        <div class="form-row-cont">
-          <div class="form-rows">
-            <label for="content" class="content-label">內容說明</label>
-            <textarea id="content" name="content" v-model="newEvent.eventData" required rows="6"></textarea>
-          </div>
+        <div class="form-rows">
+          <label for="contractor">發包廠商</label>
+          <input type="text" id="contractor" name="contractor" v-model="newEvent.eventName" required>
         </div>
-      </form>
-      <div class="submit-button" @click="handleNewFormSubmit">
-        <span>+</span>
-        <span class="button-text">新增工程表單</span>
+
+        <div class="form-rows">
+          <label for="location">施工地點</label>
+        </div>
       </div>
-    </div>
 
-    <div class="add-button-mobile" @click="togglePopup">
-      <span>&plus;</span>
+      <div class="form-row-cont">
+        <div class="form-rows">
+          <label for="content">內容說明</label>
+          <textarea id="content" name="content" v-model="newEvent.eventData" required></textarea>
+        </div>
+      </div>
+    </form>
+    <div class="submit-button" @click="handleNewFormSubmit">
+      <span>+</span>
+      <span class="button-text">新增工程表單</span>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
   name: "addEventForm",
-  props: ["newEvent", "openedPopup"],
+  props: ["newEvent"],
   components: {},
   computed: {},
   data() {
     return {
+      mobile: false,
+      mobilePopup: false
     };
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     changeVisible(){
@@ -59,9 +58,17 @@ export default {
     handleNewFormSubmit() {
       this.$emit("handleNewFormSubmit", this.newEvent)
     },
-    togglePopup() {
-      this.$emit("togglePopup", true)
+    handleResize() {
+      if (window.innerWidth < 600) {
+        this.mobile = true
+      }
+      else {
+        this.mobile = false
+      }
     },
+    handleMobilePopup() {
+      this.mobilePopup = !this.mobilePopup
+    }
   }
 };
 </script>
@@ -82,11 +89,13 @@ export default {
     margin-right: 1.5vw;
     margin-bottom: 1.5vw;
     display: flex;
+    /* flex: 1; */
     position: relative;
-    align-items: center;
   }
   .form-rows label {
+    /* font-size: 1vw; */
     padding-right: 1.7vw;
+    flex-basis: 105px;
   }
   .form-rows input {
     flex-grow: 1;
@@ -95,19 +104,11 @@ export default {
     padding: 5px 10px;
   }
   .form-rows textarea {
+    width: 100%;
     padding: 5px 10px;
-    flex-grow: 1;
-  }
-  .content-label {
-    align-self: flex-start;
   }
   .between-date {
     padding: 0 5px;
-  }
-  .upload-icon {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
   }
   .submit-button {
     background-color: #3FA893;
@@ -137,7 +138,6 @@ export default {
     bottom: 20px;
     right: 20px;
     cursor: pointer;
-    display: none;
   }
   .add-button-mobile span {
     font-size: 40px;
@@ -182,21 +182,6 @@ export default {
     }
     .form-rows {
       margin-right: 0;
-    }
-  }
-  @media screen and (max-width: 600px) {
-    .form-desktop {
-      display: none
-    }
-    .add-button-mobile {
-      display: flex;
-    }
-  }
-  @media screen and (max-width: 500px) {
-    .form-rows {
-      flex-direction: column;
-      margin-bottom: 6vw;
-      align-items: initial;
     }
   }
 </style>

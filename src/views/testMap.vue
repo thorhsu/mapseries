@@ -11,29 +11,12 @@
         v-if="functionMenu.visible" 
         :dataList="functionMenu.data_list" 
       />
-      <div class="function-content">
-        <div class="content-Style shadow">
-          <AddEventForm 
-            :newEvent="newEvent"
-            @handleNewFormSubmit="handleNewFormSubmit"
-            :openedPopup="openedPopup"
-            @togglePopup="togglePopup"
-          />
-        </div>
 
-        <div class="content-Style shadow">
-          <EventTable
-            :events="events"
-            :openedPopup="openedPopup"
-            @togglePopup="togglePopup"
-          />
-        </div>
-
-        <FormPopup 
-          :openedPopup="openedPopup"
-          @togglePopup="togglePopup"
-        />
+      <div class="map-cont">
+        <MapActionsPanel />
+        <MapSidePanel />
       </div>
+
     </div>   
   </div>
 </template>
@@ -41,18 +24,17 @@
 <script>
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import AddEventForm from '@/components/test/addEventForm.vue'
-import EventTable from '@/components/test/eventTable.vue'
-import FormPopup from '@/components/test/formPopup.vue'
+import MapActionsPanel from '@/components/test/mapActionsPanel.vue'
+import MapSidePanel from '@/components/test/mapSidePanel.vue'
+
 
 export default {
   name: "test",
   components: {
     BannerMenu,
     FunctionMenu,
-    AddEventForm,
-    EventTable,
-    FormPopup
+    MapActionsPanel,
+    MapSidePanel
   },
   data() {
     return {
@@ -122,7 +104,8 @@ export default {
         eventName: "",
         eventData: ""
       }
-    }
+    },
+    
   }
 };
 </script>
@@ -145,6 +128,13 @@ export default {
     padding: 35px;
     position: relative;
   }
+
+  .map-cont {
+    width: 100%;
+    height: auto;
+    background-color: gainsboro;
+  }
+
   .content-Style {
     border-radius: 20px;
     margin: 0 0 17.5px;
