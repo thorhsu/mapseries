@@ -4,20 +4,23 @@
       <div class="outer-flex">
         <p class="font-Style item-title">日期區間</p>
         <div class="function-outer">
-          <el-date-picker v-model="time.start" type="datetime" placeholder="選擇日期時間"></el-date-picker>
+          <input class="input-box" type="date" v-model="time.start" required>
           ～
-          <el-date-picker v-model="time.end" type="datetime" placeholder="選擇日期時間"></el-date-picker>
+          <input class="input-box" type="date" v-model="time.end" required>
         </div>
       </div>
       <div class="outer-flex">
         <p class="font-Style item-title">事件名稱</p>
-        <div class="function-outer event-items">
-          <el-input v-model="eventData" placeholder=" "></el-input>
+        <div class="function-outer">
+          <input class="input-box" type="text" v-model="disasterName" required>
         </div>
       </div>
     </div>
-    <div>
-      <div class="button-Add">+ 新增事件</div>
+    <div class="button-outer">
+      <div class="button-Add shadow" @click="disaster_add">
+        <img class="button-img" src="@/assets/icons/disaster/plus.svg">
+        <p class="font-Style">新增事件</p>
+      </div>
     </div>
   </div>
 </template>
@@ -31,17 +34,24 @@ export default {
   data() {
     return {
       time: {
-        start: '',
-        end: ''
+        start: new Date(),
+        end: ""
       },
-      eventData: ''
+      disasterName: ''
     };
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
-    
+    disaster_add(){
+      let res = {
+        name: this.disasterName,
+        time: {
+          start: this.time.end,
+          end: this.time.end
+        }
+      }
+      console.log("Add Disaster => ", res)
+    },
   }
 };
 </script>
@@ -51,35 +61,72 @@ export default {
     border-radius: 10px;
     background-color: white;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    /* justify-content: space-between; */
+    /* align-items: flex-end; */
+  }
+  .img-Style {
+    width: 100%;
+    height: auto;
   }
   .font-Style {
     margin: 0;
   }
   .item-title {
-    padding: 30px 35px 30px 70px;
+    width: 100%;
+    text-align: center;
+    flex: 1;
   }
   .item-outer {
-    width: 70%;
+    width: 100%;
     height: auto;
+  }
+  .function-outer {
+    display: flex;
+    align-items: center;
+    flex: 2;
   }
   .outer-flex {
     display: flex;
     align-items: center;
+    margin: 3% 0;
   }
-  .event-items {
-    width: 43%;
+  .input-box {
+    width: 100%;
+  }
+  .button-outer {
+    width: 100%;
+    position: relative;
   }
   .button-Add {
-    margin: 0 90px 30px 0;
+    margin: 0 10% 3%;
+    position: absolute;
+    right: 0;
+    bottom: 0;
     cursor: pointer;
+    background-color: #3FA893;
+    color: white;
+    padding: 1% 7%;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+  }
+  .button-img {
+    padding-right: 30px;
   }
   @media (min-width: 768px) and (max-width: 1280px){
-
-  }
-
-  @media (max-width: 768px){
-
+    .outer {
+      display: block;
+      padding: 1% 5%;
+    }
+    .function-outer {
+      flex: 4;
+    }
+    .button-outer {
+      padding: 0 35% 1%;
+    }
+    .button-Add {
+      position: relative;
+      margin: 0;
+    }
   }
 </style>

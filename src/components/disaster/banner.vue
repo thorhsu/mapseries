@@ -3,7 +3,8 @@
     <div class="menu font_Style" v-text="title" />
     <div class="menu font_Style icon-outer">
       <div class="icon" :class="{icon_show: visible}" @click="changeVisible">
-        <img src="https://fakeimg.pl/30x30/0f00f0/">
+        <img src="@/assets/icons/banner_close.svg" v-if="visible">
+        <img src="@/assets/icons/hanbuger.svg" v-else>
       </div>
     </div>
   </div>
@@ -42,7 +43,7 @@ export default {
     padding: 1.5625vw 0 1.5625vw 2.083vw;
   }
   .icon-outer {
-    padding-left: 4.6875vw;
+    padding-left: 3.5%;
   }
   .icon {
     cursor: pointer;
@@ -53,7 +54,8 @@ export default {
       justify-content: space-between;
     }
     .font_Style {
-      font-size: 3.64583vw;
+      /* font-size: 3.64583vw; */
+      font-size: 28px;
     }
     .menu {
       padding: 3.90625vw 0 3.90625vw 3.90625vw;
@@ -63,12 +65,13 @@ export default {
     }
   }
 
-  @media (max-width: 768px){
+  @media (max-width: 767px){
     .outer {
       justify-content: space-between;
     }
     .font_Style {
-      font-size: 7.4666vw;
+      /* font-size: 7.4666vw; */
+      font-size: 28px;
     }
     .menu {
       padding: 9.33vw 0 9.33vw 5.333vw;
