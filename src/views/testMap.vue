@@ -114,11 +114,13 @@ export default {
   /* Page */
   .test-page {
     background-color: #DFE9F0;
+    position: relative;
   }
 
   /* Other Components */
   .function-outer {
     display: flex;
+    position: relative;
   }
   .function-content {
     width: 100%;
@@ -133,7 +135,19 @@ export default {
     background-color: gainsboro;
   }
 
+  .content-Style {
+    border-radius: 20px;
+    margin: 0 0 17.5px;
+  }
 
+  @media (max-width: 767px){
+    .function-content {
+      padding: 5%;
+    }
+    .content-Style {
+      margin: 0;
+    }
+  }
   @media screen and (max-width: 500px) {
     .function-content {
       padding: 15px;
