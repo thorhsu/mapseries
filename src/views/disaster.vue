@@ -4,11 +4,11 @@
     <div class="function-outer">
       <FunctionMenu v-if="functionMenu.visible" :dataList="functionMenu.data_list" />
       <div class="function-content">
-        <div class="content-Style shadow disasterAdd">
-          <DisasterAdd v-if="device !== 'mobile'"/>
+        <div class="content-Style shadow">
+          <DisasterAdd v-if="device !== 'mobile'" />
         </div>
         <div class="content-Style shadow">
-          <DisasterList :device="device" @popup="popup"/>
+          <DisasterList :device="device" @popup="popup" />
         </div>
         <DisasterPopup v-if="editPopup" @closePopup="closePopup" />
         <DisasterPopupAddMobile v-if="mobile_addPopup" @closePopup="closePopup" />
@@ -136,9 +136,6 @@ export default {
     }
     .content-Style {
       margin: 0;
-    }
-    .disasterAdd{
-      margin-bottom: 5%;
     }
   }
 </style>
