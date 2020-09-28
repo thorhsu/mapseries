@@ -8,12 +8,23 @@
       :options="{zoomControl: false}"
     >     
       <l-control position="topleft">
-        <button @click="edit" >edit</button>
-        <button @click="clear" >clear</button>
-        <button @click="save" >save</button>
+        <div>
+          <button @click="calibrate" >校正模式</button>
+          <button @click="edit" >拖曳模式</button>
+          <button @click="drawMarker" >畫點工具</button>
+          <button @click="drawLine" >畫線工具</button>
+          <button @click="drawPoligon" >畫面工具</button>
+          <button  >儲存檔案</button>
+          <button  >離開</button>
+        </div>
+        <div>
+          <button @click="clear" >取消變更</button>
+          <button @click="save" >完成變更</button>
+        </div>
       </l-control> 
+
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />      
-      <GjsonAndMark  @addToEdit="addToEdit" :visible="true" :geoJson="geoJson" @updateGeojson="updateGeojson" :map="map" />      
+      <GjsonAndMark  @addToEdit="addToEdit" :markerVisible="markerVisible" :gjsonVisible="gjsonVisible" :geoJson="geoJson" @updateGeojson="updateGeojson" :map="map" />      
     </l-map>
   </div>
 </template>
@@ -89,6 +100,11 @@ export default {
       editableLayers: null,
       mapLoaded: false,
       editLayer: null,
+      polylineDrawer:null,
+      markerDrawer:null,
+      polygonDrawer:null,
+      markerVisible: false,
+      gjsonVisible: true,
     };
   },
   mounted() {
@@ -109,17 +125,14 @@ export default {
         }
       });
 
-      this.map.addControl(drawControl);
+      // 需要預設工具列時加入
+      // this.map.addControl(drawControl);
 
       this.editableLayers = new window.L.FeatureGroup().addTo(this.map);      
-      this.map.on(window.L.Draw.Event.CREATED, (e) => {
-        // const type = e.layerType;
-        const layer = e.layer;
-        // 
-        this.editableLayers.addLayer(layer);
-      });  
+      // 將
+      this.map.on(window.L.Draw.Event.CREATED, e => this.editableLayers.addLayer(e.layer));  
       this.mapLoaded = true;                
-    // });
+    // }); // end of this.$nextTick()
   },
   methods: { 
     clear() {
@@ -161,13 +174,38 @@ export default {
       this.editableLayers.addLayer(layer);
     },
     updateGeojson(geojson) {
-      // save後清空editablelayer
+      this.clearEditableLayers();
+      this.markerVisible = false;
+      this.gjsonVisible = true;
+      this.$emit("update:geoJson", geojson);
+    },
+    drawMarker () {
+      this.markerDrawer = new L.Draw.Marker(this.map);
+      this.markerDrawer.enable();
+    },
+    drawLine () {
+      this.polylineDrawer = new L.Draw.Polyline(this.map, {
+            allowIntersection: true,
+            showArea: true
+          });
+      this.polylineDrawer.enable();
+    },
+    drawPoligon () {
+      this.polygonDrawer = new L.Draw.Polygon(this.map);
+      this.polygonDrawer.enable();
+    },
+    clearEditableLayers() {
+      // 清空editablelayer
       for(const layer of this.editingLayers) {        
         this.editableLayers.removeLayer(layer);
       }
       this.editingLayers = [];
-      this.$emit("update:geoJson", geojson);
-    } 
+    },
+    calibrate() {
+      this.clearEditableLayers();
+      this.markerVisible = !this.markerVisible;
+      this.gjsonVisible = !this.gjsonVisible;
+    }
   }
 };
 </script>

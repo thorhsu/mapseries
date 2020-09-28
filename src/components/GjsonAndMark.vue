@@ -1,7 +1,7 @@
 <template>
   <div>    
-      <l-geo-json ref="geoLayer" :visible="visible" v-if="geojson" :options="{onEachFeature: onEachFeature}" :geojson="geojson" />      
-      <l-marker :visible="visible"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
+      <l-geo-json ref="geoLayer" :visible="gjsonVisible" v-if="geojson" :options="{onEachFeature: onEachFeature}" :geojson="geojson" />      
+      <l-marker :visible="markerVisible"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
           :lat-lng="coordinate" :key="'marker_' +index">          
           <l-popup  :options="options">
             <div style="cursor:pointer" @click="showLatLng(coordinate)" >
@@ -67,14 +67,20 @@ export default {
       type: Object,
       default: () => {}
     },
-    visible: {
+    gjsonVisible: {
       type: Boolean,
       default: true
+    },
+    markerVisible: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
-    geojson() {            
-      return Object.keys(this.geoJson).length? this.geoJson : "";
+    geojson() { 
+      if(this.gjsonVisible)           
+        return Object.keys(this.geoJson).length? this.geoJson : this.emptyGeoJson;
+      return this.emptyGeoJson;
     },
     epsgCode: {
       get() {
@@ -109,6 +115,7 @@ export default {
       oldLnglat: [],
       newLongtitude: 0,
       newLatitude: 0, 
+      emptyGeoJson: {"type": "FeatureCollection", "features": []},
     };
   },
   mounted() {
@@ -171,6 +178,17 @@ export default {
                 if(JSON.stringify(this.oldLnglat) === JSON.stringify(coordinate)){
                   coordinate = [this.newLongtitude, this.newLatitude];
                   feature.geometry.coordinates[i][j] = coordinate;
+                }
+              }
+              break;              
+            case 4:              
+              for(let j = 0 ; j < feature.geometry.coordinates[i].length; j++){
+                for(let k = 0 ; k < feature.geometry.coordinates[i][j].length; k++){
+                  coordinate = feature.geometry.coordinates[i][j][k];
+                  if(JSON.stringify(this.oldLnglat) === JSON.stringify(coordinate)){
+                    coordinate = [this.newLongtitude, this.newLatitude];
+                    feature.geometry.coordinates[i][j][k] = coordinate;
+                  }
                 }
               }
               break;              
