@@ -60,7 +60,7 @@ export default {
         title: '工程業務控管平台'
       },
       functionMenu: {
-        visible: true,
+        visible: false,
         data_list: []
       },
       events: [

@@ -166,4 +166,16 @@ export default {
       float: right;
     }
   }
+  @media screen and (max-width: 600px)  {
+    .map-sidePanel-cont {
+      width: auto;
+      height: 450px;
+      background-color: white;
+      padding: 20px 0;
+      border-radius: 10px;
+      margin: 15px;
+      padding-right: 10px;
+      float: none;
+    }
+  }
 </style>

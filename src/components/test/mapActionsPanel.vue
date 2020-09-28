@@ -80,7 +80,7 @@ export default {
     display: flex;
     align-items: center;
     position: relative;
-    margin: 15px;
+    padding: 15px;
   }
   .actions-main-button {
     background-color: #FFC401;
@@ -99,7 +99,7 @@ export default {
     padding: 12px 10px 10px 45px;
     border-radius: 15px;
     position: absolute;
-    left: 25px;
+    left: 45px;
   }
   .action-cont {
     display: flex;
@@ -118,8 +118,8 @@ export default {
   @media screen and (max-width: 768px) {
     .actions-expanded-cont {
       flex-direction: column;
-      left: 0;
-      top: 20px;
+      left: 15px;
+      top: 35px;
       padding: 60px 3px 15px 3px;
     }
     .action-cont {
