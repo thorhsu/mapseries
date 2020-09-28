@@ -24,7 +24,10 @@
       </l-control> 
 
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />      
-      <GjsonAndMark  @addToEdit="addToEdit" :markerVisible="markerVisible" :gjsonVisible="gjsonVisible" :geoJson="geoJson" @updateGeojson="updateGeojson" :map="map" />      
+      <GjsonAndMark @addToEdit="addToEdit" 
+          :markerVisible="markerVisible" 
+          :gjsonVisible="gjsonVisible" 
+          :geoJson="editingGeoJson" @updateGeojson="updateGeojson" :map="map" />      
     </l-map>
   </div>
 </template>
@@ -77,10 +80,18 @@ export default {
     geoJson: {
       type: Object,
       default: () => {}
-    }
+    },
   },
-  computed: {    
-    
+  computed: { 
+    editingGeoJson() {
+      const editingGeojson = this.geojsons.filter(geojson => {
+        return geojson.isEditing;
+      });
+      if(editingGeojson && editingGeojson.length > 0) {        
+        return editingGeojson[0].geojson;
+      }
+      return {};
+    },   
   },
   watch: {
     
@@ -105,7 +116,19 @@ export default {
       polygonDrawer:null,
       markerVisible: false,
       gjsonVisible: true,
+      isEditing: false,
     };
+  },
+  created() {
+    let put = false
+    for(const geojson of this.geojsons) {
+      if(geojson.file === this.geoJson.file) {
+        put = true;
+      }
+    }
+    if(!put) {
+      this.geojsons.push(this.geoJson);
+    }
   },
   mounted() {
     // this.$nextTick(() => {
@@ -125,7 +148,7 @@ export default {
         }
       });
 
-      // 需要預設工具列時加入
+      // 需要預設工具列時加入，目前不需要
       // this.map.addControl(drawControl);
 
       this.editableLayers = new window.L.FeatureGroup().addTo(this.map);      
@@ -133,6 +156,17 @@ export default {
       this.map.on(window.L.Draw.Event.CREATED, e => this.editableLayers.addLayer(e.layer));  
       this.mapLoaded = true;                
     // }); // end of this.$nextTick()
+  },
+  beforeUpdate() {
+    let put = false
+    for(const geojson of this.geojsons) {
+      if(geojson.file === this.geoJson.file) {
+        put = true;
+      }
+    }
+    if(!put) {
+      this.geojsons.push(this.geoJson);
+    }
   },
   methods: { 
     clear() {
@@ -168,16 +202,20 @@ export default {
       });
       this.editLayer.enable();    
     },
-    addToEdit(layer) {
-      console.log("add to layer");
+    addToEdit(layer) {      
       this.editingLayers.push(layer);
       this.editableLayers.addLayer(layer);
     },
-    updateGeojson(geojson) {
+    updateGeojson(geoJson) {
       this.clearEditableLayers();
       this.markerVisible = false;
       this.gjsonVisible = true;
-      this.$emit("update:geoJson", geojson);
+      this.geojsons.forEach( geojson => {
+        if(geojson.isEditing){
+          geojson.geojson = geoJson;
+        }
+      });
+      // this.$emit("update:geoJson", geojson);
     },
     drawMarker () {
       this.markerDrawer = new L.Draw.Marker(this.map);

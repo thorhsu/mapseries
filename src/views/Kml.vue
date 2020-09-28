@@ -25,7 +25,7 @@
               v-if="!isLoading"
               :fullscreenControl="true"
               :zoomControl="true"
-              :geoJson.sync="geoJson"
+              :geoJson="geoJson"
             ></Leaflet>
           
         </div>
@@ -77,7 +77,7 @@ export default {
       this.geoJson = "";
       if(isKml) {
         var parsedKml = new DOMParser().parseFromString(await this.getKmlTxt(file), "text/xml");
-        this.geoJson = kml(parsedKml);  
+        this.geoJson = {file: file, isEditing: true, geojson: kml(parsedKml)};  
       } else {
         //fetch geojson method
       }

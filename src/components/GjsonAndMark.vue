@@ -15,23 +15,17 @@
           <el-form-item style="border-bottom: 2px solid red; padding: 0% 0% 5%;">
             <el-row>
               <el-checkbox-group v-model="epsgCode">      
-                <el-col class="text-center" :span="8">
-                  <el-checkbox label="經緯度"></el-checkbox>
-                </el-col>
-                <el-col class="text-center" :span="8">
-                  <el-checkbox class="text-center" label="全球座標"></el-checkbox>
-                </el-col>
-                <el-col class="text-center" :span="8">
-                  <el-checkbox class="text-center" label="TWD97"></el-checkbox>
+                <el-col v-for="label in Object.keys(epsgCodes)" :key="'epsgCode_' + epsgCodes[label]" class="text-center" :span="8">
+                  <el-checkbox :label="label"></el-checkbox>
                 </el-col>
               </el-checkbox-group>
             </el-row>
             <el-row type="flex" justify="space-around">              
               <el-col class="text-center" :span="11">
-                <el-input placeholder="X座標" v-model="newLatitude"></el-input>
+                <el-input  placeholder="X座標" v-model.number="newLongtitude"></el-input>
               </el-col>
               <el-col class="text-center" :span="11">
-                <el-input placeholder="y座標" v-model="newLongtitude"></el-input>
+                <el-input  placeholder="y座標" v-model.number="newLatitude"></el-input>
               </el-col>              
             </el-row>
           </el-form-item>
@@ -77,6 +71,38 @@ export default {
     }
   },
   computed: {
+    showLongtitude: {
+      get(){
+        if(this.epsgCodes[this.epsgCode[0]] === 4326){
+          return this.newLongtitude;
+        }
+        const showCoordinate = utils.transferCoordinate(4326, this.epsgCodes[this.epsgCode[0]], [this.newLongtitude, this.newLatitude])
+        return showCoordinate[0];
+      },
+      set(newLongtitude) {        
+        if(this.epsgCodes[this.epsgCode[0]] === 4326){
+          this.newLongtitude = newLongtitude;
+        } else {
+          this.newLongtitude = utils.transferCoordinate(this.epsgCodes[this.epsgCode[0]], 4326, [newLongtitude, this.newLatitude])[0];
+        }
+      }
+    },
+    showLatitude: {
+      get(){
+        if(this.epsgCodes[this.epsgCode[0]] === 4326){
+          return this.newLatitude;
+        }
+        const showCoordinate = utils.transferCoordinate(4326, this.epsgCodes[this.epsgCode[0]], [this.newLongtitude, this.newLatitude])
+        return showCoordinate[1];
+      },
+      set(newLatitude) {
+        if(this.epsgCodes[this.epsgCode[0]] === 4326){
+          this.newLatitude = newLatitude;
+        } else { 
+          this.newLatitude = utils.transferCoordinate(this.epsgCodes[this.epsgCode[0]], 4326, [this.newLongtitude, newLatitude])[1];
+        }
+      }
+    },
     geojson() { 
       if(this.gjsonVisible)           
         return Object.keys(this.geoJson).length? this.geoJson : this.emptyGeoJson;
@@ -116,12 +142,14 @@ export default {
       newLongtitude: 0,
       newLatitude: 0, 
       emptyGeoJson: {"type": "FeatureCollection", "features": []},
+      epsgCodes: {"經緯度": 4326, "全球座標": 3857, "TWD97": 3826}
     };
   },
   mounted() {
     if(this.map) {    
       this.map.eachLayer( layer => {    
-        if(layer instanceof L.GeoJSON){    
+        if(layer instanceof L.GeoJSON
+          && Object.keys(layer.getBounds()).length > 1){            
           this.map.fitBounds(layer.getBounds());
         } 
       });
@@ -146,6 +174,7 @@ export default {
       return layer;
     },    
     showLatLng(latlng){
+      console.log(this.geoJson);
       this.oldLnglat = [latlng[1], latlng[0]];
       this.newLongtitude = latlng[1];      
       this.newLatitude = latlng[0];
