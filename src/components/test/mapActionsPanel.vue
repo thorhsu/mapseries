@@ -3,7 +3,7 @@
     <div class="actions-main-button"
       @click="toggleMapActions"
     >
-      <img src="https://fakeimg.pl/30/">
+      <img src="../../assets/icons/map/tool-box.png">
     </div>
 
     <div 
@@ -13,8 +13,10 @@
       <div class="action-cont" 
         v-for="(mapAction, index) in mapActions" 
         :key="index"
+        @mouseover="activateHover(index)"
+        @mouseleave="deactivateHover(index)"
       >
-        <img v-bind:src="mapAction.img" />
+        <img v-bind:src="require(`@/assets/icons/map/${mapAction.img}.png`)" />        
         <p>{{mapAction.text}}</p>
       </div>
     </div>
@@ -32,36 +34,44 @@ export default {
       openedMapActions: false,
       mapActions: [
         {
-          img: "https://fakeimg.pl/30/",
+          img: "edit-location",
+          imgHover: "edit-location-a",
           text: "校正模式"
         },
         {
-          img: "https://fakeimg.pl/30/",
-          text: "校正模式"
+          img: "hand-paper",
+          imgHover: "hand-paper-a",
+          text: "拖曳模式"
         },
         {
-          img: "https://fakeimg.pl/30/",
-          text: "校正模式"
+          img: "add-location",
+          imgHover: "add-location-a",
+          text: "畫點工具"
         },
         {
-          img: "https://fakeimg.pl/30/",
-          text: "校正模式"
+          img: "linear-scale",
+          imgHover: "linear-scale-a",
+          text: "畫線工具"
         },
         {
-          img: "https://fakeimg.pl/30/",
-          text: "校正模式"
+          img: "area",
+          imgHover: "area-a",
+          text: "畫面工具"
         },
         {
-          img: "https://fakeimg.pl/30/",
-          text: "校正模式"
+          img: "save",
+          imgHover: "save-a",
+          text: "儲存檔案"
         },
         {
-          img: "https://fakeimg.pl/30/",
-          text: "校正模式"
+          img: "location-off",
+          imgHover: "location-off-a",
+          text: "刪除模式"
         },
         {
-          img: "https://fakeimg.pl/30/",
-          text: "校正模式"
+          img: "exit",
+          imgHover: "exit-a",
+          text: "離開"
         }
       ]
     };
@@ -69,6 +79,12 @@ export default {
   methods: {
     toggleMapActions() {
       this.openedMapActions = !this.openedMapActions
+    },
+    activateHover (i) {
+      this.mapActions[i].img = this.mapActions[i].imgHover
+    },
+    deactivateHover (i) {
+      this.mapActions[i].img = this.mapActions[i].img.slice(0, -2)
     }
   }
 };
@@ -83,15 +99,17 @@ export default {
     padding: 15px;
   }
   .actions-main-button {
-    background-color: #FFC401;
-    height: 70px;
-    width: 70px;
-    border-radius: 50%;
+    height: 80px;
+    width: 80px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1;
+  }
+  .actions-main-button img {
+    height: 100%;
+    width: 100%;
   }
   .actions-expanded-cont {
     display: flex;
@@ -110,15 +128,22 @@ export default {
     margin: 0 8px;
     cursor: pointer;
   }
+  .action-cont img {
+    height: 30px;
+    padding-bottom: 2px;
+  }
   .action-cont p {
     margin-bottom: 0;
     color: white;
+  }
+  .action-cont:hover p {
+    color: #F2D36E;
   }
 
   @media screen and (max-width: 768px) {
     .actions-expanded-cont {
       flex-direction: column;
-      left: 15px;
+      left: 18px;
       top: 35px;
       padding: 60px 3px 15px 3px;
     }

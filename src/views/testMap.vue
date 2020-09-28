@@ -13,9 +13,9 @@
       />
 
       <div class="function-content">
-          <div class="map-cont-mobile">
-            <MapSidePanel/>
-          </div>
+        <div class="map-cont-mobile">
+          <MapSidePanel/>
+        </div>
 
 
         <div class="map-cont">
