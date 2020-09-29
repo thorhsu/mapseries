@@ -23,7 +23,7 @@
         </div>
       </l-control> 
       <l-control position="topright">
-        <el-button @click="showLayerManagement=true" v-if="geoJsons.length" circle style="background-color:rgba(0, 0, 0, 0);float:right">
+        <el-button @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle style="background-color:rgba(0, 0, 0, 0);float:right">
           <img src="@/assets/icons/map/Layer.png" style="object-fit: cover;width:73px; height:73px" />
         </el-button>
         <LayerManagement @close="showLayerManagement=false" v-show="showLayerManagement" @toEditMode="toEditMode" :geoJsons="geoJsons" :map="map"/>
