@@ -27,7 +27,13 @@
       <GjsonAndMark @addToEdit="addToEdit" 
           :markerVisible="markerVisible" 
           :gjsonVisible="gjsonVisible" 
-          :geoJson="editingGeoJson" @updateGeojson="updateGeojson" :map="map" />      
+          :geoJson="editingGeoJson" @updateGeojson="updateGeojson" 
+          :map="map" />      
+      <div v-if="!isEditing" id="geoJsonArea">
+        <l-geo-json v-for="(geojson, index) in viewGeoJsons" :ref="'geoLayer_' +index" :key="'geoLayer_' +index"
+            :geojson="geojson" />      
+        
+      </div>
     </l-map>
   </div>
 </template>
@@ -35,7 +41,7 @@
 <script>
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
-import { LMap, LControl } from 'vue2-leaflet';
+import { LMap, LControl, LGeoJson } from 'vue2-leaflet';
 import GjsonAndMark from '@/components/GjsonAndMark';
 import L from 'leaflet';
 import LDraw from 'leaflet-draw';
@@ -50,7 +56,8 @@ export default {
     LMap, 
     'gmap-tilelayer': Vue2LeafletGoogleMutant,
     GjsonAndMark,
-    LControl
+    LControl,
+    LGeoJson
   },
   props: {
     center: {
@@ -77,9 +84,9 @@ export default {
       type: Boolean,
       default: true
     },
-    geoJson: {
-      type: Object,
-      default: () => {}
+    geoJsons: {
+      type: Array,
+      default: () => []
     },
   },
   computed: { 
@@ -87,11 +94,22 @@ export default {
       const editingGeojson = this.geojsons.filter(geojson => {
         return geojson.isEditing;
       });
-      if(editingGeojson && editingGeojson.length > 0) {        
+      if(editingGeojson && editingGeojson.length > 0) {  
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.isEditing = true;      
         return editingGeojson[0].geojson;
       }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      this.isEditing = false;      
       return {};
     },   
+    viewGeoJsons() {
+      return this.geojsons.map(json => {
+        if(json.visible){
+          return json.geojson;
+        }
+      });
+    }
   },
   watch: {
     
@@ -120,15 +138,7 @@ export default {
     };
   },
   created() {
-    let put = false
-    for(const geojson of this.geojsons) {
-      if(geojson.file === this.geoJson.file) {
-        put = true;
-      }
-    }
-    if(!put) {
-      this.geojsons.push(this.geoJson);
-    }
+    this.geojsons = _.cloneDeep(this.geoJsons);
   },
   mounted() {
     // this.$nextTick(() => {
@@ -159,13 +169,9 @@ export default {
   },
   beforeUpdate() {
     let put = false
-    for(const geojson of this.geojsons) {
-      if(geojson.file === this.geoJson.file) {
-        put = true;
-      }
-    }
-    if(!put) {
-      this.geojsons.push(this.geoJson);
+    if(!this.isEditing){
+      this.geojsons = _.cloneDeep(this.geoJsons);
+      console.log("geoJsons", this.geojsons.length, this.geojsons);
     }
   },
   methods: { 
@@ -211,7 +217,7 @@ export default {
       this.markerVisible = false;
       this.gjsonVisible = true;
       this.geojsons.forEach( geojson => {
-        if(geojson.isEditing){
+        if(geojson.isEditing){          
           geojson.geojson = geoJson;
         }
       });

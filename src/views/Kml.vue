@@ -24,10 +24,9 @@
             <Leaflet
               v-if="!isLoading"
               :fullscreenControl="true"
-              :zoomControl="true"
-              :geoJson="geoJson"
-            ></Leaflet>
-          
+              :zoomControl="true"            
+              :geoJsons="geoJsons"
+            ></Leaflet>          
         </div>
       </div>     
       
@@ -52,17 +51,22 @@ export default {
     return {
       isLoading: true, 
       viewResult: false,      
-      geoJson: ""
+      geoJson: {},   
+      geoJsons: [],   
     };
   },
   mounted() {
     const { kmlFile } = this.$route.params;    
     this.getGeoJson(kmlFile, true);
+    // this.geoJsons.push(this.geoJson);
   },
   beforeRouteUpdate(to, from, next) {    
-    const { kmlFile } = to.params;
-    this.getGeoJson(kmlFile, true);
+    const { kmlFile } = to.params;    
+    this.getGeoJson(kmlFile, true);            
     next();
+  },
+  updated(){    
+
   },
   methods: {
     async getKmlTxt(kmlFile) {
@@ -77,7 +81,17 @@ export default {
       this.geoJson = "";
       if(isKml) {
         var parsedKml = new DOMParser().parseFromString(await this.getKmlTxt(file), "text/xml");
-        this.geoJson = {file: file, isEditing: true, geojson: kml(parsedKml)};  
+        this.geoJson = {file: file, isEditing: false, visible: true, geojson: kml(parsedKml)}; 
+        let put = false
+        for(let i = 0 ; i < this.geoJsons.length ; i++) {
+          if(this.geoJsons[i].file === this.geoJson.file) {
+            put = true;     
+            this.geoJsons[i] = this.geoJson;       
+          }
+        }
+        if(!put) {
+          this.geoJsons.push(this.geoJson);
+        }        
       } else {
         //fetch geojson method
       }

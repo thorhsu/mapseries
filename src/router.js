@@ -10,18 +10,31 @@ Vue.use(Router)
 
 export default new Router({
     routes: [{
-        path: '/kml/:kmlFile',
-        component: Kml
-    },{
-        path: '/disaster',
-        component: disaster
-    },
-    {
-        path: '/test',
-        component: test
-    },
-    {
-        path: '/testMap',
-        component: testMap
-    }]
+            path: '/kml/:kmlFile',
+            component: Kml,
+            meta: {
+                keepAlive: true // 需要被cache
+            }
+        }, {
+            path: '/disaster',
+            component: disaster,
+            meta: {
+                keepAlive: false
+            }
+        },
+        {
+            path: '/test',
+            component: test,
+            meta: {
+                keepAlive: false
+            }
+        },
+        {
+            path: '/testMap',
+            component: testMap,
+            meta: {
+                keepAlive: false
+            }
+        }
+    ]
 })
