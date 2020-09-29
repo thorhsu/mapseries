@@ -35,41 +35,49 @@ export default {
       mapActions: [
         {
           img: "edit-location",
+          imgUnhover: "edit-location",
           imgHover: "edit-location-a",
           text: "校正模式"
         },
         {
           img: "hand-paper",
+          imgUnhover: "hand-paper",
           imgHover: "hand-paper-a",
           text: "拖曳模式"
         },
         {
           img: "add-location",
+          imgUnhover: "add-location",
           imgHover: "add-location-a",
           text: "畫點工具"
         },
         {
           img: "linear-scale",
+          imgUnhover: "linear-scale",
           imgHover: "linear-scale-a",
           text: "畫線工具"
         },
         {
           img: "area",
+          imgUnhover: "area",
           imgHover: "area-a",
           text: "畫面工具"
         },
         {
           img: "save",
+          imgUnhover: "save",
           imgHover: "save-a",
           text: "儲存檔案"
         },
         {
           img: "location-off",
+          imgUnhover: "location-off",
           imgHover: "location-off-a",
           text: "刪除模式"
         },
         {
           img: "exit",
+          imgUnhover: "exit",
           imgHover: "exit-a",
           text: "離開"
         }
@@ -84,7 +92,7 @@ export default {
       this.mapActions[i].img = this.mapActions[i].imgHover
     },
     deactivateHover (i) {
-      this.mapActions[i].img = this.mapActions[i].img.slice(0, -2)
+      this.mapActions[i].img = this.mapActions[i].imgUnhover
     }
   }
 };
@@ -127,6 +135,7 @@ export default {
     font-size: 12px;
     margin: 0 8px;
     cursor: pointer;
+    width: 50px;
   }
   .action-cont img {
     height: 30px;
