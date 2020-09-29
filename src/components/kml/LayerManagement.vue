@@ -2,7 +2,7 @@
   <div>      
     <el-card class="box-card" shadow="always">
       <el-row style="margin: -10px -10px 0 0" >
-        <i style="float:right; " class="far fa-window-close fa-sm"></i>
+        <i @click="$emit('close')" style="float:right; " class="far fa-window-close fa-sm"></i>
       </el-row>
       <el-row type="flex" align="middle" justify="center" v-for="(layer, index) in geoJsons" :key="'gjLayer_' + index" >
         <el-col :span="2"><i @click="edit(layer)" style="cursor:pointer" class="fas fa-pen fa-sm`"></i></el-col>
