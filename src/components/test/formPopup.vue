@@ -113,6 +113,7 @@ export default {
     left: 0;
     right: 0;
     opacity: 0.7;
+    display: block;
   }
   .popup-cont {
     background-color: white;
