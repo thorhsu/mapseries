@@ -229,11 +229,9 @@ export default {
       this.gjsonVisible = true;
       this.geojsons.forEach( geojson => {
         if(geojson.isEditing){          
-          geojson.geojson = geoJson;
-          geojson.isEditing = false;
+          geojson.geojson = geoJson;         
         }
       });
-      this.isEditing = false;
       // this.$emit("update:geoJson", geojson);
     },
     drawMarker () {

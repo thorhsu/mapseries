@@ -59,7 +59,6 @@ export default {
       layer.isEditing = true;
       this.$emit("toEditMode", layer);
     }
-    
   }
 };
 </script>
