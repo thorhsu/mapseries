@@ -107,8 +107,8 @@ export default {
     padding: 15px;
   }
   .actions-main-button {
-    height: 80px;
-    width: 80px;
+    height: 85px;
+    width: 85px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -152,7 +152,7 @@ export default {
   @media screen and (max-width: 768px) {
     .actions-expanded-cont {
       flex-direction: column;
-      left: 18px;
+      left: 20px;
       top: 35px;
       padding: 60px 3px 15px 3px;
     }
