@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import Leaflet from "../components/Leaflet";
+import Leaflet from "@/components/kml/Leaflet";
 import { kml } from "togeojson";
 
 export default {

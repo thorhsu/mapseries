@@ -22,9 +22,17 @@
           <button @click="save" >完成變更</button>
         </div>
       </l-control> 
+      <l-control position="topright">
+        <el-button v-if="geoJsons.length" circle style="background-color:rgba(0, 0, 0, 0);float:right">
+          <img src="@/assets/icons/map/Layer.png" style="object-fit: cover;width:73px; height:73px" />
+        </el-button>
+        <LayerManagement @toEditMode="toEditMode" :geoJsons="geoJsons" :map="map"/>
+        
+
+      </l-control>
 
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />      
-      <GjsonAndMark @addToEdit="addToEdit" 
+      <GjsonAndMark v-if="isEditing" @addToEdit="addToEdit" 
           :markerVisible="markerVisible" 
           :gjsonVisible="gjsonVisible" 
           :geoJson="editingGeoJson" @updateGeojson="updateGeojson" 
@@ -42,7 +50,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 import { LMap, LControl, LGeoJson } from 'vue2-leaflet';
-import GjsonAndMark from '@/components/GjsonAndMark';
+import GjsonAndMark from '@/components/kml/GjsonAndMark';
+import LayerManagement from '@/components/kml/LayerManagement';
 import L from 'leaflet';
 import LDraw from 'leaflet-draw';
 import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
@@ -57,7 +66,8 @@ export default {
     'gmap-tilelayer': Vue2LeafletGoogleMutant,
     GjsonAndMark,
     LControl,
-    LGeoJson
+    LGeoJson,
+    LayerManagement
   },
   props: {
     center: {
@@ -138,7 +148,8 @@ export default {
     };
   },
   created() {
-    this.geojsons = _.cloneDeep(this.geoJsons);
+    if(!this.isEditing)
+      this.geojsons = _.cloneDeep(this.geoJsons);
   },
   mounted() {
     // this.$nextTick(() => {
@@ -219,8 +230,10 @@ export default {
       this.geojsons.forEach( geojson => {
         if(geojson.isEditing){          
           geojson.geojson = geoJson;
+          geojson.isEditing = false;
         }
       });
+      this.isEditing = false;
       // this.$emit("update:geoJson", geojson);
     },
     drawMarker () {
@@ -249,6 +262,15 @@ export default {
       this.clearEditableLayers();
       this.markerVisible = !this.markerVisible;
       this.gjsonVisible = !this.gjsonVisible;
+    },
+    toEditMode(layer){
+      this.isEditing = true;
+      for(let i = 0 ; i < this.geojsons.length; i++) {
+        if(this.geojsons[i].file == layer.file) {
+          this.geojsons[i] = layer
+        }
+      }
+      console.log(this.geojsons);
     }
   }
 };

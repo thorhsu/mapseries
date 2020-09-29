@@ -47,6 +47,7 @@ import utils from '@/assets/js/utils.js';
 import _ from 'lodash';
 
 export default {
+  name: "GjsonAndMark",
   components: {
     LGeoJson,
     LMarker,
