@@ -31,7 +31,7 @@ import MapLayerPanel from '@/components/disasterMapTest/mapLayerPanel.vue'
 
 
 export default {
-  name: "disasterTest",
+  name: "disasterMapTest",
   components: {
     BannerMenu,
     FunctionMenu,

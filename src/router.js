@@ -4,7 +4,7 @@ import Kml from './views/Kml.vue'
 import disaster from './views/disaster.vue'
 import test from './views/test.vue'
 import testMap from './views/testMap.vue'
-import disasterTest from './views/disasterTest.vue'
+import disasterMapTest from './views/disasterMapTest.vue'
 
 
 Vue.use(Router)
@@ -26,7 +26,7 @@ export default new Router({
         component: testMap
     },
     {
-        path: '/disasterTest',
-        component: disasterTest
+        path: '/disasterMapTest',
+        component: disasterMapTest
     }]
 })
