@@ -8,8 +8,9 @@
       :options="{zoomControl: false}"
     >     
       <l-control position="topleft">
-        <div>
-          <button @click="calibrate" >校正模式</button>
+        <MapActionsPanel @handleFunctionCall="handleFunctionCall" v-show="isEditing" />
+        <!-- <div>
+          <button @click="calibrate">校正模式</button>
           <button @click="edit" >拖曳模式</button>
           <button @click="drawMarker" >畫點工具</button>
           <button @click="drawLine" >畫線工具</button>
@@ -20,12 +21,12 @@
         <div>
           <button @click="clear" >取消變更</button>
           <button @click="save" >完成變更</button>
-        </div>
+        </div> -->
       </l-control> 
       <l-control position="topright">
-        <el-button @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle style="background-color:rgba(0, 0, 0, 0);float:right">
-          <img src="@/assets/icons/map/Layer.png" style="object-fit: cover;width:73px; height:73px" />
-        </el-button>
+        <div @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle class="layers-button">
+          <img src="@/assets/icons/map/Layer.png" />
+        </div>
         <LayerManagement @close="showLayerManagement=false" v-show="showLayerManagement" @toEditMode="toEditMode" :geoJsons="geoJsons" :map="map"/>
 
       </l-control>
@@ -51,6 +52,8 @@
 import { LMap, LControl, LGeoJson } from 'vue2-leaflet';
 import GjsonAndMark from '@/components/kml/GjsonAndMark';
 import LayerManagement from '@/components/kml/LayerManagement';
+import MapActionsPanel from '@/components/test/mapActionsPanel';
+
 import L from 'leaflet';
 import LDraw from 'leaflet-draw';
 import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
@@ -66,7 +69,8 @@ export default {
     GjsonAndMark,
     LControl,
     LGeoJson,
-    LayerManagement
+    LayerManagement,
+    MapActionsPanel
   },
   props: {
     center: {
@@ -186,6 +190,9 @@ export default {
     }
   },
   methods: { 
+    handleFunctionCall(functionName) {
+      this[functionName]()
+    },
     clear() {
       if(!this.editLayer)
         return;
@@ -273,3 +280,20 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+  .layers-button {
+    background-color:rgba(0, 0, 0, 0); 
+    float:right;
+    height: 85px;
+    width: 85px;
+    cursor: pointer;
+    margin: 15px;
+  }
+  .layers-button img {
+    height: 100%;
+    width: 100%;
+  }
+
+</style>
