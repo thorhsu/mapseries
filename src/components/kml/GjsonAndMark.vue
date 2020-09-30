@@ -175,7 +175,6 @@ export default {
       return layer;
     },    
     showLatLng(latlng){
-      console.log(this.geoJson);
       this.oldLnglat = [latlng[1], latlng[0]];
       this.newLongtitude = latlng[1];      
       this.newLatitude = latlng[0];
@@ -225,6 +224,7 @@ export default {
           }
         }
       }
+      this.isCalibration=false;
       this.$emit("updateGeojson", geojsonCopy);
     }
   }

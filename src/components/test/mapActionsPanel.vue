@@ -16,7 +16,7 @@
           :key="index"
           @mouseover="activateHover(index)"
           @mouseleave="deactivateHover(index)"
-          @click="testMapActions(index)"
+          @click="handleFunctionCall(mapAction.clickEvent)"
         >
           <img v-bind:src="require(`@/assets/icons/map/${mapAction.img}.png`)" />        
           <p>{{mapAction.text}}</p>
@@ -25,13 +25,13 @@
 
       <div class="actions-sub-cont" v-show="dragMode">
         <div class="drag-mode-cont">
-          <div class="drag-action">
+          <div class="drag-action" @click="handleFunctionCall('clear')">
             <img src="../../assets/icons/map/check-circle.png" />
             <p>取消變更</p>
           </div>
-          <div class="drag-action">
+          <div class="drag-action" @click="handleFunctionCall('save')">
             <img src="../../assets/icons/map/close-circle.png" />
-            <p>取消變更</p>
+            <p>完成變更</p>
           </div>
         </div>
       </div>
@@ -54,49 +54,57 @@ export default {
           img: "edit-location",
           imgUnhover: "edit-location",
           imgHover: "edit-location-a",
-          text: "校正模式"
+          text: "校正模式",
+          clickEvent: "calibrate"
         },
         {
           img: "hand-paper",
           imgUnhover: "hand-paper",
           imgHover: "hand-paper-a",
-          text: "拖曳模式"
+          text: "拖曳模式",
+          clickEvent: "edit"
         },
         {
           img: "add-location",
           imgUnhover: "add-location",
           imgHover: "add-location-a",
-          text: "畫點工具"
+          text: "畫點工具",
+          clickEvent: "drawMarker"
         },
         {
           img: "linear-scale",
           imgUnhover: "linear-scale",
           imgHover: "linear-scale-a",
-          text: "畫線工具"
+          text: "畫線工具",
+          clickEvent: "drawLine"
         },
         {
           img: "area",
           imgUnhover: "area",
           imgHover: "area-a",
-          text: "畫面工具"
+          text: "畫面工具",
+          clickEvent: "drawPoligon"
         },
         {
           img: "save",
           imgUnhover: "save",
           imgHover: "save-a",
-          text: "儲存檔案"
+          text: "儲存檔案",
+          clickEvent: ""
         },
         {
           img: "location-off",
           imgUnhover: "location-off",
           imgHover: "location-off-a",
-          text: "刪除模式"
+          text: "刪除模式",
+          clickEvent: ""
         },
         {
           img: "exit",
           imgUnhover: "exit",
           imgHover: "exit-a",
-          text: "離開"
+          text: "離開",
+          clickEvent: ""
         }
       ]
     };
@@ -112,10 +120,20 @@ export default {
     deactivateHover (i) {
       this.mapActions[i].img = this.mapActions[i].imgUnhover
     },
-    testMapActions(i) {
-      if (i===1) {
-        this.dragMode = !this.dragMode
+    handleFunctionCall(functionName) {
+      if (functionName==="edit" && this.dragMode === false) {
+        this.dragMode = true
       }
+      else if (functionName==="edit" && this.dragMode === true) {
+        this.dragMode = false
+        this.$emit("handleFunctionCall", "clear")
+        return
+      }
+      else if (functionName==="clear" || functionName==="save") {
+        this.dragMode = false
+      }
+      
+      this.$emit("handleFunctionCall", functionName)
     }
   }
 };
@@ -146,20 +164,12 @@ export default {
     position: absolute;
     left: 50px;
     top: 20px;
-    /* display: flex; */
-    /* background-color: rgba(0, 0, 0, 0.3);
-    padding: 12px 10px 10px 45px;
-    border-radius: 15px;*/
-    /* position: absolute;
-    left: 45px;  */
   }
   .actions-main-cont {
     display: flex;
     background-color: rgba(0, 0, 0, 0.3);
     padding: 13px 10px 11px 45px;
     border-radius: 15px;
-    /* position: absolute;
-    left: 45px; */
   }
   .action-cont {
     display: flex;
