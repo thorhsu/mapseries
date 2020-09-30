@@ -26,7 +26,10 @@
         <el-button @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle style="background-color:rgba(0, 0, 0, 0);float:right">
           <img src="@/assets/icons/map/Layer.png" style="object-fit: cover;width:73px; height:73px" />
         </el-button>
-        <LayerManagement @close="showLayerManagement=false" v-show="showLayerManagement" @toEditMode="toEditMode" :geoJsons="geoJsons" :map="map"/>
+        <LayerManagement @close="showLayerManagement=false"  
+          v-show="showLayerManagement" 
+          @toEditMode="toEditMode" 
+          :geoJsons="geoJsons" :map="map"/>
 
       </l-control>
 
@@ -100,7 +103,7 @@ export default {
   },
   computed: { 
     editingGeoJson() {
-      const editingGeojson = this.geojsons.filter(geojson => {
+      const editingGeojson = this.geoJsons.filter(geojson => {
         return geojson.isEditing;
       });
       if(editingGeojson && editingGeojson.length > 0) {  
@@ -113,7 +116,7 @@ export default {
       return {};
     },   
     viewGeoJsons() {
-      return this.geojsons.map(json => {
+      return this.geoJsons.map(json => {
         if(json.visible){
           return json.geojson;
         }
@@ -134,7 +137,6 @@ export default {
       markers: [],
       editingLayers: [], 
       map: null,
-      geojsons: [],
       editableLayers: null,
       mapLoaded: false,
       editLayer: null,
@@ -148,8 +150,6 @@ export default {
     };
   },
   created() {
-    if(!this.isEditing)
-      this.geojsons = _.cloneDeep(this.geoJsons);
   },
   mounted() {
     // this.$nextTick(() => {
@@ -180,10 +180,6 @@ export default {
   },
   beforeUpdate() {
     let put = false
-    if(!this.isEditing){
-      this.geojsons = _.cloneDeep(this.geoJsons);
-      console.log("geoJsons", this.geojsons.length, this.geojsons);
-    }
   },
   methods: { 
     clear() {
@@ -222,16 +218,18 @@ export default {
     addToEdit(layer) {      
       this.editingLayers.push(layer);
       this.editableLayers.addLayer(layer);
+      console.log("editable layers", this.editingLayers);
     },
     updateGeojson(geoJson) {
       this.clearEditableLayers();
       this.markerVisible = false;
       this.gjsonVisible = true;
-      this.geojsons.forEach( geojson => {
+      this.geoJsons.forEach( geojson => {
         if(geojson.isEditing){          
           geojson.geojson = geoJson;         
         }
       });
+      console.log("editingLayers", this.editingLayers.length);
       // this.$emit("update:geoJson", geojson);
     },
     drawMarker () {
@@ -263,12 +261,12 @@ export default {
     },
     toEditMode(layer){
       this.isEditing = true;
-      for(let i = 0 ; i < this.geojsons.length; i++) {
-        if(this.geojsons[i].file == layer.file) {
-          this.geojsons[i] = layer
+      for(let i = 0 ; i < this.geoJsons.length; i++) {
+        if(this.geoJsons[i].file == layer.file) {
+          this.geoJsons[i] = layer
         }
       }
-      console.log(this.geojsons);
+      console.log(this.geoJsons);
     }
   }
 };
