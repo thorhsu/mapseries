@@ -121,9 +121,18 @@ export default {
       this.mapActions[i].img = this.mapActions[i].imgUnhover
     },
     handleFunctionCall(functionName) {
-      if (functionName==="edit" || functionName==="clear" || functionName==="save") {
-        this.dragMode = !this.dragMode
+      if (functionName==="edit" && this.dragMode === false) {
+        this.dragMode = true
       }
+      else if (functionName==="edit" && this.dragMode === true) {
+        this.dragMode = false
+        this.$emit("handleFunctionCall", "clear")
+        return
+      }
+      else if (functionName==="clear" || functionName==="save") {
+        this.dragMode = false
+      }
+      
       this.$emit("handleFunctionCall", functionName)
     }
   }
