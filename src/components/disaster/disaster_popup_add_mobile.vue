@@ -82,7 +82,7 @@ export default {
   }
   .item-title {
     width: 100%;
-    text-align: center;
+    text-align: start;
     flex: 1;
   }
   .item-outer {
@@ -91,12 +91,12 @@ export default {
     padding: 20px 0;
   }
   .function-outer {
-    display: flex;
+    display: block;
     align-items: center;
     flex: 2;
   }
   .outer-flex {
-    display: flex;
+    display: block;
     align-items: center;
     margin: 3% 0;
   }
@@ -108,7 +108,7 @@ export default {
     position: relative;
   }
   .button-Add {
-    margin: 0 10% 3%;
+    margin: 0 25% 3%;
     position: absolute;
     right: 0;
     bottom: 0;
@@ -119,6 +119,7 @@ export default {
     border-radius: 30px;
     display: flex;
     align-items: center;
+    justify-content: center;
   }
   .button-img {
     padding-right: 30px;

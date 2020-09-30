@@ -159,7 +159,7 @@ export default {
   }
   .function-img {
     width: 100%;
-    margin: 0 5%;
+    margin: 5% 5% 0;
     cursor: pointer;
     border-radius: 50%;
     padding: 3%;

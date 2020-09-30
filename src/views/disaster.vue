@@ -121,7 +121,7 @@ export default {
     position: fixed;
     right: 3%;
     bottom: 3%;
-    width: 20%;
+    width: 15%;
   }
   .mobile-button {
     width: 100%;
