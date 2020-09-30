@@ -44,13 +44,10 @@
       <GjsonAndMark v-if="isEditing" @addToEdit="addToEdit" 
           :markerVisible="markerVisible" 
           :gjsonVisible="gjsonVisible" 
+          :isEditing="isEditing"
           :geoJson="editingGeoJson" @updateGeojson="updateGeojson" 
           :map="map" />      
-      <div v-if="!isEditing" id="geoJsonArea">
-        <l-geo-json v-for="(geojson, index) in viewGeoJsons" :ref="'geoLayer_' +index" :key="'geoLayer_' +index"
-            :geojson="geojson" />      
-        
-      </div>
+
     </l-map>
   </div>
 </template>
@@ -58,7 +55,7 @@
 <script>
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
-import { LMap, LControl, LGeoJson } from 'vue2-leaflet';
+import { LMap, LControl } from 'vue2-leaflet';
 import GjsonAndMark from '@/components/kml/GjsonAndMark';
 import LayerManagement from '@/components/kml/LayerManagement';
 import MapActionsPanel from '@/components/test/mapActionsPanel';
@@ -77,7 +74,6 @@ export default {
     'gmap-tilelayer': Vue2LeafletGoogleMutant,
     GjsonAndMark,
     LControl,
-    LGeoJson,
     LayerManagement,
     MapActionsPanel
   },
@@ -125,13 +121,6 @@ export default {
       this.isEditing = false;      
       return {};
     },   
-    viewGeoJsons() {
-      return this.geoJsons.map(json => {
-        if(json.visible){
-          return json.geojson;
-        }
-      });
-    }
   },
   watch: {
     

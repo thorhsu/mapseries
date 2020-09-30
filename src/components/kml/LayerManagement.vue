@@ -15,16 +15,21 @@
         </el-col>
         <el-col :span="1"><i style="cursor:pointer" class="el-icon-delete"></i></el-col>
       </el-row>
-    </el-card>      
+    </el-card>    
+    <div v-if="!isEditing" id="geoJsonArea">
+      <l-geo-json v-for="(geojson, index) in viewGeoJsons" :ref="'geoLayer_' +index" :key="'geoLayer_' +index"
+          :geojson="geojson" />              
+    </div>  
   </div>
 </template>
 
 <script>
 /* eslint-disable no-console */
-/* eslint-disable vue/valid-v-for */
+import { LGeoJson} from 'vue2-leaflet';
 export default {
   name: "LayerManagement",
   components: {
+    LGeoJson
   },
   props: {
     map: {
@@ -34,10 +39,20 @@ export default {
     geoJsons: {
       type: Array,
       default: () => []
+    },
+    isEditing: {
+      type: Boolean,
+      default: false,
     }
   },
   computed: {
-    
+    viewGeoJsons() {
+      return this.geoJsons.map(json => {
+        if(json.visible){
+          return json.geojson;
+        }
+      });
+    }
   },
   data() {
     return {
