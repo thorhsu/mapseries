@@ -119,29 +119,33 @@ export default {
   },
   mounted() {
     if(this.map) {    
-      this.map.eachLayer( layer => {    
-        if(layer instanceof L.GeoJSON
-          && Object.keys(layer.getBounds()).length > 1){            
-          this.map.fitBounds(layer.getBounds());
-        } 
-      });
+      this.fitBounds();
       // 找出每個feature所代表的layer，送出去方便編輯模式
+      let editableLayers = [];
       this.$refs.geoLayer.mapObject.eachLayer(layer => {
-        this.$emit("addToEdit", layer);
+        editableLayers.push(layer);
       });
+      this.$emit("addToEdit", editableLayers);
     }
   },
   beforeUpdate() {
   },
   updated() {    
     // 找出每個feature所代表的layer，送出去方便編輯模式
+    this.fitBounds();
+    let editableLayers = [];
     this.$refs.geoLayer.mapObject.eachLayer(layer => {
-        this.$emit("addToEdit", layer);
+      editableLayers.push(layer);
     });
+    this.$emit("addToEdit", editableLayers);
   },
   watch: {
   },
-  methods: {      
+  methods: {     
+    fitBounds() {
+      if(this.gjsonVisible)
+        this.map.fitBounds(this.$refs.geoLayer.mapObject.getBounds())
+    },
     showLatLng(latlng){
       this.form.epsgCode= ["經緯度"];
       this.oldLnglat = [latlng[1], latlng[0]];
@@ -150,6 +154,7 @@ export default {
       this.isCalibration = true;      
     },
     toGeoJson() {
+      console.log("to geojson");
       if(this.epsgCodes[this.epsgCode[0]] !== 4326){
         [this.newLongtitude, this.newLatitude] = utils.transferCoordinate(
                 this.epsgCodes[this.epsgCode[0]], 

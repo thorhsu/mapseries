@@ -204,21 +204,25 @@ export default {
       });
       this.editLayer.enable();    
     },
-    addToEdit(layer) {      
-      this.editingLayers.push(layer);
-      this.editableLayers.addLayer(layer);
+    addToEdit(layers) {
+      this.clearEditableLayers();      
+      for(let layer of layers) {
+        this.editingLayers.push(layer);
+        this.editableLayers.addLayer(layer);
+      }
       console.log("editable layers", this.editingLayers);
     },
     updateGeojson(geoJson) {
       this.clearEditableLayers();
       this.markerVisible = false;
       this.gjsonVisible = true;
-      this.geoJsons.forEach( geojson => {
+      let mutatedGjsons = _.cloneDeep(this.geoJsons);
+      mutatedGjsons.forEach( geojson => {
         if(geojson.isEditing){          
           geojson.geojson = geoJson;         
         }
       });
-      // this.$emit("update:geoJson", geojson);
+      this.$emit("update:geoJsons", mutatedGjsons);
     },
     drawMarker () {
       this.markerDrawer = new L.Draw.Marker(this.map);
@@ -249,11 +253,15 @@ export default {
     },
     toEditMode(layer){
       this.isEditing = true;
-      for(let i = 0 ; i < this.geoJsons.length; i++) {
-        if(this.geoJsons[i].file == layer.file) {
-          this.geoJsons[i] = layer
+      let mutatedGjsons = _.cloneDeep(this.geoJsons);
+      for(let i = 0 ; i < mutatedGjsons.length; i++) {
+        if(mutatedGjsons[i].file == layer.file) {
+          mutatedGjsons[i] = layer
+        } else {
+          mutatedGjsons[i].isEditing = false;
         }
       }
+      this.$emit("update:geoJsons", mutatedGjsons);
     }
   }
 };
