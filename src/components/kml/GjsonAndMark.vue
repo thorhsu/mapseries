@@ -1,6 +1,6 @@
 <template>
   <div>    
-      <l-geo-json ref="geoLayer" :visible="gjsonVisible" v-if="geojson" :options="{onEachFeature: onEachFeature}" :geojson="geojson" />      
+      <l-geo-json ref="geoLayer" :visible="gjsonVisible" v-if="geojson" :geojson="geojson" />      
       <l-marker :visible="markerVisible"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
           :lat-lng="coordinate" :key="'marker_' +index">          
           <l-popup  :options="options">
@@ -31,7 +31,7 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">          
-          <el-button type="primary" @click="toGeoJson">儲存</el-button>
+          <el-button type="primary" @click="toGeoJson">確認</el-button>
         </span>
       </el-dialog>
   </div>
@@ -72,38 +72,6 @@ export default {
     }
   },
   computed: {
-    showLongtitude: {
-      get(){
-        if(this.epsgCodes[this.epsgCode[0]] === 4326){
-          return this.newLongtitude;
-        }
-        const showCoordinate = utils.transferCoordinate(4326, this.epsgCodes[this.epsgCode[0]], [this.newLongtitude, this.newLatitude])
-        return showCoordinate[0];
-      },
-      set(newLongtitude) {        
-        if(this.epsgCodes[this.epsgCode[0]] === 4326){
-          this.newLongtitude = newLongtitude;
-        } else {
-          this.newLongtitude = utils.transferCoordinate(this.epsgCodes[this.epsgCode[0]], 4326, [newLongtitude, this.newLatitude])[0];
-        }
-      }
-    },
-    showLatitude: {
-      get(){
-        if(this.epsgCodes[this.epsgCode[0]] === 4326){
-          return this.newLatitude;
-        }
-        const showCoordinate = utils.transferCoordinate(4326, this.epsgCodes[this.epsgCode[0]], [this.newLongtitude, this.newLatitude])
-        return showCoordinate[1];
-      },
-      set(newLatitude) {
-        if(this.epsgCodes[this.epsgCode[0]] === 4326){
-          this.newLatitude = newLatitude;
-        } else { 
-          this.newLatitude = utils.transferCoordinate(this.epsgCodes[this.epsgCode[0]], 4326, [this.newLongtitude, newLatitude])[1];
-        }
-      }
-    },
     geojson() { 
       if(this.gjsonVisible)           
         return Object.keys(this.geoJson).length? this.geoJson : this.emptyGeoJson;
@@ -114,7 +82,10 @@ export default {
         return this.form.epsgCode;
       },
       set(value) {
-        this.form.epsgCode = [value[value.length - 1]];
+        [this.newLongtitude, this.newLatitude] = utils.transferCoordinate(this.epsgCodes[value[0]], 
+              this.epsgCodes[value[1]], 
+              [this.newLongtitude, this.newLatitude]);
+        this.form.epsgCode = [value[value.length - 1]];        
       }
     },
     markers() {
@@ -170,17 +141,21 @@ export default {
   },
   watch: {
   },
-  methods: {  
-    onEachFeature(feature, layer) { 
-      return layer;
-    },    
+  methods: {      
     showLatLng(latlng){
+      this.form.epsgCode= ["經緯度"];
       this.oldLnglat = [latlng[1], latlng[0]];
       this.newLongtitude = latlng[1];      
       this.newLatitude = latlng[0];
       this.isCalibration = true;      
     },
     toGeoJson() {
+      if(this.epsgCodes[this.epsgCode[0]] !== 4326){
+        [this.newLongtitude, this.newLatitude] = utils.transferCoordinate(
+                this.epsgCodes[this.epsgCode[0]], 
+                4326, 
+                [this.newLongtitude, this.newLatitude]);
+      }
       let geojsonCopy = _.cloneDeep(this.geoJson);      
       for(let feature of geojsonCopy.features) {        
         const coordinatesDeepth = utils.getArrayDepth(feature.geometry.coordinates);        
@@ -209,22 +184,14 @@ export default {
                   feature.geometry.coordinates[i][j] = coordinate;
                 }
               }
-              break;              
-            case 4:              
-              for(let j = 0 ; j < feature.geometry.coordinates[i].length; j++){
-                for(let k = 0 ; k < feature.geometry.coordinates[i][j].length; k++){
-                  coordinate = feature.geometry.coordinates[i][j][k];
-                  if(JSON.stringify(this.oldLnglat) === JSON.stringify(coordinate)){
-                    coordinate = [this.newLongtitude, this.newLatitude];
-                    feature.geometry.coordinates[i][j][k] = coordinate;
-                  }
-                }
-              }
-              break;              
+              break;                            
           }
         }
       }
       this.isCalibration=false;
+      this.oldLnglat = [];
+      this.newLongtitude = 0;
+      this.newLatitude = 0;
       this.$emit("updateGeojson", geojsonCopy);
     }
   }

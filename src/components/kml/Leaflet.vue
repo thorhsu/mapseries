@@ -9,19 +9,6 @@
     >     
       <l-control position="topleft">
         <MapActionsPanel @handleFunctionCall="handleFunctionCall" v-show="isEditing" />
-        <!-- <div>
-          <button @click="calibrate">校正模式</button>
-          <button @click="edit" >拖曳模式</button>
-          <button @click="drawMarker" >畫點工具</button>
-          <button @click="drawLine" >畫線工具</button>
-          <button @click="drawPoligon" >畫面工具</button>
-          <button  >儲存檔案</button>
-          <button  >離開</button>
-        </div>
-        <div>
-          <button @click="clear" >取消變更</button>
-          <button @click="save" >完成變更</button>
-        </div> -->
       </l-control> 
       <l-control position="topright">
 
@@ -36,7 +23,7 @@
         <div @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle class="layers-button">
           <img src="@/assets/icons/map/Layer.png" />
         </div>
-        <LayerManagement @close="showLayerManagement=false" v-show="showLayerManagement" @toEditMode="toEditMode" :geoJsons="geoJsons" :map="map"/>
+        <LayerManagement :isEditing.sync="isEditing" @close="showLayerManagement=false" v-show="showLayerManagement" @toEditMode="toEditMode" :geoJsons="geoJsons" :map="map"/>
 
       </l-control>
 

@@ -56,7 +56,7 @@ export default {
   },
   data() {
     return {
-
+      
     };
   },
   mounted() {
@@ -71,6 +71,7 @@ export default {
   },
   methods: {  
     edit(layer){
+      this.$emit("update:isEditing", true);
       layer.isEditing = true;
       this.$emit("toEditMode", layer);
     }
