@@ -100,8 +100,7 @@ export default {
       })
     },
     selectHistory(data){
-      this.selectedHistory = data
-      console.log(this.selectedHistory)
+      this.selectedHistory = data      
     }
   }
 };
