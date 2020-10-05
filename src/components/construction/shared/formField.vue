@@ -48,7 +48,8 @@
         <label for="yes">是</label>
 
         <input 
-          v-if="displaySubInput"
+          class="subInput"
+          v-bind:class="{ visible: displaySubInput }"
           v-bind:type="field.subInputType" 
           v-bind:id="field.subInputName" 
           v-bind:name="field.subInputName" 
@@ -131,14 +132,18 @@ export default {
     margin-bottom: 1.5vw;
     display: flex;
     position: relative;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 25px;
   }
   .form-rows label {
     padding-right: 1.7vw;
-    flex-basis: 120px;
+    flex-basis: 0;
   }
   .form-rows input {
     flex-grow: 1;
+
+    width: 100%;
   }
   .form-rows input[type=text] {
     padding: 5px 10px;
@@ -156,34 +161,20 @@ export default {
     height: 30px;
     margin: 0 10px;
   }
-  .radio-cont input[type=radio] {
-    margin-right: 10px;
+  .radio-cont {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
-  @media screen and (max-width: 500px){
-    .form-rows {
-      flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 25px;
-    }
-    .form-rows label {
-      flex-basis: 0;
-    }
-    .form-rows input {
-      width: 100%;
-    }
-    .radio-cont {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .radio-cont label {
-      margin-bottom: 0;
-    }
-    .radio-cont input[type=radio] {
-      width: 50px;
-      margin-right: 0;
-    }
+  .radio-cont label {
+    margin-bottom: 0;
+  }
+  .radio-cont input[type=radio] {
+    width: 50px;
+    margin-right: 0;
+  }
+  .subInput {
+    visibility: hidden;
   }
 
 </style>

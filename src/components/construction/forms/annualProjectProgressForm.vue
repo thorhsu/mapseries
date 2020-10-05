@@ -75,8 +75,8 @@ export default {
         {
           title: "相關資料上傳",
           input: "",
-          inputType: "upload",
-          inputName: "uploads"
+          inputType: "uploads",
+          inputName: "fileUploads"
         }
       ],
       inputs: {}
