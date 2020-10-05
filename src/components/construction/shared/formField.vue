@@ -2,7 +2,7 @@
 
   <div>
     <!-- Inputs -->
-    <div class="form-rows" v-if="field.inputType === 'text' || field.inputType === 'date'">
+    <div class="form-rows" v-if="field.inputType === 'text' || field.inputType === 'date' || field.inputType === 'month'">
       <label v-bind:for="field.inputName">{{field.title}}</label>
       <input 
         v-bind:type="field.inputType" 
@@ -34,7 +34,7 @@
           value="no"
           v-bind:type="field.inputType" 
           v-model="field.input" 
-          @input="handleInput"
+          @change="handleInput"
         >
         <label for="no">否</label>
 
@@ -42,13 +42,13 @@
           id="yes" 
           value="yes"
           v-bind:type="field.inputType" 
-          v-model="field.input" 
-          @input="handleInput"
+          v-model="field.input"
+          @change="handleInput" 
         >
         <label for="yes">是</label>
 
         <input 
-          v-if="field.subInputType"
+          v-if="displaySubInput"
           v-bind:type="field.subInputType" 
           v-bind:id="field.subInputName" 
           v-bind:name="field.subInputName" 
@@ -65,6 +65,27 @@
       <img src="@/assets/icons/construction/upload.png" v-if="field.inputName==='fileUploads'" />
       <img src="@/assets/icons/construction/kml.svg" v-if="field.inputName==='kmlUploads'" />
     </div>
+
+    <!-- Dropdowns -->
+    <div class="form-rows" v-if="field.inputType === 'select'">
+      <label v-bind:for="field.inputName">{{field.title}}</label>
+      <select 
+        v-bind:name="field.inputName"
+        v-bind:id="field.inputName"
+        v-model="field.input"
+        @change="handleInput"
+      >
+        <option disabled value="">請選擇案件類型</option>
+        <option
+          v-for="(option, index) in field.options"
+          :key="index"
+          v-bind:value="option.value"
+        >
+            {{option.valueName}}
+        </option>
+      </select>
+    </div>
+
   </div>
 
 </template>
@@ -77,16 +98,28 @@ export default {
   computed: {},
   data() {
     return {
+      displaySubInput: false
     };
   },
   methods: {
     handleInput() {
-      if (this.field.subInput !== undefined) {
-        this.$emit("handleInput", this.field.subInputName, this.field.subInput)
+      if (this.field.input==='yes') {
+        this.displaySubInput = true
       }
-      this.$emit("handleInput", this.field.inputName, this.field.input)
-      console.log(this.field.input);
+      else {
+        this.displaySubInput = false
+      }
+      if (this.field.subInput !== undefined && this.field.input==='yes') {
+        let inputObj = {}
+        inputObj[this.field.inputName]= this.field.input,
+        inputObj[this.field.subInputName]= this.field.subInput
 
+        this.$emit("handleInput", this.field.inputName, inputObj)
+      }
+      else {
+        this.$emit("handleInput", this.field.inputName, this.field.input)
+
+      }
     }
   }
 };
@@ -123,6 +156,9 @@ export default {
     height: 30px;
     margin: 0 10px;
   }
+  .radio-cont input[type=radio] {
+    margin-right: 10px;
+  }
 
   @media screen and (max-width: 500px){
     .form-rows {
@@ -135,6 +171,18 @@ export default {
     }
     .form-rows input {
       width: 100%;
+    }
+    .radio-cont {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .radio-cont label {
+      margin-bottom: 0;
+    }
+    .radio-cont input[type=radio] {
+      width: 50px;
+      margin-right: 0;
     }
   }
 

@@ -21,9 +21,17 @@
             @handleNewFormSubmit="handleNewFormSubmit" 
           /> -->
 
-          <BusinessProgressForm
+          <!-- <BusinessProgressForm
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
+
+          <DredgingProgressForm 
             @handleNewFormSubmit="handleNewFormSubmit" 
           />
+
+          <!-- <ConstructionProjectForm 
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
 
           <!-- <AddEventForm 
             :newEvent="newEvent"
@@ -55,9 +63,13 @@ import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
 import EventTable from '@/components/construction/shared/eventTable.vue'
 import FormPopup from '@/components/construction/shared/formPopup.vue'
-// import ConstructionProgressForm from '@/components/construction/constructionProgressForm.vue'
-// import AnnualProjectProgressForm from '@/components/construction/annualProjectProgressForm.vue'
+import ConstructionProgressForm from '@/components/construction/constructionProgressForm.vue'
+import AnnualProjectProgressForm from '@/components/construction/annualProjectProgressForm.vue'
 import BusinessProgressForm from '@/components/construction/businessProgressForm.vue'
+import DredgingProgressForm from '@/components/construction/dredgingProgressForm.vue'
+import ConstructionProjectForm from '@/components/construction/constructionProjectForm.vue'
+
+
 
 
 export default {
@@ -67,9 +79,11 @@ export default {
     FunctionMenu,
     EventTable,
     FormPopup,
-    // ConstructionProgressForm,
-    // AnnualProjectProgressForm,
-    BusinessProgressForm
+    ConstructionProgressForm,
+    AnnualProjectProgressForm,
+    BusinessProgressForm,
+    DredgingProgressForm,
+    ConstructionProjectForm
   },
   data() {
     return {
