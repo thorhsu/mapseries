@@ -52,20 +52,35 @@ const flattenToLines = points =>
         allPoints.concat(flattenToLines(point)) : allPoints.concat([point]), []);
 
 const removeDuplicatePoint = coordinates => {
-    // 去掉重覆的點，下面的寫法無法去除重覆的點，因為[2,3] != [2,3]
-    let array4compare = [];
-    return _.cloneDeep(coordinates).filter(coordinate => {
-        const strCoordinate = JSON.stringify(coordinate);
-        if (array4compare.includes(strCoordinate))
-            return false;
-        array4compare.push(strCoordinate);
-        return true;
+        // 去掉重覆的點，下面的寫法無法去除重覆的點，因為[2,3] != [2,3]
+        let array4compare = [];
+        return _.cloneDeep(coordinates).filter(coordinate => {
+            const strCoordinate = JSON.stringify(coordinate);
+            if (array4compare.includes(strCoordinate))
+                return false;
+            array4compare.push(strCoordinate);
+            return true;
+        });
+    }
+    /*
+    取得array的深度
+    */
+const getArrayDepth = value =>
+    Array.isArray(value) ?
+    1 + Math.max(...value.map(getArrayDepth)) : 0
+    /*
+     * UUID的產生法
+     */
+const uuid = () => {
+    var d = Date.now();
+    if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+        d += performance.now(); //use high-precision timer if available
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
-}
-
-function getArrayDepth(value) {
-    return Array.isArray(value) ?
-        1 + Math.max(...value.map(getArrayDepth)) : 0;
 }
 
 export default {
@@ -74,5 +89,6 @@ export default {
     flattenDeep,
     removeDuplicatePoint,
     getArrayDepth,
-    transferCoordinate
+    transferCoordinate,
+    uuid,
 }

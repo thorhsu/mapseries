@@ -23,7 +23,9 @@
         <div @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle class="layers-button">
           <img src="@/assets/icons/map/Layer.png" />
         </div>
-        <LayerManagement :isEditing.sync="isEditing" @close="showLayerManagement=false" v-show="showLayerManagement" @toEditMode="toEditMode" :geoJsons="geoJsons" :map="map"/>
+        <LayerManagement :isEditing.sync="isEditing" @close="showLayerManagement=false" 
+            v-show="showLayerManagement" @toEditMode="toEditMode" 
+            :geoJsons="geoJsons" @updateGeoJsons="updateGeoJsons" :map="map"/>
 
       </l-control>
 
@@ -138,6 +140,7 @@ export default {
   created() {
   },
   mounted() {
+    // console.log("mounted");
     // this.$nextTick(() => {
       this.map = this.$refs.map.mapObject;
       // 測試繪圖工具列
@@ -159,15 +162,22 @@ export default {
       // this.map.addControl(drawControl);
 
       this.editableLayers = new window.L.FeatureGroup().addTo(this.map);      
-      // 將
+      // 將draw出來的圖層加到editableLayers
       this.map.on(window.L.Draw.Event.CREATED, e => this.editableLayers.addLayer(e.layer));  
       this.mapLoaded = true;                
     // }); // end of this.$nextTick()
   },
   beforeUpdate() {
-    let put = false
+    // console.log("before updated");
+  },
+  updated() {
+    // console.log("updated");
   },
   methods: { 
+    updateGeoJsons(geoJsons){
+      this.geoJsons = geoJsons;
+      this.$emit('update:geoJsons', geoJsons);
+    },
     handleFunctionCall(functionName) {
       this[functionName]()
     },
@@ -255,7 +265,7 @@ export default {
       this.isEditing = true;
       let mutatedGjsons = _.cloneDeep(this.geoJsons);
       for(let i = 0 ; i < mutatedGjsons.length; i++) {
-        if(mutatedGjsons[i].file == layer.file) {
+        if(mutatedGjsons[i].url === layer.url) {
           mutatedGjsons[i] = layer
         } else {
           mutatedGjsons[i].isEditing = false;

@@ -1,11 +1,21 @@
 <template>
   <div>
-    <div class="data-closed-cont" @click="toggleLayerPanel" v-show="!layerPanelExpanded">
-      <img src="../../assets/icons/disaster-map/search-data.png" />
-      <span>顯示資料</span>
-    </div>
-
-    <div class="data-expanded-cont" v-show="layerPanelExpanded">
+    <l-map
+      ref="map"
+      :zoom="9"
+      :center="center"
+      style="height: 100vh"
+      :options="options"
+    >
+      <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" /> 
+      <l-marker :visible="true"  v-for="(data, index) in filteredData" :ref="'marker_' + index" 
+          :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" />          
+      <l-control position="topright">
+        <div class="data-closed-cont" @click="toggleLayerPanel" v-show="!layerPanelExpanded">
+          <img src="../../assets/icons/disaster-map/search-data.png" />
+          <span>顯示資料</span>
+        </div>
+        <div class="data-expanded-cont" v-show="layerPanelExpanded">
       <div class="popup-background"></div>
       <div class="data-box-cont">
         <div class="data-action" @click="toggleLayerPanel" >
@@ -53,22 +63,54 @@
         </div>
       </div>
     </div>
+      </l-control>
+    </l-map>
   </div>
 </template>
 
 <script>
+import { LMap, LControl, LMarker } from 'vue2-leaflet';
+import { latLng } from "leaflet";
+import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
+
 export default {
   name: "mapLayerPanel",
-  props: [],
-  components: {},
-  computed: {},
+  props: {
+    allData: {
+      type: Array,
+      default: () => []
+    },
+  },
+  components: {
+    LMap, 
+    'gmap-tilelayer': Vue2LeafletGoogleMutant,    
+    LControl,
+    LMarker
+  },
+  computed: {
+    filteredData(){
+      return this.allData.filter(data => this.checkedData.includes(data.GroupName));
+    }
+    
+  },
   data() {
     return {
-      checkedData: [],
-      layerPanelExpanded: false
+      checkedData: ["rain", "tide", "water", "flood", "tide-layer", "flood-layer"],      
+      layerPanelExpanded: false,
+      center: { lat: 24.0025917, lng: 121.3624999 },
+      zoom: 10,
+      options: {zoomControl: true},
+      latLng
     };
   },
-  mounted() {},
+  mounted() {
+    
+  },
+  updated() {
+    console.log("this", this.allData);
+  },
   methods: {
     toggleLayerPanel(e) {
       e.preventDefault;

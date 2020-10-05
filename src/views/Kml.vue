@@ -20,7 +20,7 @@
         </ul> 
       </div>
       <div class="row">
-        <div class="col-12">
+        <div class="col-12">  
             <Leaflet
               v-if="!isLoading"
               :fullscreenControl="true"
@@ -38,6 +38,7 @@
 <script>
 import Leaflet from "@/components/kml/Leaflet";
 import { kml } from "togeojson";
+import utils from '@/assets/js/utils.js';
 
 export default {
   name: "Kml",
@@ -81,19 +82,31 @@ export default {
       this.geoJson = "";
       if(isKml) {
         var parsedKml = new DOMParser().parseFromString(await this.getKmlTxt(file), "text/xml");
-        this.geoJson = {url: file, modified: false, file: file, isEditing: false, visible: true, geojson: kml(parsedKml)}; 
-        let put = false
+        this.geoJson = {url: file, modified: false, file: file, 
+                        isEditing: false, visible: true, 
+                        geojson: kml(parsedKml)}; 
+        let put = false;
         for(let i = 0 ; i < this.geoJsons.length ; i++) {
+          // 如果沒有zIndex就設定zIndex
+          if(!this.geoJsons[i].zIndex) {
+            this.geoJsons[i]["zIndex"] = 400 + i;
+          }
           if(this.geoJsons[i].file === this.geoJson.file) {
             put = true;     
             this.geoJsons[i] = this.geoJson;       
           }
         }
         if(!put) {
+          const uuid = utils.uuid();
+          this.geoJson["zIndex"] = 400 + this.geoJsons.length + 1;
+          for(let feature of this.geoJson.geojson.features){
+            feature.properties["uuid"] = uuid;
+          }
+          this.geoJson["uuid"] = uuid;
           this.geoJsons.push(this.geoJson);
         }        
       } else {
-        //fetch geojson method
+        //fetch remote geojson file method
       }
       this.isLoading = false;      
     },  

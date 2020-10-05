@@ -14,7 +14,7 @@
 
       <div class="function-content">
         <div class="map-cont">
-          <MapLayerPanel />
+          <MapLayerPanel :allData="allData"/>
         </div>
       </div>
 
@@ -25,10 +25,9 @@
 </template>
 
 <script>
-import BannerMenu from '@/components/disaster/banner.vue'
-import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import MapLayerPanel from '@/components/disasterMapTest/mapLayerPanel.vue'
-
+import BannerMenu from '@/components/disaster/banner.vue';
+import FunctionMenu from '@/components/disaster/functionMenu.vue';
+import MapLayerPanel from '@/components/disasterMapTest/mapLayerPanel.vue';
 
 export default {
   name: "disasterMapTest",
@@ -46,12 +45,33 @@ export default {
         visible: false,
         data_list: []
       },
+      allData: [],
+      checkedDataMap: {"雨量": "rain", "水位": "water","淹水感測": "flood","潮位": "tide-layer", "累積雨量圖層": "flood-layer"}
     };
   },
+  beforeUpdate(){          
+    
+  },
+  created(){    
+  },
   mounted() {
+    
   },
   methods: {
+    async getAllEvent() {      
+      await fetch(`https://yliflood.yunlin.gov.tw/v2/api/Station/All`)
+        .then(result => result.text())
+        .then(text => this.allData = JSON.parse(text));    
+      this.allData.forEach(data =>{         
+        data.GroupName = this.checkedDataMap[data.GroupName]? this.checkedDataMap[data.GroupName] : data.GroupName        
+      });
+      
+      return this.allData;
+    },
     changeVisible(value){
+      if(value){
+        this.getAllEvent();
+      }
       this.functionMenu.visible = value
     }
   }
