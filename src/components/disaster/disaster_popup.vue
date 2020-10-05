@@ -22,9 +22,9 @@
             </div>
           </div>
           <div class="button-outer">
-            <div class="button-Add shadow" @click="disaster_add">
+            <div class="button-Add shadow" @click="disaster_update">
               <img class="button-img" src="@/assets/icons/disaster/plus.svg">
-              <p class="font-Style">新增事件</p>
+              <p class="font-Style">更新事件</p>
             </div>
           </div>
         </div>
@@ -34,16 +34,17 @@
 </template>
 
 <script>
+const axios = require('axios');
 export default {
   name: "disaster_popup",
-  props: [],
+  props: ['editData'],
   components: {},
   computed: {},
   data() {
     return {
       time: {
-        start: new Date(),
-        end: ""
+        start: new Date().toISOString().split('T')[0],
+        end: new Date().toISOString().split('T')[0]
       },
       disasterName: ''
     };
@@ -53,15 +54,14 @@ export default {
     closePopup() {
       this.$emit('closePopup')
     },
-    disaster_add(){
-      let res = {
-        name: this.disasterName,
-        time: {
-          start: this.time.end,
-          end: this.time.end
-        }
-      }
-      console.log("Add Disaster => ", res)
+    async disaster_update(){
+      let Id = this.editData.Id
+      let response = await axios.put(`https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${Id}`, {
+        Name: this.disasterName,
+        Start: new Date(this.time.start).toISOString(),
+        End: new Date(this.time.end).toISOString()
+      })
+      this.$emit('update_List')
     },
   }
 };

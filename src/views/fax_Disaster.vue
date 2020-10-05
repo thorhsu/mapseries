@@ -5,13 +5,13 @@
       <FunctionMenu v-if="functionMenu.visible" :dataList="functionMenu.data_list" />
       <div class="function-content">
         <div class="content-Style shadow">
-          <DisasterAdd v-if="device !== 'mobile'" @update_List="update_List" />
+          <DisasterAdd v-if="device !== 'mobile'" />
         </div>
         <div class="content-Style shadow">
-          <DisasterList :device="device" :disasterList="disasterList" @popup="popup" @update_List="update_List"/>
+          <DisasterList :device="device" @popup="popup" />
         </div>
-        <DisasterPopup v-if="editPopup" :editData="editData" @update_List="update_List" @closePopup="closePopup" />
-        <DisasterPopupAddMobile v-if="mobile_addPopup" @update_List="update_List" @closePopup="closePopup" />
+        <DisasterPopup v-if="editPopup" @closePopup="closePopup" />
+        <DisasterPopupAddMobile v-if="mobile_addPopup" @closePopup="closePopup" />
       </div>
     </div>
     <div v-if="device === 'mobile'" class="mobile-add" @click="mobile_addPopup = !mobile_addPopup">
@@ -21,16 +21,15 @@
 </template>
 
 <script>
-const axios = require('axios');
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import DisasterAdd from '@/components/disaster/disaster_add.vue'
+import DisasterAdd from '@/components/fax_disaster/add.vue'
 import DisasterList from '@/components/disaster/disaster_list.vue'
 import DisasterPopup from '@/components/disaster/disaster_popup.vue'
 import DisasterPopupAddMobile from '@/components/disaster/disaster_popup_add_mobile.vue'
 
 export default {
-  name: "Disaster",
+  name: "Fax_Disaster",
   components: {
     BannerMenu,
     FunctionMenu,
@@ -52,16 +51,11 @@ export default {
       editPopup: false,
       mobile_addPopup: false,
       windowsWidth: 0,
-      device: "",
-      disasterList: [],
-      editData: null
+      device: ""
     };
   },
-  created(){
-    this.prepareList()
-  },
   mounted() {
-    this.prepare_FunctionList();
+    this.prepare_DataList();
     
     let vue = this;
     this.checkDevice()
@@ -84,7 +78,7 @@ export default {
         this.device = "desktop"
       }
     },
-    prepare_FunctionList(){
+    prepare_DataList(){
       this.functionMenu.data_list.push({
         name: "事件列表",
         img: require('@/assets/icons/disaster/event_icon1.svg')
@@ -99,25 +93,10 @@ export default {
     },
     popup(data){
       this.editPopup = !this.editPopup;
-      this.editData = data;
     },
     closePopup(){
       this.editPopup = false;
       this.mobile_addPopup = false;
-    },
-    async prepareList(){
-      this.disasterList = []
-      let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
-      console.log(response.data)
-      for(let data of response.data){
-        data.Start = data.Start.split('T')[0].replaceAll('-', '/')
-        data.End = data.End.split('T')[0].replaceAll('-', '/')
-        this.disasterList.push(data)
-      }
-      this.closePopup()
-    },
-    update_List(){
-      this.prepareList();
     }
   }
 };

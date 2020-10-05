@@ -10,6 +10,10 @@
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" /> 
       <l-marker :visible="true"  v-for="(data, index) in filteredData" :ref="'marker_' + index" 
           :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" />          
+      
+      <l-control position="toprleft">
+        <MapSidePanel v-if="device !== 'mobile' && visible" class="map-cont-desktop" />
+      </l-control>
       <l-control position="topright">
         <div class="data-closed-cont" @click="toggleLayerPanel" v-show="!layerPanelExpanded">
           <img src="../../assets/icons/disaster-map/search-data.png" />
@@ -72,6 +76,7 @@
 import { LMap, LControl, LMarker } from 'vue2-leaflet';
 import { latLng } from "leaflet";
 import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
+import MapSidePanel from '@/components/test/mapSidePanel.vue'
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
@@ -82,12 +87,21 @@ export default {
       type: Array,
       default: () => []
     },
+    device: {
+      type: String,
+      default: "desktop"
+    },
+    visible: {
+      type: Boolean,
+      default: true
+    }
   },
   components: {
     LMap, 
     'gmap-tilelayer': Vue2LeafletGoogleMutant,    
     LControl,
-    LMarker
+    LMarker,
+    MapSidePanel
   },
   computed: {
     filteredData(){
@@ -192,8 +206,16 @@ export default {
     display: none;
   }
 
+  @media screen and (max-width: 1280px) {
+    .data-expanded-cont {
+      top: 5vh;
+    }
+    .data-closed-cont {
+      top: 40vh;
+    }
+  }
 
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 767px) {
     .data-expanded-cont {
       top: 10vh;
       width: 100%;

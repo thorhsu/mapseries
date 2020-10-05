@@ -1,8 +1,8 @@
 <template>
   <div class="outer">
-    <div class="function-item" v-for="(data, index) of dataList" :key="index" :class="{selected: selected===data}" @click="selectedList(data)">
-      <img class="item-img" src="@/assets/icons/disaster/event_icon1.svg">
-      <p class="item-title" v-html="data" />
+    <div class="function-item" v-for="(data, index) of dataList" :key="index" :class="{selected: selected===data.name}" @click="selectedList(data)">
+      <img class="item-img" :src="data.img">
+      <p class="item-title" v-html="data.name" />
     </div>
   </div>
 </template>
@@ -19,11 +19,11 @@ export default {
     };
   },
   mounted() {
-    this.selected = this.dataList[0]
+    this.selected = this.dataList[0].name
   },
   methods: {
     selectedList(data){
-      this.selected = data
+      this.selected = data.name
     }
   }
 };
@@ -46,7 +46,7 @@ export default {
     cursor: pointer;
   }
   .item-img {
-    width: 50%;
+    width: 40%;
     padding: 5% 10%;
   }
   .item-title {

@@ -13,12 +13,37 @@
       />
       <div class="function-content">
         <div class="content-Style shadow">
-          <AddEventForm 
+          <!-- 工程案件詳細資訊 -->
+          <!-- <ConstructionProjectForm 
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
+
+          <!-- 疏濬案件進度控管 -->
+          <!-- <DredgingProgressForm 
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
+
+          <!-- 業務進度控管 -->
+          <!-- <BusinessProgressForm
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
+
+          <!-- 工作報告進度控管 -->
+          <!-- <ConstructionProgressForm
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
+
+          <!-- 年度標案進度控管 -->
+          <AnnualProjectProgressForm
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          />
+
+          <!-- <AddEventForm 
             :newEvent="newEvent"
             @handleNewFormSubmit="handleNewFormSubmit"
             :openedPopup="openedPopup"
             @togglePopup="togglePopup"
-          />
+          /> -->
         </div>
 
         <div class="content-Style shadow">
@@ -41,18 +66,28 @@
 <script>
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import AddEventForm from '@/components/test/addEventForm.vue'
-import EventTable from '@/components/test/eventTable.vue'
-import FormPopup from '@/components/test/formPopup.vue'
+import EventTable from '@/components/construction/shared/eventTable.vue'
+import FormPopup from '@/components/construction/shared/formPopup.vue'
+
+import ConstructionProjectForm from '@/components/construction/forms/constructionProjectForm.vue'
+import DredgingProgressForm from '@/components/construction/forms/dredgingProgressForm.vue'
+import BusinessProgressForm from '@/components/construction/forms/businessProgressForm.vue'
+import ConstructionProgressForm from '@/components/construction/forms/constructionProgressForm.vue'
+import AnnualProjectProgressForm from '@/components/construction/forms/annualProjectProgressForm.vue'
+
 
 export default {
-  name: "test",
+  name: "construction",
   components: {
     BannerMenu,
     FunctionMenu,
-    AddEventForm,
     EventTable,
-    FormPopup
+    FormPopup,
+    ConstructionProjectForm,
+    DredgingProgressForm,
+    BusinessProgressForm,
+    ConstructionProgressForm,
+    AnnualProjectProgressForm,
   },
   data() {
     return {
@@ -108,11 +143,11 @@ export default {
       })
       this.functionMenu.data_list.push({
         name: "其他表單1",
-        img: require('@/assets/icons/disaster/event_icon1.svg')
+        img: require('@/assets/icons/disaster/fax/function-menu.svg')
       })
       this.functionMenu.data_list.push({
         name: "其他表單2",
-        img: require('@/assets/icons/disaster/event_icon1.svg')
+        img: require('@/assets/icons/disaster/fax/function-menu.svg')
       })
     },
     changeVisible(value){
@@ -122,15 +157,15 @@ export default {
       this.openedPopup = value
     },
     handleNewFormSubmit(newevent) {
-      this.events.push(newevent)
-      this.newEvent = {
-        time: {
-          start: "",
-          end: ""
-        },
-        eventName: "",
-        eventData: ""
-      }
+      // this.events.push(newevent)
+      // this.newEvent = {
+      //   time: {
+      //     start: "",
+      //     end: ""
+      //   },
+      //   eventName: "",
+      //   eventData: ""
+      // }
     }
   }
 };

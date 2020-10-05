@@ -32,6 +32,7 @@
 </template>
 
 <script>
+const axios = require('axios');
 export default {
   name: "disaster_popup",
   props: [],
@@ -40,8 +41,8 @@ export default {
   data() {
     return {
       time: {
-        start: new Date(),
-        end: ""
+        start: new Date().toISOString().split('T')[0],
+        end: new Date().toISOString().split('T')[0]
       },
       disasterName: ''
     };
@@ -51,15 +52,13 @@ export default {
     closePopup() {
       this.$emit('closePopup')
     },
-    disaster_add(){
-      let res = {
-        name: this.disasterName,
-        time: {
-          start: this.time.end,
-          end: this.time.end
-        }
-      }
-      console.log("Add Disaster => ", res)
+    async disaster_add(){
+      let response = await axios.post('https://yliflood.yunlin.gov.tw/v2/api/FloodEvent', {
+        Name: this.disasterName,
+        Start: new Date(this.time.start).toISOString(),
+        End: new Date(this.time.end).toISOString()
+      })
+      this.$emit('update_List')
     },
   }
 };
