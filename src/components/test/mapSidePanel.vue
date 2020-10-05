@@ -6,7 +6,7 @@
     </div>
 
     <div class="sidePanel-events-cont">
-      <div class="event-cont" v-for="(history, index) in historyList" :key="index" @click="selected_History(history.Id)" :class="{'selected-history': selected_History_Id === history.Id}">
+      <div class="event-cont" v-for="(history, index) in historyList" :key="index" @click="selected_History(history)" :class="{'selected-history': selected_History_Id === history.Id}">
         <div class="event-row">
           <p class="event-name">{{history.Name}}</p>
           <p class="event-time">{{history.Start}} ~ {{history.End}}</p>
@@ -36,16 +36,21 @@ export default {
   },
   methods: {
     async prepareList(){
-      this.historyList = []
-      let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
-      for(let data of response.data){
-        data.Start = data.Start.split('T')[0].replaceAll('-', '/')
-        data.End = data.End.split('T')[0].replaceAll('-', '/')
-        this.historyList.push(data)
+      try {
+        this.historyList = []
+        let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
+        for(let data of response.data){
+          data.Start = data.Start.split('T')[0].replaceAll('-', '/')
+          data.End = data.End.split('T')[0].replaceAll('-', '/')
+          this.historyList.push(data)
+        }
+      } catch (error) {
+        alert(error)
       }
     },
-    selected_History(Id){
-      this.selected_History_Id = Id
+    selected_History(history){
+      this.selected_History_Id = history.Id
+      this.$emit('selectHistory', history)
     }
   }
 };

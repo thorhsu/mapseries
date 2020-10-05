@@ -62,19 +62,27 @@ export default {
       this.$emit('popup', data)
     },
     async download(data){
-      let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvents/${data.Id}/File`
-      let response = await axios.get(endpoint,{ responseType: 'blob' })
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${data.Name}.zip`);
-      document.body.appendChild(link);
-      link.click();
+      try {
+        let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvents/${data.Id}/File`
+        let response = await axios.get(endpoint,{ responseType: 'blob' })
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${data.Name}.zip`);
+        document.body.appendChild(link);
+        link.click();
+      } catch (error) {
+        alert(error)
+      }
     },
     async deleteData(data){
-      let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${data.Id}`
-      let response = await axios.delete(endpoint)
-      this.$emit('update_List')
+      try {
+        let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${data.Id}`
+        let response = await axios.delete(endpoint)
+        this.$emit('update_List') 
+      } catch (error) {
+        alert(error)
+      }
     }
   }
 };

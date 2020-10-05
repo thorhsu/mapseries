@@ -44,12 +44,16 @@ export default {
   mounted() {},
   methods: {
     async addData(){
-      let response = await axios.post('https://yliflood.yunlin.gov.tw/v2/api/FloodEvent', {
-        Name: this.disasterName,
-        Start: new Date(this.time.start).toISOString(),
-        End: new Date(this.time.end).toISOString()
-      })
-      this.$emit('update_List')
+      try {
+        let response = await axios.post('https://yliflood.yunlin.gov.tw/v2/api/FloodEvent', {
+          Name: this.disasterName,
+          Start: new Date(this.time.start).toISOString(),
+          End: new Date(this.time.end).toISOString()
+        })
+        this.$emit('update_List')
+      } catch (error) {
+        alert(error)
+      }
     },
   }
 };

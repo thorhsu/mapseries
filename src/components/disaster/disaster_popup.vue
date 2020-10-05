@@ -55,13 +55,17 @@ export default {
       this.$emit('closePopup')
     },
     async disaster_update(){
-      let Id = this.editData.Id
-      let response = await axios.put(`https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${Id}`, {
-        Name: this.disasterName,
-        Start: new Date(this.time.start).toISOString(),
-        End: new Date(this.time.end).toISOString()
-      })
-      this.$emit('update_List')
+      try {
+        let Id = this.editData.Id
+        let response = await axios.put(`https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${Id}`, {
+          Name: this.disasterName,
+          Start: new Date(this.time.start).toISOString(),
+          End: new Date(this.time.end).toISOString()
+        })
+        this.$emit('update_List')
+      } catch (error) {
+        alert(error)
+      }
     },
   }
 };

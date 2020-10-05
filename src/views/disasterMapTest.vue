@@ -3,10 +3,11 @@
     <BannerMenu :title="banner.title" :visible="functionMenu.visible" @visible="changeVisible" />
     <div class="function-outer">
       <FunctionMenu v-if="functionMenu.visible" :dataList="functionMenu.data_list" />
-      <MapSidePanel v-if="device === 'mobile' && functionMenu.visible"/>
+      <MapSidePanel v-if="device === 'mobile' && functionMenu.visible" @selectHistory="selectHistory"/>
       <div class="function-content">
-        <div class="map-cont">          
+        <div class="map-cont">
           <MapLayerPanel :allData="allData" :visible="functionMenu.visible" :device="device"/>
+          
         </div>
       </div>
     </div>   
@@ -40,7 +41,8 @@ export default {
       windowsWidth: 0,
       device: "",
       allData: [],
-      checkedDataMap: {"雨量": "rain", "水位": "water","淹水感測": "flood","潮位": "tide-layer", "累積雨量圖層": "flood-layer"}
+      checkedDataMap: {"雨量": "rain", "水位": "water","淹水感測": "flood","潮位": "tide-layer", "累積雨量圖層": "flood-layer"},
+      selectedHistory: null
     };
   },
   beforeUpdate(){          
@@ -96,6 +98,10 @@ export default {
         name: "KML檔案總管理",
         img: require('@/assets/icons/map/function-kml-file.svg')
       })
+    },
+    selectHistory(data){
+      this.selectedHistory = data
+      console.log(this.selectedHistory)
     }
   }
 };

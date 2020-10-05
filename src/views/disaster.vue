@@ -107,14 +107,19 @@ export default {
     },
     async prepareList(){
       this.disasterList = []
-      let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
-      console.log(response.data)
-      for(let data of response.data){
-        data.Start = data.Start.split('T')[0].replaceAll('-', '/')
-        data.End = data.End.split('T')[0].replaceAll('-', '/')
-        this.disasterList.push(data)
+      try {
+        let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
+        console.log(response.data)
+        for(let data of response.data){
+          data.Start = data.Start.split('T')[0].replaceAll('-', '/')
+          data.End = data.End.split('T')[0].replaceAll('-', '/')
+          this.disasterList.push(data)
+        }
+        this.closePopup()
+      } catch (error) {
+        alert(error)
       }
-      this.closePopup()
+      
     },
     update_List(){
       this.prepareList();

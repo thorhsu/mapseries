@@ -11,8 +11,8 @@
       <l-marker :visible="true"  v-for="(data, index) in filteredData" :ref="'marker_' + index" 
           :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" />          
       
-      <l-control position="toprleft">
-        <MapSidePanel v-if="device !== 'mobile' && visible" class="map-cont-desktop" />
+      <l-control position="topleft">        
+        <MapSidePanel v-if="device !== 'mobile' && visible" class="map-cont-desktop" @selectHistory="selectHistory"/>
       </l-control>
       <l-control position="topright">
         <div class="data-closed-cont" @click="toggleLayerPanel" v-show="!layerPanelExpanded">
@@ -94,7 +94,8 @@ export default {
     visible: {
       type: Boolean,
       default: true
-    }
+    },
+
   },
   components: {
     LMap, 
@@ -116,19 +117,22 @@ export default {
       center: { lat: 24.0025917, lng: 121.3624999 },
       zoom: 10,
       options: {zoomControl: true},
-      latLng
+      latLng,
+      selectedHistory: null,
     };
   },
   mounted() {
     
   },
-  updated() {
-    console.log("this", this.allData);
+  updated() {    
   },
   methods: {
     toggleLayerPanel(e) {
       e.preventDefault;
       this.layerPanelExpanded = !this.layerPanelExpanded
+    },
+    selectHistory(data){
+      this.selectedHistory = data      
     }
   }
 };
