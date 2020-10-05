@@ -3,10 +3,10 @@
     <BannerMenu :title="banner.title" :visible="functionMenu.visible" @visible="changeVisible" />
     <div class="function-outer">
       <FunctionMenu v-if="functionMenu.visible" :dataList="functionMenu.data_list" />
-      <MapSidePanel v-if="device === 'mobile'" />
+      <MapSidePanel v-if="device === 'mobile'" @selectHistory="selectHistory" />
       <div class="function-content">
         <div class="map-cont">
-          <MapSidePanel class="map-cont-desktop" />
+          <MapSidePanel class="map-cont-desktop" @selectHistory="selectHistory" />
           <MapLayerPanel />
         </div>
       </div>
@@ -40,6 +40,7 @@ export default {
       },
       windowsWidth: 0,
       device: "",
+      selectedHistory: null
     };
   },
   created() {
@@ -79,6 +80,10 @@ export default {
         name: "KML檔案總管理",
         img: require('@/assets/icons/map/function-kml-file.svg')
       })
+    },
+    selectHistory(data){
+      this.selectedHistory = data
+      console.log(this.selectedHistory)
     }
   }
 };
