@@ -13,23 +13,28 @@
       />
       <div class="function-content">
         <div class="content-Style shadow">
-          <!-- <ConstructionProgressForm
+          <!-- 工程案件詳細資訊 -->
+          <!-- <ConstructionProjectForm 
             @handleNewFormSubmit="handleNewFormSubmit" 
           /> -->
 
-          <!-- <AnnualProjectProgressForm
-            @handleNewFormSubmit="handleNewFormSubmit" 
-          /> -->
-
-          <!-- <BusinessProgressForm
-            @handleNewFormSubmit="handleNewFormSubmit" 
-          /> -->
-
+          <!-- 疏濬案件進度控管 -->
           <DredgingProgressForm 
             @handleNewFormSubmit="handleNewFormSubmit" 
           />
 
-          <!-- <ConstructionProjectForm 
+          <!-- 業務進度控管 -->
+          <!-- <BusinessProgressForm
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
+
+          <!-- 工作報告進度控管 -->
+          <!-- <ConstructionProgressForm
+            @handleNewFormSubmit="handleNewFormSubmit" 
+          /> -->
+
+          <!-- 年度標案進度控管 -->
+          <!-- <AnnualProjectProgressForm
             @handleNewFormSubmit="handleNewFormSubmit" 
           /> -->
 
@@ -63,13 +68,12 @@ import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
 import EventTable from '@/components/construction/shared/eventTable.vue'
 import FormPopup from '@/components/construction/shared/formPopup.vue'
-import ConstructionProgressForm from '@/components/construction/constructionProgressForm.vue'
-import AnnualProjectProgressForm from '@/components/construction/annualProjectProgressForm.vue'
-import BusinessProgressForm from '@/components/construction/businessProgressForm.vue'
-import DredgingProgressForm from '@/components/construction/dredgingProgressForm.vue'
-import ConstructionProjectForm from '@/components/construction/constructionProjectForm.vue'
 
-
+import ConstructionProjectForm from '@/components/construction/forms/constructionProjectForm.vue'
+import DredgingProgressForm from '@/components/construction/forms/dredgingProgressForm.vue'
+import BusinessProgressForm from '@/components/construction/forms/businessProgressForm.vue'
+import ConstructionProgressForm from '@/components/construction/forms/constructionProgressForm.vue'
+import AnnualProjectProgressForm from '@/components/construction/forms/annualProjectProgressForm.vue'
 
 
 export default {
@@ -79,11 +83,11 @@ export default {
     FunctionMenu,
     EventTable,
     FormPopup,
+    ConstructionProjectForm,
+    DredgingProgressForm,
+    BusinessProgressForm,
     ConstructionProgressForm,
     AnnualProjectProgressForm,
-    BusinessProgressForm,
-    DredgingProgressForm,
-    ConstructionProjectForm
   },
   data() {
     return {
