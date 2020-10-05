@@ -102,37 +102,6 @@ export default {
     padding: 40px 50px;
     border-radius: 10px;
   }
-  .form {
-    display: flex;
-  }
-  .form-row-cont {
-    flex: 1;
-  }
-  .form-rows {
-    margin-right: 1.5vw;
-    margin-bottom: 1.5vw;
-    display: flex;
-    /* flex: 1; */
-    position: relative;
-  }
-  .form-rows label {
-    /* font-size: 1vw; */
-    padding-right: 1.7vw;
-    flex-basis: 105px;
-  }
-  .form-rows input {
-    flex-grow: 1;
-  }
-  .form-rows input[type=text] {
-    padding: 5px 10px;
-  }
-  .form-rows textarea {
-    width: 100%;
-    padding: 5px 10px;
-  }
-  .between-date {
-    padding: 0 5px;
-  }
   .submit-button {
     background-color: #3FA893;
     border-radius: 35px;
@@ -197,14 +166,5 @@ export default {
     position: absolute;
     top: 20px;
     right: 20px;
-  }
-
-  @media screen and (max-width: 1300px) {
-    .form {
-      display: block;
-    }
-    .form-rows {
-      margin-right: 0;
-    }
   }
 </style>

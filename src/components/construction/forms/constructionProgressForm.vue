@@ -181,20 +181,4 @@ export default {
     right: 20px;
   }
 
-  /* @media screen and (max-width: 1300px) {
-    .form {
-      display: block;
-    }
-    .form-rows {
-      margin-right: 0;
-    }
-  }
-  @media screen and (max-width: 500px){
-    .form-rows {
-      margin-bottom: 25px;
-    }
-    .form-rows label {
-      flex-basis: 0;
-    }
-  } */
 </style>
