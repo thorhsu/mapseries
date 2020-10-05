@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Kml from './views/Kml.vue'
 import disaster from './views/disaster.vue'
-import test from './views/test.vue'
+import construction from './views/construction.vue'
 import testMap from './views/testMap.vue'
 import disasterMapTest from './views/disasterMapTest.vue'
 
@@ -24,8 +24,8 @@ export default new Router({
             }
         },
         {
-            path: '/test',
-            component: test,
+            path: '/construction',
+            component: construction,
             meta: {
                 keepAlive: false
             }
