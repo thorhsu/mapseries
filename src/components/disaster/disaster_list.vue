@@ -20,18 +20,18 @@
       <div class="function-item button-download" v-if="device !== 'mobile'">下載所有資料</div>
     </div>
     <div class="dataList-outer">
-      <div v-for="(data, index) of data_list" :key="index" class="data-outer">
-        <div class="data-title" v-html="data.name" />
+      <div v-for="(data, index) of disasterList" :key="index" class="data-outer">
+        <div class="data-title" v-html="data.Name" />
         <div class="data-time">
-          <div v-html="data.time.start" />
+          <div v-html="data.Start" />
           <p class="font-Style">～</p>
-          <div v-html="data.time.end" />
+          <div v-html="data.End" />
         </div>
         <div class="data-function">
           <img src="@/assets/icons/edit.svg" class="function-img" style="background-color: #5d9cec;" @click="handleEditPopup(data)">
           <img src="@/assets/icons/location.svg" class="function-img" style="background-color: #5d9cec;">
-          <img src="@/assets/icons/download.svg" class="function-img" style="background-color: #5fbeaa;">
-          <img src="@/assets/icons/delete.svg" class="function-img" style="background-color: #f05050;">
+          <img src="@/assets/icons/download.svg" class="function-img" style="background-color: #5fbeaa;" v-if='data.Packaged' @click="download(data)">
+          <img src="@/assets/icons/delete.svg" class="function-img" style="background-color: #f05050;" @click="deleteData(data)">
         </div>
       </div>
     </div>
@@ -42,40 +42,40 @@
 </template>
 
 <script>
+const axios = require('axios');
 export default {
   name: "disaster_list",
-  props: ['device'],
+  props: ['device', 'disasterList'],
   components: {},
   computed: {},
   data() {
     return {
       data_count: 10,
       keyWord: null,
-      data_list: [],
       editPopup: false,
     };
   },
-  mounted() {
-    this.prepareList();
-  },
+  created() {},
+  mounted() {},
   methods: {
-    prepareList(){
-      for(let i = 0; i < 10; i++){
-        let data = {
-          id: i,
-          name: "雲林辦事處測試",
-          time: {
-            start: new Date().toISOString().split('T')[0].replaceAll('-', '/'),
-            end: new Date().toISOString().split('T')[0].replaceAll('-', '/')
-          },
-          kml: []
-        }
-        this.data_list.push(data)
-      }
-    },
     handleEditPopup(data) {
       this.$emit('popup', data)
     },
+    async download(data){
+      let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvents/${data.Id}/File`
+      let response = await axios.get(endpoint,{ responseType: 'blob' })
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${data.Name}.zip`);
+      document.body.appendChild(link);
+      link.click();
+    },
+    async deleteData(data){
+      let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${data.Id}`
+      let response = await axios.delete(endpoint)
+      this.$emit('update_List')
+    }
   }
 };
 </script>
@@ -143,6 +143,8 @@ export default {
   }
   .data-function {
     display: flex;
+    justify-content: space-around;
+    align-items: center;
   }
   .data-outer {
     width: 100%;

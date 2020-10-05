@@ -150,8 +150,16 @@ export default {
     display: none;
   }
 
+  @media screen and (max-width: 1280px) {
+    .data-expanded-cont {
+      top: 5vh;
+    }
+    .data-closed-cont {
+      top: 40vh;
+    }
+  }
 
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 767px) {
     .data-expanded-cont {
       top: 10vh;
       width: 100%;

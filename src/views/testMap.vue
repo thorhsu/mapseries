@@ -93,9 +93,18 @@ export default {
   },
   methods: {
     prepare_DataList(){
-      this.functionMenu.data_list.push("工程表單")
-      this.functionMenu.data_list.push("其他表單1")
-      this.functionMenu.data_list.push("其他表單2")
+      this.functionMenu.data_list.push({
+        name: "工程表單",
+        img: require('@/assets/icons/disaster/event_icon1.svg')
+      })
+      this.functionMenu.data_list.push({
+        name: "其他表單1",
+        img: require('@/assets/icons/disaster/event_icon1.svg')
+      })
+      this.functionMenu.data_list.push({
+        name: "其他表單2",
+        img: require('@/assets/icons/disaster/event_icon1.svg')
+      })
     },
     changeVisible(value){
       this.functionMenu.visible = value

@@ -1,18 +1,15 @@
 <template>
   <div class="map-sidePanel-cont">
     <div class="sidePanel-title-cont">
-      <p>工程表單</p>
+      <p>{{title}}</p>
       <hr>
     </div>
 
     <div class="sidePanel-events-cont">
-      <div class="event-cont" 
-        v-for="(event, index) in events" 
-        :key="index"
-      >
+      <div class="event-cont" v-for="(history, index) in historyList" :key="index" @click="selected_History(history.Id)" :class="{'selected-history': selected_History_Id === history.Id}">
         <div class="event-row">
-          <p class="event-name">{{event.eventName}}</p>
-          <p class="event-time">{{event.time.start}} ~ {{event.time.end}}</p>
+          <p class="event-name">{{history.Name}}</p>
+          <p class="event-time">{{history.Start}} ~ {{history.End}}</p>
           <hr>
         </div>
       </div>
@@ -21,6 +18,7 @@
 </template>
 
 <script>
+const axios = require('axios');
 export default {
   name: "mapSidePanel",
   props: [],
@@ -28,74 +26,27 @@ export default {
   computed: {},
   data() {
     return {
-      events: [
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        },
-        {
-          time: {
-            start: '2020-08-04',
-            end: '2020-08-06'
-          },
-          eventName: '雲林辦事處測試'
-        }
-      ],
+      title: '歷史紀錄',
+      historyList: [],
+      selected_History_Id: ''
     };
   },
+  mounted(){
+    this.prepareList()
+  },
   methods: {
+    async prepareList(){
+      this.historyList = []
+      let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
+      for(let data of response.data){
+        data.Start = data.Start.split('T')[0].replaceAll('-', '/')
+        data.End = data.End.split('T')[0].replaceAll('-', '/')
+        this.historyList.push(data)
+      }
+    },
+    selected_History(Id){
+      this.selected_History_Id = Id
+    }
   }
 };
 </script>
@@ -126,6 +77,10 @@ export default {
     border-left: 3px solid transparent;
   }
   .event-row:hover {
+    background-color: #F4F8FB;
+    border-left: 3px solid #FFC401;
+  }
+  .selected-history {
     background-color: #F4F8FB;
     border-left: 3px solid #FFC401;
   }
@@ -160,21 +115,10 @@ export default {
   ::-webkit-scrollbar-thumb:hover {
     background: #888;
   }
-
-  @media screen and (max-width: 768px) {
-    .map-sidePanel-cont {
-      float: right;
-    }
-  }
-  @media screen and (max-width: 600px)  {
+  @media screen and (max-width: 767px)  {
     .map-sidePanel-cont {
       width: auto;
-      height: 450px;
-      background-color: white;
-      padding: 20px 0;
-      border-radius: 10px;
-      margin: 15px;
-      padding-right: 10px;
+      height: 270px;
       float: none;
     }
   }
