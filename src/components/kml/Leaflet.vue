@@ -19,13 +19,14 @@
           v-show="showLayerManagement" 
           @toEditMode="toEditMode" 
           :geoJsons="geoJsons" :map="map"/> -->
-
-        <div @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle class="layers-button">
-          <img src="@/assets/icons/map/Layer.png" />
+        <div v-show="!isEditing">
+          <div @click="showLayerManagement=!showLayerManagement" v-show="geoJsons.length" circle class="layers-button">
+            <img src="@/assets/icons/map/Layer.png" />
+          </div>
+          <LayerManagement :isEditing.sync="isEditing" @close="showLayerManagement=false" 
+              v-show="showLayerManagement" @toEditMode="toEditMode" 
+              :geoJsons="geoJsons" @updateGeoJsons="updateGeoJsons" :map="map"/>
         </div>
-        <LayerManagement :isEditing.sync="isEditing" @close="showLayerManagement=false" 
-            v-show="showLayerManagement" @toEditMode="toEditMode" 
-            :geoJsons="geoJsons" @updateGeoJsons="updateGeoJsons" :map="map"/>
 
       </l-control>
 

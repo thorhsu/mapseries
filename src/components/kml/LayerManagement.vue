@@ -7,17 +7,18 @@
       <el-row type="flex" align="middle" justify="center" v-for="(layer, index) in geoJsons" :key="'gjLayer_' + currentTime + index" >
         <el-col :span="2"><i @click="edit(layer)" style="cursor:pointer" class="fas fa-pen fa-sm`"></i></el-col>
         <el-col :span="2">
-          <i v-show="layer.visible" @click="" style="cursor:pointer" class="fas fa-eye"></i>
-          <i v-show="!layer.visible" style="cursor:pointer" class="fas fa-eye-slash"></i>
+          <i @click="toggleView(layer, index)" 
+              style="cursor:pointer" 
+              :class="{'fas': true, 'fa-sm': true, 'fa-eye': layer.visible, 'fa-eye-slash': !layer.visible}"></i>          
         </el-col>
         <el-col :span="9">{{layer.file}}</el-col>
         <el-col :span="10">
           <el-input-number v-model="zIndexes[index]" 
-              @change="zIndexChange($event, index)" 
-              :min="min" :max="max" label="描述文字" size="mini" controls-position="right">
+              @change="zIndexChange($event, index)" :key="'zIndex_' + currentTime + index" 
+              :min="min" :max="max" label="zIndex" size="mini" controls-position="right">
           </el-input-number> 
         </el-col>
-        <el-col :span="1"><i style="cursor:pointer" class="el-icon-delete"></i></el-col>
+        <el-col :span="1"><i style="cursor:pointer" @click="removeLayer(index)" class="el-icon-delete"></i></el-col>
       </el-row>
     </el-card>    
     <div v-if="!isEditing" id="geoJsonArea">
@@ -70,7 +71,6 @@ export default {
   },
   updated() {  
     this.updateGeoJsonLayers();  
-    // console.log("test updated");
   },
   watch: {
   },
@@ -88,6 +88,11 @@ export default {
         this.zIndexes.push(geoJson.zIndex);
         this.old_zIndexes.push(geoJson.zIndex);        
       });      
+    },
+    toggleView(layer, index){      
+      this.geoJsons[index].visible = !this.geoJsons[index].visible;       
+      this.currentTime = new Date().getTime();
+      this.$emit("updateGeoJsons", this.geoJsons);
     },
     zIndexChange(value, index){      
       const oldValue = this.old_zIndexes[index];         
@@ -107,6 +112,17 @@ export default {
       this.$emit("update:isEditing", true);
       layer.isEditing = true;
       this.$emit("toEditMode", layer);
+    },
+    removeLayer(index){
+      const removedIndex = this.geoJsons[index].zIndex;
+      this.geoJsons.splice(index, 1);   
+      // 重算zIndex   
+      this.geoJsons.forEach(geoJson => {
+        if(geoJson.zIndex > removedIndex){
+          geoJson.zIndex = geoJson.zIndex -1 ;
+        }
+      });
+      this.$emit("updateGeoJsons", this.geoJsons);
     },
     updateGeoJsonLayers(){
       this.allGeoJsonLayer = [];   

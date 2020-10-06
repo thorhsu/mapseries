@@ -11,8 +11,13 @@
       <l-marker :visible="true"  v-for="(data, index) in filteredData" :ref="'marker_' + index" 
           :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" >
           
-      </l-marker>          
+      </l-marker>
       
+      <l-image-overlay v-for="(layer, index) in floodedImgs" :visible="checkedData.includes('tide-layer')"
+        :key="`flooded_${index}`" :url="layer.url" :bounds="layer.bounds" />
+      <l-image-overlay v-for="(layer, index) in rainfallImgs" :visible="checkedData.includes('flood-layer')"
+        :key="`rainfall_${index}`" :url="layer.url" :bounds="layer.bounds" />      
+       
       <l-control position="topleft">        
         <MapSidePanel v-if="device !== 'mobile' && visible" class="map-cont-desktop" @selectHistory="selectHistory"/>
       </l-control>
@@ -76,8 +81,8 @@
 
 <script>
 /* eslint-disable no-console */
-import { LMap, LControl, LMarker } from 'vue2-leaflet';
-import { latLng } from "leaflet";
+import { LMap, LControl, LMarker, LImageOverlay } from 'vue2-leaflet';
+import { latLng, latLngBounds } from "leaflet";
 import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
 import MapSidePanel from '@/components/test/mapSidePanel.vue'
 import 'leaflet/dist/leaflet.css';
@@ -105,7 +110,8 @@ export default {
     'gmap-tilelayer': Vue2LeafletGoogleMutant,    
     LControl,
     LMarker,
-    MapSidePanel
+    MapSidePanel,
+    LImageOverlay,
   },
   computed: {
     filteredData(){
@@ -121,7 +127,10 @@ export default {
       zoom: 10,
       options: {zoomControl: true},
       latLng,
+      latLngBounds,
       selectedHistory: null,
+      floodedImgs: [],
+      rainfallImgs: []
     };
   },
   mounted() {
@@ -135,8 +144,35 @@ export default {
       this.layerPanelExpanded = !this.layerPanelExpanded
     },
     selectHistory(data){
-      this.selectedHistory = data  
-      console.log(this.selectedHistory);    
+      this.selectedHistory = data;
+      if(data.flooded && Object.keys(data.flooded).length) {
+        let put = false;
+        for(let floodedImg of this.floodedImgs){             
+          if(floodedImg.id == data.Id){
+            put = true;
+          }            
+        }
+        if(!put) {
+          let southWest = this.latLng(data.flooded.Bound.Bottom, data.flooded.Bound.Left),
+            northEast = this.latLng(data.flooded.Bound.Top, data.flooded.Bound.Right),
+            bounds = this.latLngBounds(southWest, northEast);
+          this.floodedImgs.push({id: data.Id, url: data.flooded.Url, bounds: bounds})
+        }
+      }
+      if(data.rainfall && Object.keys(data.rainfall).length) {
+        let put = false;
+        for(let rainfallImg of this.rainfallImgs){
+          if(rainfallImg.id == data.Id){
+            put = true;
+          }            
+        }
+        if(!put) {
+          let southWest = this.latLng(data.rainfall.Bound.Bottom, data.rainfall.Bound.Left),
+            northEast = this.latLng(data.rainfall.Bound.Top, data.rainfall.Bound.Right),
+            bounds = this.latLngBounds(southWest, northEast);
+          this.rainfallImgs.push({id: data.Id, url: data.rainfall.Url, bounds: bounds})
+        }
+      }      
     }
   }
 };

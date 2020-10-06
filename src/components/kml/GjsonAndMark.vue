@@ -155,8 +155,7 @@ export default {
       this.newLatitude = latlng[0];
       this.isCalibration = true;      
     },
-    toGeoJson() {
-      console.log("to geojson");
+    toGeoJson() {      
       if(this.epsgCodes[this.epsgCode[0]] !== 4326){
         [this.newLongtitude, this.newLatitude] = utils.transferCoordinate(
                 this.epsgCodes[this.epsgCode[0]], 
