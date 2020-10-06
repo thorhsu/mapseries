@@ -15,6 +15,7 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
 import MapLayerPanel from '@/components/disasterMapTest/mapLayerPanel.vue'
@@ -100,7 +101,8 @@ export default {
       })
     },
     selectHistory(data){
-      this.selectedHistory = data      
+      this.selectedHistory = data
+      console.log(this.selectedHistory)
     }
   }
 };

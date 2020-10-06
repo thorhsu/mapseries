@@ -9,7 +9,9 @@
     >
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" /> 
       <l-marker :visible="true"  v-for="(data, index) in filteredData" :ref="'marker_' + index" 
-          :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" />          
+          :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" >
+          
+      </l-marker>          
       
       <l-control position="topleft">        
         <MapSidePanel v-if="device !== 'mobile' && visible" class="map-cont-desktop" @selectHistory="selectHistory"/>
@@ -73,6 +75,7 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
 import { LMap, LControl, LMarker } from 'vue2-leaflet';
 import { latLng } from "leaflet";
 import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
@@ -132,7 +135,8 @@ export default {
       this.layerPanelExpanded = !this.layerPanelExpanded
     },
     selectHistory(data){
-      this.selectedHistory = data      
+      this.selectedHistory = data  
+      console.log(this.selectedHistory);    
     }
   }
 };

@@ -6,7 +6,10 @@
       </el-row>
       <el-row type="flex" align="middle" justify="center" v-for="(layer, index) in geoJsons" :key="'gjLayer_' + currentTime + index" >
         <el-col :span="2"><i @click="edit(layer)" style="cursor:pointer" class="fas fa-pen fa-sm`"></i></el-col>
-        <el-col :span="2"><i style="cursor:pointer" class="fas fa-eye"></i></el-col>
+        <el-col :span="2">
+          <i v-show="layer.visible" @click="" style="cursor:pointer" class="fas fa-eye"></i>
+          <i v-show="!layer.visible" style="cursor:pointer" class="fas fa-eye-slash"></i>
+        </el-col>
         <el-col :span="9">{{layer.file}}</el-col>
         <el-col :span="10">
           <el-input-number v-model="zIndexes[index]" 
@@ -56,23 +59,14 @@ export default {
       currentTime: new Date().getTime()
     };
   },
-  created() {        
+  created() { 
+    this.refreshZIndexes();       
   },
   mounted() { 
     
   },
   beforeUpdate() {
-    this.zIndexes = [];    
-    this.geoJsons.forEach(geoJson => {
-      if(this.max < geoJson.zIndex){
-        this.max = geoJson.zIndex;
-      }
-      if(this.min > geoJson.zIndex){
-        this.min = geoJson.zIndex;
-      }
-      this.zIndexes.push(geoJson.zIndex);
-      console.log("zIndexes", this.zIndexes);
-    });
+    this.refreshZIndexes();    
   },
   updated() {  
     this.updateGeoJsonLayers();  
@@ -81,17 +75,31 @@ export default {
   watch: {
   },
   methods: { 
-    zIndexChange(value, index){
-      const oldValue = this.zIndexes[index];   
-      console.log("old value", oldValue);   
+    refreshZIndexes(){
+      this.zIndexes = [];    
+      this.old_zIndexes = [];    
+      this.geoJsons.forEach(geoJson => {
+        if(this.max < geoJson.zIndex){
+          this.max = geoJson.zIndex;
+        }
+        if(this.min > geoJson.zIndex){
+          this.min = geoJson.zIndex;
+        }
+        this.zIndexes.push(geoJson.zIndex);
+        this.old_zIndexes.push(geoJson.zIndex);        
+      });      
+    },
+    zIndexChange(value, index){      
+      const oldValue = this.old_zIndexes[index];         
       for(let i = 0 ; i < this.zIndexes.length; i++){
-        if(this.zIndexes[i] === value){
-          this.zIndexes[i] = oldValue;
+        if(this.zIndexes[i] === value && index !== i){
+           this.zIndexes[i] = oldValue;
           this.geoJsons[i].zIndex = this.zIndexes[i];         
         }
       }
-      this.zIndexes[index] = value;       
-      this.geoJsons[index].zIndex = this.zIndexes[index];         
+      this.geoJsons[index].zIndex = this.zIndexes[index];       
+      this.old_zIndexes = [...this.zIndexes];      
+      
       this.currentTime = new Date().getTime();
       this.$emit("updateGeoJsons", this.geoJsons);
     } ,   
@@ -105,7 +113,7 @@ export default {
       for(let geoJson of this.geoJsons) {
         this.map.eachLayer(layer => {
           if(layer instanceof window.L.GeoJSON){
-            if(geoJson.uuid === layer.toGeoJSON().features[0].properties.uuid){              
+            if(geoJson.uuid === layer.toGeoJSON().features[0].properties.uuid){                            
               layer.setZIndex(geoJson.zIndex);              
             }
           }

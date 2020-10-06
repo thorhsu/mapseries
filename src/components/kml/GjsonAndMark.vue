@@ -2,7 +2,7 @@
   <div>    
       <l-geo-json ref="geoLayer" :visible="gjsonVisible" v-if="geojson" :geojson="geojson" />      
       <l-marker :visible="markerVisible"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
-          :lat-lng="coordinate" :key="'marker_' +index">          
+          :lat-lng="coordinate" :key="'marker_' + currentTime +index">          
           <l-popup  :options="options">
             <div style="cursor:pointer" @click="showLatLng(coordinate)" >
               校正座標
@@ -15,7 +15,7 @@
           <el-form-item style="border-bottom: 2px solid red; padding: 0% 0% 5%;">
             <el-row>
               <el-checkbox-group v-model="epsgCode">      
-                <el-col v-for="label in Object.keys(epsgCodes)" :key="'epsgCode_' + epsgCodes[label]" class="text-center" :span="8">
+                <el-col v-for="label in Object.keys(epsgCodes)" :key="'epsgCode_' + currentTime + epsgCodes[label]" class="text-center" :span="8">
                   <el-checkbox :label="label"></el-checkbox>
                 </el-col>
               </el-checkbox-group>
@@ -114,7 +114,8 @@ export default {
       newLongtitude: 0,
       newLatitude: 0, 
       emptyGeoJson: {"type": "FeatureCollection", "features": []},
-      epsgCodes: {"經緯度": 4326, "全球座標": 3857, "TWD97": 3826}
+      epsgCodes: {"經緯度": 4326, "全球座標": 3857, "TWD97": 3826},
+      currentTime: new Date().getTime()
     };
   },
   mounted() {
@@ -129,6 +130,7 @@ export default {
     }
   },
   beforeUpdate() {
+    this.currentTime = new Date().getTime();
   },
   updated() {    
     // 找出每個feature所代表的layer，送出去方便編輯模式
