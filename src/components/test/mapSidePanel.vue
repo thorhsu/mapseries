@@ -9,7 +9,7 @@
       <div class="event-cont" v-for="(history, index) in historyList" :key="index" @click="selected_History(history)" :class="{'selected-history': selected_History_Id === history.Id}">
         <div class="event-row">
           <p class="event-name">{{history.Name}}</p>
-          <p class="event-time">{{history.Start}} ~ {{history.End}}</p>
+          <p class="event-time">{{history.time.start}} ~ {{history.time.end}}</p>
           <hr>
         </div>
       </div>
@@ -40,17 +40,28 @@ export default {
         this.historyList = []
         let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
         for(let data of response.data){
-          data.Start = data.Start.split('T')[0].replaceAll('-', '/')
-          data.End = data.End.split('T')[0].replaceAll('-', '/')
+          data['time'] = {}
+          data['time']['start'] = data.Start.split('T')[0].replaceAll('-', '/')
+          data['time']['end'] = data.End.split('T')[0].replaceAll('-', '/')
           this.historyList.push(data)
         }
       } catch (error) {
         alert(error)
       }
     },
-    selected_History(history){
-      this.selected_History_Id = history.Id
-      this.$emit('selectHistory', history)
+    async selected_History(history){
+      try{
+        this.selected_History_Id = history.Id
+        let timestamp = history.Start
+        let rainfall = await axios.get(`https://yliflood.yunlin.gov.tw/v2/api/Analyse/Image/RainAccumulated?timestamp=${timestamp}`)
+        let flooded = await axios.get(`https://yliflood.yunlin.gov.tw/v2/api/Analyse/Image/Flood?timestamp=${timestamp}`)
+        history['rainfall'] = rainfall.data
+        history['flooded'] = flooded.data
+        console.log('history => ', history)
+        this.$emit('selectHistory', history)
+      } catch(error) {
+        alert('找不到 NotFound')
+      }
     }
   }
 };

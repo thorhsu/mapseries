@@ -3,11 +3,10 @@
     <BannerMenu :title="banner.title" :visible="functionMenu.visible" @visible="changeVisible" />
     <div class="function-outer">
       <FunctionMenu v-if="functionMenu.visible" :dataList="functionMenu.data_list" />
-      <MapSidePanel v-if="device === 'mobile' && functionMenu.visible" @selectHistory="selectHistory"/>
+      <MapSidePanel v-if="device === 'mobile'" @selectHistory="selectHistory"/>
       <div class="function-content">
         <div class="map-cont">
           <MapLayerPanel :allData="allData" :visible="functionMenu.visible" :device="device"/>
-          
         </div>
       </div>
     </div>   
@@ -100,7 +99,7 @@ export default {
       })
     },
     selectHistory(data){
-      this.selectedHistory = data      
+      this.selectedHistory = data
     }
   }
 };
