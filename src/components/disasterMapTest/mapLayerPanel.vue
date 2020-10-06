@@ -1,16 +1,16 @@
 <template>
   <div>
     <l-map
-      ref="map"
+      ref="mapLayerPane"
       :zoom="9"
       :center="center"
       style="height: 100vh"
+      @click="mouseScroll"
       :options="options"
     >
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" /> 
       <l-marker :visible="true"  v-for="(data, index) in filteredData" :ref="'marker_' + index" 
-          :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" >
-          
+          :lat-lng="latLng(data.Coordinate.Latitude, data.Coordinate.Longitude)" :key="'marker_' +index" >          
       </l-marker>
       
       <l-image-overlay v-for="(layer, index) in floodedImgs" :visible="checkedData.includes('tide-layer')"
@@ -18,8 +18,8 @@
       <l-image-overlay v-for="(layer, index) in rainfallImgs" :visible="checkedData.includes('flood-layer')"
         :key="`rainfall_${index}`" :url="layer.url" :bounds="layer.bounds" />      
        
-      <l-control position="topleft">        
-        <MapSidePanel v-if="device !== 'mobile' && visible" class="map-cont-desktop" @selectHistory="selectHistory"/>
+      <l-control position="topleft" >        
+        <MapSidePanel v-if="device !== 'mobile' && visible" :map="map" class="map-cont-desktop" @selectHistory="selectHistory"/>
       </l-control>
       <l-control position="topright">
         <div class="data-closed-cont" @click="toggleLayerPanel" v-show="!layerPanelExpanded">
@@ -125,20 +125,24 @@ export default {
       layerPanelExpanded: false,
       center: { lat: 24.0025917, lng: 121.3624999 },
       zoom: 10,
-      options: {zoomControl: true},
+      options: {zoomControl: true, scrollWheelZoom: false},
       latLng,
       latLngBounds,
       selectedHistory: null,
       floodedImgs: [],
-      rainfallImgs: []
+      rainfallImgs: [],
+      map: null,
     };
   },
   mounted() {
-    
+    this.map = this.$refs.mapLayerPane.mapObject;
   },
   updated() {    
   },
   methods: {
+    mouseScroll() {
+      this.map.scrollWheelZoom.enable();
+    },
     toggleLayerPanel(e) {
       e.preventDefault;
       this.layerPanelExpanded = !this.layerPanelExpanded

@@ -5,7 +5,7 @@
       <hr>
     </div>
 
-    <div class="sidePanel-events-cont">
+    <div class="sidePanel-events-cont" @click="map.scrollWheelZoom.disable()" >
       <div class="event-cont" v-for="(history, index) in historyList" :key="index" @click="selected_History(history)" :class="{'selected-history': selected_History_Id === history.Id}">
         <div class="event-row">
           <p class="event-name">{{history.Name}}</p>
@@ -22,7 +22,12 @@
 const axios = require('axios');
 export default {
   name: "mapSidePanel",
-  props: [],
+  props: {
+    map: {
+      type: Object,
+      default: () => {}
+    }
+  },
   components: {},
   computed: {},
   data() {
