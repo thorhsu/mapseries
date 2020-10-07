@@ -22,7 +22,7 @@
       </el-row>
     </el-card>    
     <div v-if="!isEditing" id="geoJsonArea">
-      <l-geo-json v-for="(geoJson, index) in geoJsons" :ref="'geoLayer_' +index" :key="'geoLayer_' +index"
+      <l-geo-json v-for="(geoJson, index) in geoJsons" :ref="'geoLayer_' +index" :key="geoJson.uuid"
           :geojson="geoJson.geojson" :visible="geoJson.visible"/>              
     </div>  
   </div>
@@ -64,20 +64,22 @@ export default {
     this.refreshZIndexes();       
   },
   mounted() { 
-    
+    this.updateGeoJsonLayers();      
   },
-  beforeUpdate() {
+  beforeUpdate() {    
     this.refreshZIndexes();    
   },
-  updated() {  
-    this.updateGeoJsonLayers();  
+  updated() {      
+    this.updateGeoJsonLayers();      
   },
   watch: {
   },
   methods: { 
     refreshZIndexes(){
       this.zIndexes = [];    
-      this.old_zIndexes = [];    
+      this.old_zIndexes = [];  
+      this.min = 99999999;
+      this.max = 0;
       this.geoJsons.forEach(geoJson => {
         if(this.max < geoJson.zIndex){
           this.max = geoJson.zIndex;
@@ -119,9 +121,10 @@ export default {
       // 重算zIndex   
       this.geoJsons.forEach(geoJson => {
         if(geoJson.zIndex > removedIndex){
-          geoJson.zIndex = geoJson.zIndex -1 ;
+          geoJson.zIndex = geoJson.zIndex - 1 ;
         }
       });
+      // this.refreshZIndexes();
       this.$emit("updateGeoJsons", this.geoJsons);
     },
     updateGeoJsonLayers(){
@@ -129,7 +132,7 @@ export default {
       for(let geoJson of this.geoJsons) {
         this.map.eachLayer(layer => {
           if(layer instanceof window.L.GeoJSON){
-            if(geoJson.uuid === layer.toGeoJSON().features[0].properties.uuid){                            
+            if(geoJson.uuid === layer.toGeoJSON().features[0].properties.uuid){                 
               layer.setZIndex(geoJson.zIndex);              
             }
           }

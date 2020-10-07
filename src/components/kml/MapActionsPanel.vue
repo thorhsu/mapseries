@@ -11,14 +11,14 @@
       v-show="openedMapActions"
     >
       <div class="actions-main-cont">
-        <div class="action-cont" 
+        <div :class="{'action-cont': true, 'forbidden': mapActionsActivity[index]}" 
           v-for="(mapAction, index) in mapActions" 
           :key="index"
           @mouseover="activateHover(index)"
           @mouseleave="deactivateHover(index)"
-          @click="handleFunctionCall(mapAction.clickEvent)"
+          @click="handleFunctionCall(mapAction.clickEvent, index)"
         >
-          <img v-bind:src="require(`@/assets/icons/map/${mapAction.img}.png`)" />        
+          <img :src="require(`@/assets/icons/map/${mapActionsImage[index]}.png`)" />        
           <p>{{mapAction.text}}</p>
         </div>
       </div>
@@ -26,11 +26,11 @@
       <div class="actions-sub-cont" v-show="dragMode">
         <div class="drag-mode-cont">
           <div class="drag-action" @click="handleFunctionCall('clear')">
-            <img src="../../assets/icons/map/check-circle.png" />
+            <img src="@/assets/icons/map/check-circle.png" />
             <p>取消變更</p>
           </div>
           <div class="drag-action" @click="handleFunctionCall('save')">
-            <img src="../../assets/icons/map/close-circle.png" />
+            <img src="@/assets/icons/map/close-circle.png" />
             <p>完成變更</p>
           </div>
         </div>
@@ -42,9 +42,26 @@
 <script>
 export default {
   name: "mapActionsPanel",
-  props: [],
+  props: {
+    activedIndex: {
+      type: Number,
+      default: -1,
+    },
+  },
   components: {},
-  computed: {},
+  computed: {
+    mapActionsActivity() {
+      return this.mapActions.map((action, index) => 
+        this.activedIndex === -1? false : this.activedIndex !== index
+      );
+    },
+    mapActionsImage() {
+      return this.mapActions.map((action, index) => 
+        this.activedIndex === -1 || this.activedIndex === index? this.mapActions[index].img : this.mapActions[index].imgDisabled          
+      );
+    },
+
+  },
   data() {
     return {
       openedMapActions: false,
@@ -54,6 +71,7 @@ export default {
           img: "edit-location",
           imgUnhover: "edit-location",
           imgHover: "edit-location-a",
+          imgDisabled: "edit-location-d",
           text: "校正模式",
           clickEvent: "calibrate"
         },
@@ -61,6 +79,7 @@ export default {
           img: "hand-paper",
           imgUnhover: "hand-paper",
           imgHover: "hand-paper-a",
+          imgDisabled: "hand-paper-d",
           text: "拖曳模式",
           clickEvent: "edit"
         },
@@ -68,6 +87,7 @@ export default {
           img: "add-location",
           imgUnhover: "add-location",
           imgHover: "add-location-a",
+          imgDisabled: "add-location-d",
           text: "畫點工具",
           clickEvent: "drawMarker"
         },
@@ -75,6 +95,7 @@ export default {
           img: "linear-scale",
           imgUnhover: "linear-scale",
           imgHover: "linear-scale-a",
+          imgDisabled: "linear-scale-d",
           text: "畫線工具",
           clickEvent: "drawLine"
         },
@@ -82,6 +103,7 @@ export default {
           img: "area",
           imgUnhover: "area",
           imgHover: "area-a",
+          imgDisabled: "area-d",
           text: "畫面工具",
           clickEvent: "drawPoligon"
         },
@@ -89,6 +111,7 @@ export default {
           img: "save",
           imgUnhover: "save",
           imgHover: "save-a",
+          imgDisabled: "save-d",
           text: "儲存檔案",
           clickEvent: ""
         },
@@ -96,6 +119,7 @@ export default {
           img: "location-off",
           imgUnhover: "location-off",
           imgHover: "location-off-a",
+          imgDisabled: "location-off-d",
           text: "刪除模式",
           clickEvent: ""
         },
@@ -103,6 +127,7 @@ export default {
           img: "exit",
           imgUnhover: "exit",
           imgHover: "exit-a",
+          imgDisabled: "exit-d",
           text: "離開",
           clickEvent: ""
         }
@@ -120,20 +145,30 @@ export default {
     deactivateHover (i) {
       this.mapActions[i].img = this.mapActions[i].imgUnhover
     },
-    handleFunctionCall(functionName) {
-      if (functionName==="edit" && this.dragMode === false) {
-        this.dragMode = true
-      }
-      else if (functionName==="edit" && this.dragMode === true) {
-        this.dragMode = false
-        this.$emit("handleFunctionCall", "clear")
+    handleFunctionCall(functionName, index=-1) {  
+      let activedIndex = this.activedIndex 
+      if(activedIndex === -1 && index !== -1){        
+        // 開始動作
+        if (functionName==="edit" && this.dragMode === false) {
+          this.dragMode = true
+        }
+      } else if(activedIndex === index && index !== -1){
+        // 相同時代表取消
+        activedIndex = -1;
+        // 如果是拖曳模式時是取消之前畫的        
+        this.dragMode = false                  
+        this.$emit("handleFunctionCall", "clear");
         return
+      } else if(activedIndex !== index && index !== -1){ 
+        // 如果已經在動作，又點其它功能，就什麼都不做
+        return;
+      } else {
+        // 只剩下index === -1時了
+        this.dragMode = false;
       }
-      else if (functionName==="clear" || functionName==="save") {
-        this.dragMode = false
-      }
-      
-      this.$emit("handleFunctionCall", functionName)
+      activedIndex = index;
+      this.$emit("update:activedIndex", activedIndex);
+      this.$emit("handleFunctionCall", functionName);
     }
   }
 };
@@ -189,8 +224,14 @@ export default {
     margin-bottom: 0;
     color: white;
   }
+  .forbidden{
+    cursor: not-allowed;
+  }
 
   .action-cont:hover p {
+    color: #F2D36E;
+  }
+  . p {
     color: #F2D36E;
   }
 

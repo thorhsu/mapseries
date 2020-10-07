@@ -8,7 +8,7 @@
       :options="{zoomControl: false}"
     >     
       <l-control position="topleft">
-        <MapActionsPanel @handleFunctionCall="handleFunctionCall" v-show="isEditing" />
+        <MapActionsPanel @handleFunctionCall="handleFunctionCall" :activedIndex.sync="activedIndex" v-show="isEditing" />
       </l-control> 
       <l-control position="topright">
 
@@ -31,11 +31,13 @@
       </l-control>
 
       <gmap-tilelayer apikey="AIzaSyA2Kn8mv5cSaew9vwGwKY9DBULqxyRdVbc" :options="options" />      
-      <GjsonAndMark v-if="isEditing" @addToEdit="addToEdit" 
+      <GjsonAndMark v-if="isEditing" 
+          @addToEdit="addToEdit" 
+          @updateGeojson="updateGeojson"
           :markerVisible="markerVisible" 
           :gjsonVisible="gjsonVisible" 
           :isEditing="isEditing"
-          :geoJson="editingGeoJson" @updateGeojson="updateGeojson" 
+          :geoJson="editingGeoJson"  
           :map="map" />      
 
     </l-map>
@@ -48,7 +50,7 @@
 import { LMap, LControl } from 'vue2-leaflet';
 import GjsonAndMark from '@/components/kml/GjsonAndMark';
 import LayerManagement from '@/components/kml/LayerManagement';
-import MapActionsPanel from '@/components/test/mapActionsPanel';
+import MapActionsPanel from '@/components/kml/MapActionsPanel';
 
 import L from 'leaflet';
 import LDraw from 'leaflet-draw';
@@ -121,9 +123,8 @@ export default {
       attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       options: {
         type: 'roadmap'
-      },
-      infowindow: null,
-      markers: [],
+      },            
+      activedIndex: -1,
       editingLayers: [], 
       map: null,
       editableLayers: null,
@@ -164,7 +165,11 @@ export default {
 
       this.editableLayers = new window.L.FeatureGroup().addTo(this.map);      
       // 將draw出來的圖層加到editableLayers
-      this.map.on(window.L.Draw.Event.CREATED, e => this.editableLayers.addLayer(e.layer));  
+      this.map.on(window.L.Draw.Event.CREATED, e => {
+        this.editableLayers.addLayer(e.layer);
+        this.save(false);
+        this.activedIndex = -1;
+      });  
       this.mapLoaded = true;                
     // }); // end of this.$nextTick()
   },
@@ -183,17 +188,21 @@ export default {
       this[functionName]()
     },
     clear() {
+      this.markerVisible = false; 
+      this.gjsonVisible = true;
       if(!this.editLayer)
         return;
       this.editLayer.revertLayers();
-      this.editLayer.disable();
+      this.editLayer.disable();      
     },
-    save() {
+    save(editing=true) {
+      var geoJson = this.editableLayers.toGeoJSON();
       if(!this.editLayer)
         return;
-      this.editLayer.save();
-      this.editLayer.disable();
-      var geoJson = this.editableLayers.toGeoJSON();      
+      if(editing){
+        this.editLayer.save();
+        this.editLayer.disable();
+      }
       this.updateGeojson(geoJson);      
     }, 
     edit() {      

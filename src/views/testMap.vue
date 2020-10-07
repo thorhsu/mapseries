@@ -33,7 +33,7 @@
 <script>
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import MapActionsPanel from '@/components/test/mapActionsPanel.vue'
+import MapActionsPanel from '@/components/kml/MapActionsPanel.vue'
 import MapSidePanel from '@/components/test/mapSidePanel.vue'
 
 
