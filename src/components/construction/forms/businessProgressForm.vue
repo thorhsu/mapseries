@@ -12,6 +12,7 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
 import FormField from "@/components/construction/shared/formField.vue"
 
 export default {

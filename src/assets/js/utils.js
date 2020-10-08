@@ -28,15 +28,13 @@ const flattenDeep = points =>
  * @param: coordinates
  * @return: Array
  */
-const flattenToPoints = (points, reverse = false, copy = true) => {
+const flattenToPoints = (points, copy = true) => {
     if (copy) {
         points = _.cloneDeep(points);
     }
     let flattenResult = points.reduce((allPoints, point) => Array.isArray(point[0]) ?
-        allPoints.concat(flattenToPoints(point, reverse, copy)) : allPoints.concat([point]), []);
-    if (reverse) {
-        return flattenResult.map(point => point.reverse());
-    }
+        allPoints.concat(flattenToPoints(point, copy)) : allPoints.concat([point]), []);
+
     return flattenResult;
 };
 

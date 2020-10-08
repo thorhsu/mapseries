@@ -21,6 +21,7 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
 const axios = require('axios');
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'

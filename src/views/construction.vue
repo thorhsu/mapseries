@@ -64,6 +64,7 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
 import EventTable from '@/components/construction/shared/eventTable.vue'

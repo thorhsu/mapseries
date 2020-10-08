@@ -8,7 +8,7 @@
       :options="{zoomControl: false}"
     >     
       <l-control position="topleft">
-        <MapActionsPanel @handleFunctionCall="handleFunctionCall" :activedIndex.sync="activedIndex" v-show="isEditing" />
+        <MapActionsPanel @handleFunctionCall="handleFunctionCall" :modifying.sync="modifying" v-show="isEditing" />
       </l-control> 
       <l-control position="topright">
 
@@ -58,6 +58,7 @@ import Vue2LeafletGoogleMutant from 'vue2-leaflet-googlemutant';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import _ from 'lodash';
+import tokml  from "tokml";
 
 export default {
   name: "Leaflet",
@@ -124,12 +125,13 @@ export default {
       options: {
         type: 'roadmap'
       },            
-      activedIndex: -1,
+      modifying: false,
       editingLayers: [], 
       map: null,
       editableLayers: null,
       mapLoaded: false,
       editLayer: null,
+      deleteLayer: null,
       polylineDrawer:null,
       markerDrawer:null,
       polygonDrawer:null,
@@ -166,9 +168,11 @@ export default {
       this.editableLayers = new window.L.FeatureGroup().addTo(this.map);      
       // 將draw出來的圖層加到editableLayers
       this.map.on(window.L.Draw.Event.CREATED, e => {
+        this.editingLayers.push(e.layer);
         this.editableLayers.addLayer(e.layer);
         this.save(false);
-        this.activedIndex = -1;
+        this.map.removeLayer(e.layer);
+        this.modifying = false;
       });  
       this.mapLoaded = true;                
     // }); // end of this.$nextTick()
@@ -177,7 +181,7 @@ export default {
     // console.log("before updated");
   },
   updated() {
-    // console.log("updated");
+    // console.log("leaflet updated");    
   },
   methods: { 
     updateGeoJsons(geoJsons){
@@ -195,13 +199,12 @@ export default {
       this.editLayer.revertLayers();
       this.editLayer.disable();      
     },
-    save(editing=true) {
-      var geoJson = this.editableLayers.toGeoJSON();
-      if(!this.editLayer)
-        return;
-      if(editing){
+    save(editing=true) {            
+      var geoJson = JSON.parse(JSON.stringify(this.editableLayers.toGeoJSON()));
+      
+      if(editing && this.editLayer){
         this.editLayer.save();
-        this.editLayer.disable();
+        this.editLayer.disable();                
       }
       this.updateGeojson(geoJson);      
     }, 
@@ -222,6 +225,7 @@ export default {
               allowIntersection: false
           }
       });
+      console.log("edit layer", this.editLayer.enable, this.editLayer);
       this.editLayer.enable();    
     },
     addToEdit(layers) {
@@ -255,9 +259,37 @@ export default {
           });
       this.polylineDrawer.enable();
     },
-    drawPoligon () {
+    drawPolygon () {
       this.polygonDrawer = new L.Draw.Polygon(this.map);
       this.polygonDrawer.enable();
+    },
+    upload(){
+      const geoJson = this.editableLayers.toGeoJSON();
+      const kmlTxt = tokml(geoJson);
+      console.log(kmlTxt);
+    },
+    delete() {
+      console.log("delete");
+      this.deleteLayer = new L.EditToolbar.Delete(this.map, {
+          featureGroup: this.editableLayers,          
+      });
+      this.deleteLayer.enable();
+    },
+    cancelDelete() {
+      this.deleteLayer.revertLayers();
+      this.deleteLayer.disable();
+    },
+    saveDelete() {
+      this.deleteLayer.save();
+      this.deleteLayer.disable();
+      this.save(false);
+
+    },
+    exit() {
+      console.log("exit");
+      this.isEditing = false;
+      /* 待完成 */
+      // 將遠端的kml拉下來，重新整理
     },
     clearEditableLayers() {
       // 清空editablelayer

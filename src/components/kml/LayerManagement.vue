@@ -21,7 +21,7 @@
         <el-col :span="1"><i style="cursor:pointer" @click="removeLayer(index)" class="el-icon-delete"></i></el-col>
       </el-row>
     </el-card>    
-    <div v-if="!isEditing" id="geoJsonArea">
+    <div  id="geoJsonArea">
       <l-geo-json v-for="(geoJson, index) in geoJsons" :ref="'geoLayer_' +index" :key="geoJson.uuid"
           :geojson="geoJson.geojson" :visible="geoJson.visible"/>              
     </div>  
@@ -73,6 +73,15 @@ export default {
     this.updateGeoJsonLayers();      
   },
   watch: {
+    isEditing(newVal, oldVal) {
+      if(newVal && !oldVal){
+        this.geoJsons.forEach(geoJson => geoJson.visible = false)
+        this.$emit("updateGeoJsons", this.geoJsons);        
+      }else if(!newVal && oldVal){
+        this.geoJsons.forEach(geoJson => geoJson.visible = true)
+        this.$emit("updateGeoJsons", this.geoJsons);
+      }    
+    }
   },
   methods: { 
     refreshZIndexes(){

@@ -1,11 +1,11 @@
 <template>
   <div>    
       <l-geo-json ref="geoLayer" :visible="gjsonVisible" v-if="geojson" :geojson="geojson" />      
-      <l-marker :visible="markerVisible"  v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
-          :lat-lng="coordinate" :key="'marker_' + currentTime +index">          
+      <l-marker  :visible="markerVisible" v-for="(coordinate, index) in markers" :ref="'marker_' + index" 
+          :lat-lng="coordinate" :key="'marker_' + index" :options="{'zIndexOffset': 1000, 'opacity': 1.0, 'riseOnHover': true}">          
           <l-popup  :options="options">
             <div style="cursor:pointer" @click="showLatLng(coordinate)" >
-              校正座標
+              校正座標 {{index}}
             </div>
           </l-popup>
       </l-marker>   
@@ -96,7 +96,9 @@ export default {
           this.geoJson.features.forEach(feature => {            
             coordinates.push(feature.geometry.coordinates);
           });
-          return utils.removeDuplicatePoint(utils.flattenToPoints(coordinates, true));
+          var allCoordinates = utils.flattenToPoints(coordinates, true).map(coordinate => [coordinate[1], coordinate[0]]);
+          var result = utils.removeDuplicatePoint(allCoordinates);
+          return result;
       }
       return [];
     }
@@ -115,7 +117,8 @@ export default {
       newLatitude: 0, 
       emptyGeoJson: {"type": "FeatureCollection", "features": []},
       epsgCodes: {"經緯度": 4326, "全球座標": 3857, "TWD97": 3826},
-      currentTime: new Date().getTime()
+      currentTime: new Date().getTime(),
+      markerDemo: null
     };
   },
   mounted() {
@@ -124,7 +127,8 @@ export default {
       // 找出每個feature所代表的layer，送出去方便編輯模式
       let editableLayers = [];
       this.$refs.geoLayer.mapObject.eachLayer(layer => {
-        editableLayers.push(layer);
+        // editableLayers.push(layer);
+        this.addNonGroupLayers(layer, editableLayers);      
       });
       this.$emit("addToEdit", editableLayers);
     }
@@ -137,13 +141,25 @@ export default {
     this.fitBounds();
     let editableLayers = [];
     this.$refs.geoLayer.mapObject.eachLayer(layer => {
-      editableLayers.push(layer);
+      this.addNonGroupLayers(layer, editableLayers);      
     });
     this.$emit("addToEdit", editableLayers);
   },
   watch: {
   },
-  methods: {     
+  methods: {   
+    // Would benefit from https://github.com/Leaflet/Leaflet/issues/4461
+    addNonGroupLayers(sourceLayer, editableLayers=[]) {
+      // 有eachLayer時必須往下再找
+      if (sourceLayer.eachLayer) {
+        sourceLayer.eachLayer(layer =>{           
+          this.addNonGroupLayers(layer, editableLayers)
+        });
+      } else {                
+        editableLayers.push(sourceLayer);                
+      }
+      return editableLayers;
+    },  
     fitBounds() {
       if(this.gjsonVisible)
         this.map.fitBounds(this.$refs.geoLayer.mapObject.getBounds())
