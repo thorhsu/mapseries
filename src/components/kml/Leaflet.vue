@@ -7,9 +7,9 @@
       style="height: 100vh"
       :options="{zoomControl: false}"
     >     
-      <l-control position="topleft">
-        <MapActionsPanel @handleFunctionCall="handleFunctionCall" :modifying.sync="modifying" v-show="isEditing" />
-      </l-control> 
+      
+      <MapActionsPanel @handleFunctionCall="handleFunctionCall" :modifying.sync="modifying" :isEditing.sync="isEditing" />
+      
       <l-control position="topright">
 
         <!-- <el-button @click="showLayerManagement=!showLayerManagement" v-if="geoJsons.length" circle style="background-color:rgba(0, 0, 0, 0);float:right">
@@ -287,6 +287,7 @@ export default {
       });
       this.updateGeoJsons(this.geoJsons);
       this.modifying = false;
+      /** 缺上傳部分，後補 */
     },
     delete() {      
       this.deleteLayer = new L.EditToolbar.Delete(this.map, {

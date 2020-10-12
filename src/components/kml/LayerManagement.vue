@@ -2,7 +2,7 @@
   <div>      
     <el-card class="box-card" shadow="always">
       <el-row style="margin: -10px -10px 0 0" >
-        <i @click="$emit('close')" style="float:right; " class="far fa-window-close fa-sm"></i>
+        <i @click="$emit('close')" style="float:right; color:#999; cursor: pointer" class="fas fa-times fa-lg"></i>
       </el-row>
       <el-row type="flex" align="middle" justify="center" v-for="(layer, index) in geoJsons" :key="'gjLayer_' + currentTime + index" >
         <el-col :span="2"><i @click="edit(layer)" style="cursor:pointer" class="fas fa-pen fa-sm`"></i></el-col>
@@ -60,7 +60,7 @@ export default {
       currentTime: new Date().getTime()
     };
   },
-  created() { 
+  created() {
     this.refreshZIndexes();       
   },
   mounted() { 
@@ -89,15 +89,15 @@ export default {
       this.old_zIndexes = [];  
       this.min = 99999999;
       this.max = 0;
-      this.geoJsons.forEach(geoJson => {
+      this.geoJsons.forEach(geoJson => {           
         if(this.max < geoJson.zIndex){
           this.max = geoJson.zIndex;
         }
         if(this.min > geoJson.zIndex){
           this.min = geoJson.zIndex;
-        }
+        }        
         this.zIndexes.push(geoJson.zIndex);
-        this.old_zIndexes.push(geoJson.zIndex);        
+        this.old_zIndexes.push(geoJson.zIndex);                
       });      
     },
     toggleView(layer, index){      

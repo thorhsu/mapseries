@@ -84,18 +84,19 @@ export default {
         var parsedKml = new DOMParser().parseFromString(await this.getKmlTxt(file), "text/xml");
         this.geoJson = {url: file, modified: false, file: file, 
                         isEditing: false, visible: true, 
-                        geojson: kml(parsedKml)}; 
+                        geojson: kml(parsedKml)};         
         let put = false;
-        for(let i = 0 ; i < this.geoJsons.length ; i++) {
-          // 如果沒有zIndex就設定zIndex
-          if(!this.geoJsons[i].zIndex) {
-            this.geoJsons[i]["zIndex"] = 400 + i;
-          }
+        for(let i = 0 ; i < this.geoJsons.length ; i++) {             
           if(this.geoJsons[i].file === this.geoJson.file) {
             put = true;     
             this.geoJsons[i] = this.geoJson;       
           }
+          // 如果沒有zIndex就設定zIndex
+          if(!this.geoJsons[i].zIndex) {
+            this.geoJsons[i]["zIndex"] = 400 + i + 1;
+          }
         }
+
         if(!put) {
           const uuid = utils.uuid();
           this.geoJson["zIndex"] = 400 + this.geoJsons.length + 1;

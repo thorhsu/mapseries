@@ -1,57 +1,96 @@
 <template>
-  <div class="map-actions-cont">
-    <div class="actions-main-button"
-      @click="toggleMapActions"
-    >
-      <img src="../../assets/icons/map/tool-box.png">
-    </div>
-
-    <div 
-      class="actions-expanded-cont" 
-      v-show="openedMapActions"
-    >
-      <div class="actions-main-cont">
-        <div :class="{'action-cont': true, 'forbidden': mapActionsActivity[index]}" 
-          v-for="(mapAction, index) in mapActions" 
-          :key="index"
-          @mouseover="activateHover(index)"
-          @mouseleave="deactivateHover(index)"
-          @click="handleFunctionCall(mapAction.clickEvent, index)"
+  <div>
+    <l-control position="topleft">
+      <div class="map-actions-cont" v-show="isEditing">
+        <div class="actions-main-button"
+          @click="toggleMapActions"
         >
-          <img :src="require(`@/assets/icons/map/${mapActionsImage[index]}.png`)" />        
-          <p>{{mapAction.text}}</p>
+          <img src="../../assets/icons/map/tool-box.png">
         </div>
-      </div>
 
-      <div class="actions-sub-cont" v-show="dragMode">
-        <div class="drag-mode-cont">
-          <div class="drag-action" @click="handleFunctionCall('clear')">
-            <img src="@/assets/icons/map/close-circle.png" />            
-            <p>取消變更</p>
+        <div 
+          class="actions-expanded-cont" 
+          v-show="openedMapActions"
+        >
+          <div class="actions-main-cont">
+            <div :class="{'action-cont': true, 'forbidden': mapActionsActivity[index]}" 
+              v-for="(mapAction, index) in mapActions" 
+              :key="index"
+              @mouseover="activateHover(index)"
+              @mouseleave="deactivateHover(index)"
+              @click="handleFunctionCall(mapAction.clickEvent, index)"
+            >
+              <img :src="require(`@/assets/icons/map/${mapActionsImage[index]}.png`)" />        
+              <p>{{mapAction.text}}</p>
+            </div>
           </div>
-          <div class="drag-action" @click="handleFunctionCall('save')">
-            <img src="@/assets/icons/map/check-circle.png" />
-            <p>完成變更</p>
-          </div>
-        </div>
-      </div>      
-      <div :class="{'actions-sub-cont': true, 'delete-mode': deleteMode}" v-show="deleteMode">
-        <div class="drag-mode-cont">
-          <div class="drag-action" @click="handleFunctionCall('cancelDelete')">
-            <img src="@/assets/icons/map/close-circle.png" />
-            <p>取消變更</p>
-          </div>
-          <div class="drag-action" @click="handleFunctionCall('saveDelete')">
-            <img src="@/assets/icons/map/check-circle.png" />            
-            <p>完成變更</p>
-          </div>
-        </div>
-      </div>      
-    </div>
+
+          <div class="actions-sub-cont" v-show="dragMode">
+            <div class="drag-mode-cont">
+              <div class="drag-action" @click="handleFunctionCall('clear')">
+                <img src="@/assets/icons/map/close-circle.png" />            
+                <p>取消變更</p>
+              </div>
+              <div class="drag-action" @click="handleFunctionCall('save')">
+                <img src="@/assets/icons/map/check-circle.png" />
+                <p>完成變更</p>
+              </div>
+            </div>
+          </div>      
+          <div :class="{'actions-sub-cont': true, 'delete-mode': deleteMode}" v-show="deleteMode">
+            <div class="drag-mode-cont">
+              <div class="drag-action" @click="handleFunctionCall('cancelDelete')">
+                <img src="@/assets/icons/map/close-circle.png" />
+                <p>取消變更</p>
+              </div>
+              <div class="drag-action" @click="handleFunctionCall('saveDelete')">
+                <img src="@/assets/icons/map/check-circle.png" />            
+                <p>完成變更</p>
+              </div>
+            </div>
+          </div>      
+        </div>      
+      </div>
+    </l-control>
+    <el-dialog v-dialogDragAble :visible.sync="isDraw" @close="back" title="畫面工具"
+          width="30%" center>
+      <el-row type="flex" justify="space-around">
+        <el-col class="text-center" :span="9">
+          <el-button type="success" plain size="medium">
+            <el-row style="margin-bottom: 10px">
+              <el-col :span="24">
+                輸入座標
+              </el-col>                
+            </el-row>
+            
+            <el-row>
+              <el-col :span="24">
+                <img src="@/assets/icons/map/keyboard.png" style="object-fit: scale-down" />
+              </el-col>
+            </el-row>              
+          </el-button>
+        </el-col>
+        <el-col class="text-center" :span="9">
+          <el-button type="success" plain size="medium" @click.stop.prevent="fire(true, functionName)">
+            <el-row style="margin-bottom: 10px">
+              <el-col :span="24">
+                手動繪製
+              </el-col>                
+            </el-row>              
+            <el-row>
+              <el-col :span="24">
+                <img src="@/assets/icons/map/pen-nib.png" style="object-fit: scale-down;" />                
+              </el-col>
+            </el-row>
+          </el-button>            
+        </el-col>              
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { LControl } from 'vue2-leaflet';
 export default {
   name: "mapActionsPanel",
   props: {
@@ -59,6 +98,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isEditing: {
+      type:Boolean,
+      default: false
+    }
   },
   watch: {
     // 如果離開編輯狀態，把activedIndex改為-1
@@ -68,7 +111,9 @@ export default {
       }
     }
   },
-  components: {},
+  components: {
+    LControl
+  },
   computed: {
     mapActionsActivity() {
       return this.mapActions.map((action, index) => 
@@ -87,6 +132,8 @@ export default {
       dragMode: false,
       deleteMode: false,
       activedIndex: -1,
+      isDraw: false,
+      functionName: "",
       mapActions: [
         {
           img: "edit-location",
@@ -160,29 +207,45 @@ export default {
       this.openedMapActions = !this.openedMapActions
       this.dragMode = false
     },
+    back() {
+      console.log("back");
+
+    },
     activateHover (i) {
       this.mapActions[i].img = this.mapActions[i].imgHover
     },
     deactivateHover (i) {
       this.mapActions[i].img = this.mapActions[i].imgUnhover
     },
+    fire(modifying, functionName) {
+      // 關閉draw視窗      
+      this.isDraw = false;
+      // 控制是不是在編輯中
+      this.$emit("update:modifying", modifying);
+      // 事件控制
+      this.$emit("handleFunctionCall", functionName);
+    },
     handleFunctionCall(functionName, index=-1) {       
-      let modifying = false;      
+      let modifying = false;    
+      let fire = true;  
       if(this.activedIndex === -1 && index !== -1){        
         // 開始動作
-        modifying = true;      
-        // 拖曳模式
-        if (functionName==="edit" && this.dragMode === false) {
+        modifying = true; 
+        this.functionName = functionName;                     
+        if(functionName === "edit" && this.dragMode === false) {
+          // 拖曳模式
           this.dragMode = true
-        }
-        // 刪除模式
-        if (functionName==="delete" && this.deleteMode === false) {
+        } else if (functionName === "delete" && this.deleteMode === false) {
+          // 刪除模式
           this.deleteMode = true
-        }
-        // 這兩個不是編輯模式
-        if (functionName==="upload" || functionName==="exit") {
+        } else if (functionName === "upload" || functionName==="exit") {
+          // 這兩個不是編輯模式，modifying設為false
           modifying = false;
           index = -1;
+        } else if (functionName === "drawMarker" || functionName==="drawLine" || functionName === "drawPolygon") {
+          // 要先跳出視窗           
+          fire = false;
+          this.isDraw = true;
         }        
       } else if(this.activedIndex === index && index !== -1){
         // 相同時代表取消
@@ -191,10 +254,12 @@ export default {
         this.dragMode = false;
         this.deleteMode = false;                
         this.$emit("handleFunctionCall", "clear");
-        return
+        fire = false;
+        return;
       } else if(this.activedIndex !== index && index !== -1){ 
         // 如果已經在動作，又點其它功能，就什麼都不做
         modifying = true;      
+        fire = false;
         return;
       } else {
         // 只剩下index === -1時了，代表是完成或取消
@@ -202,17 +267,18 @@ export default {
         this.deleteMode = false;
       }
       this.activedIndex = index;
-      // 控制是不是在編輯中
-      this.$emit("update:modifying", modifying);
-      // 事件控制
-      this.$emit("handleFunctionCall", functionName);
+      if(fire){
+        this.fire(modifying, functionName);        
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-
+  .el-button {
+    width: 177px;
+  }
   .map-actions-cont {
     display: flex;
     align-items: flex-start;
