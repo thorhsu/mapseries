@@ -112,8 +112,10 @@ export default {
   .submit-button {
     background-color: #3FA893;
     border-radius: 35px;
-    width: 200px;
-    height: 40px;
+    width: auto;
+    height: auto;
+    max-width: 200px;
+    max-height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-evenly;

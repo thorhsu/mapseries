@@ -25,10 +25,10 @@
 const axios = require('axios');
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import DisasterAdd from '@/components/disaster/disaster_add.vue'
-import DisasterList from '@/components/disaster/disaster_list.vue'
-import DisasterPopup from '@/components/disaster/disaster_popup.vue'
-import DisasterPopupAddMobile from '@/components/disaster/disaster_popup_add_mobile.vue'
+import DisasterAdd from '@/components/disaster/disaster/add.vue'
+import DisasterList from '@/components/disaster/disaster/list.vue'
+import DisasterPopup from '@/components/disaster/disaster/update.vue'
+import DisasterPopupAddMobile from '@/components/disaster/disaster/add_mobile.vue'
 
 export default {
   name: "Disaster",

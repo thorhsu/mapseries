@@ -1,6 +1,6 @@
 <template>
   <div class="outer">
-    <div class="function-item" v-for="(data, index) of dataList" :key="index" :class="{selected: selected===data.name}" @click="selectedList(data)">
+    <div class="function-item" v-for="(data, index) of formList" :key="index" :class="{selected: selectedForm === data.name}" @click="changeForm(data)">
       <img class="item-img" :src="data.img">
       <p class="item-title" v-html="data.name" />
     </div>
@@ -10,20 +10,16 @@
 <script>
 export default {
   name: "functionMenu",
-  props: ['dataList'],
+  props: ['formList', 'selectedForm'],
   components: {},
   computed: {},
   data() {
-    return {
-      selected: ''
-    };
+    return {};
   },
-  mounted() {
-    this.selected = this.dataList[0].name
-  },
+  mounted() {},
   methods: {
-    selectedList(data){
-      this.selected = data.name
+    changeForm(form_Name){
+      this.$emit('change', form_Name.name)
     }
   }
 };
@@ -46,8 +42,8 @@ export default {
     cursor: pointer;
   }
   .item-img {
-    width: 40%;
-    padding: 5% 10%;
+    width: 25%;
+    padding: 5%;
   }
   .item-title {
     width: 100%;

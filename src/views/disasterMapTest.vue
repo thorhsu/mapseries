@@ -2,7 +2,7 @@
   <div class="test-page">
     <BannerMenu :title="banner.title" :visible="functionMenu.visible" @visible="changeVisible" />
     <div class="function-outer">
-      <FunctionMenu v-if="functionMenu.visible" :dataList="functionMenu.data_list" />
+      <FunctionMenu v-if="functionMenu.visible" :form_list="functionMenu.form_list" />
       <MapSidePanel v-if="device === 'mobile'" @selectHistory="selectHistory"/>
       <div class="function-content">
         <div class="map-cont">
@@ -36,7 +36,7 @@ export default {
       },
       functionMenu: {
         visible: false,
-        data_list: []
+        form_list: []
       },
       windowsWidth: 0,
       device: "",
@@ -90,11 +90,11 @@ export default {
       this.functionMenu.visible = value
     },
     prepare_FunctionList(){
-      this.functionMenu.data_list.push({
+      this.functionMenu.form_list.push({
         name: "事件總覽",
         img: require('@/assets/icons/map/function-event-all.svg')
       })
-      this.functionMenu.data_list.push({
+      this.functionMenu.form_list.push({
         name: "KML檔案總管理",
         img: require('@/assets/icons/map/function-kml-file.svg')
       })
