@@ -63,7 +63,7 @@ export default {
   watch: {
     // 如果離開編輯狀態，把activedIndex改為-1
     modifying (newVal) {
-      if(newVal === false){
+      if(!newVal){
         this.activedIndex = -1;
       }
     }
@@ -166,17 +166,24 @@ export default {
     deactivateHover (i) {
       this.mapActions[i].img = this.mapActions[i].imgUnhover
     },
-    handleFunctionCall(functionName, index=-1) {  
+    handleFunctionCall(functionName, index=-1) {       
       let modifying = false;      
       if(this.activedIndex === -1 && index !== -1){        
         // 開始動作
         modifying = true;      
+        // 拖曳模式
         if (functionName==="edit" && this.dragMode === false) {
           this.dragMode = true
         }
+        // 刪除模式
         if (functionName==="delete" && this.deleteMode === false) {
           this.deleteMode = true
         }
+        // 這兩個不是編輯模式
+        if (functionName==="upload" || functionName==="exit") {
+          modifying = false;
+          index = -1;
+        }        
       } else if(this.activedIndex === index && index !== -1){
         // 相同時代表取消
         this.activedIndex = -1;

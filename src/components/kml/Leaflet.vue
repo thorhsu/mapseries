@@ -114,6 +114,9 @@ export default {
       this.isEditing = false;      
       return {};
     },   
+    modified() {
+      return this.geoJsons.filter(geoJson => geoJson.modified).length
+    }
   },
   watch: {
     
@@ -131,6 +134,7 @@ export default {
       editableLayers: null,
       mapLoaded: false,
       editLayer: null,
+      editingUuid: "",
       deleteLayer: null,
       polylineDrawer:null,
       markerDrawer:null,
@@ -185,13 +189,16 @@ export default {
   },
   methods: { 
     updateGeoJsons(geoJsons){
+      // 把父組件傳來的geoJsons全部update
       this.geoJsons = geoJsons;
       this.$emit('update:geoJsons', geoJsons);
     },
     handleFunctionCall(functionName) {
+      // 控制MapActionPanel傳來的事件
       this[functionName]()
     },
     clear() {
+      // 拖曳模式放棄時
       this.markerVisible = false; 
       this.gjsonVisible = true;
       if(!this.editLayer)
@@ -199,16 +206,21 @@ export default {
       this.editLayer.revertLayers();
       this.editLayer.disable();      
     },
-    save(editing=true) {            
-      var geoJson = JSON.parse(JSON.stringify(this.editableLayers.toGeoJSON()));
-      
+    save(editing=true) {
+      // 確認完成拖曳模式            
+      var geoJson = this.editableLayers.toGeoJSON();
+      // 如果是新畫的圖形沒有uuid，要加回去
+      for(let feature of geoJson.features){
+        feature.properties["uuid"] = this.editingUuid;
+      }
       if(editing && this.editLayer){
         this.editLayer.save();
-        this.editLayer.disable();                
+        this.editLayer.disable();                        
       }
       this.updateGeojson(geoJson);      
     }, 
-    edit() {      
+    edit() {    
+      // 進入拖曳模式  
       this.editLayer = new L.EditToolbar.Edit(this.map, {
           featureGroup: this.editableLayers,
           // 進入edit mode後的樣式
@@ -243,7 +255,8 @@ export default {
       let mutatedGjsons = _.cloneDeep(this.geoJsons);
       mutatedGjsons.forEach( geojson => {
         if(geojson.isEditing){          
-          geojson.geojson = geoJson;         
+          geojson.geojson = geoJson;
+          geojson.modified = true;         
         }
       });
       this.$emit("update:geoJsons", mutatedGjsons);
@@ -264,35 +277,56 @@ export default {
       this.polygonDrawer.enable();
     },
     upload(){
-      const geoJson = this.editableLayers.toGeoJSON();
-      const kmlTxt = tokml(geoJson);
-      console.log(kmlTxt);
+      const completedGeoJson = this.editableLayers.toGeoJSON();
+      const kmlTxt = tokml(completedGeoJson);
+      this.geoJsons.forEach(geoJson => {
+        if(geoJson.isEditing){
+          geoJson.modified = false;
+          geoJson.geojson = completedGeoJson;
+        }
+      });
+      this.updateGeoJsons(this.geoJsons);
+      this.modifying = false;
     },
-    delete() {
-      console.log("delete");
+    delete() {      
       this.deleteLayer = new L.EditToolbar.Delete(this.map, {
           featureGroup: this.editableLayers,          
       });
       this.deleteLayer.enable();
     },
+    // 取消刪除
     cancelDelete() {
       this.deleteLayer.revertLayers();
       this.deleteLayer.disable();
     },
+    // 刪除確認
     saveDelete() {
       this.deleteLayer.save();
       this.deleteLayer.disable();
       this.save(false);
-
     },
-    exit() {
-      console.log("exit");
-      this.isEditing = false;
+    exit() {      
+      let exit = false;
+      if(this.modified && confirm("尚未上傳儲存，確認離開？")){        
+        exit = true;        
+      } else if(!this.modified) {
+        exit = true;
+      }
+      if(exit) {
+        this.editingUuid = "";
+        this.isEditing = false;
+        this.modifying = false;
+        this.geoJsons.forEach(geoJson => {
+          geoJson.modified = false; 
+          geoJson.isEditing = false;
+          geoJson.visible =true;
+        });
+      }
       /* 待完成 */
       // 將遠端的kml拉下來，重新整理
     },
     clearEditableLayers() {
-      // 清空editablelayer
+      // 清空editablelayers
       for(const layer of this.editingLayers) {        
         this.editableLayers.removeLayer(layer);
       }
@@ -308,6 +342,7 @@ export default {
       let mutatedGjsons = _.cloneDeep(this.geoJsons);
       for(let i = 0 ; i < mutatedGjsons.length; i++) {
         if(mutatedGjsons[i].url === layer.url) {
+          this.editingUuid = mutatedGjsons[i].uuid;
           mutatedGjsons[i] = layer
         } else {
           mutatedGjsons[i].isEditing = false;
