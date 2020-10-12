@@ -209,6 +209,7 @@ export default {
     save(editing=true) {
       // 確認完成拖曳模式            
       var geoJson = this.editableLayers.toGeoJSON();
+      // console.log("geojson", JSON.stringify(geoJson.features[2]), );
       // 如果是新畫的圖形沒有uuid，要加回去
       for(let feature of geoJson.features){
         feature.properties["uuid"] = this.editingUuid;

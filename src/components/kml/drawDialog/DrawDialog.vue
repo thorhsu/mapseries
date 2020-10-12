@@ -67,7 +67,10 @@ export default {
       },
       newLongtitude: 0, 
       newLatitude: 0,      
-      emptyGeoJson: {"type": "FeatureCollection", "features": []},
+      emptyGeoJson: {type: "FeatureCollection", features: []},
+      pointGeoJson: {type:"Feature",properties:{},geometry:{type:"Point",coordinates:[]}},
+      lineGeoJson: {type:"Feature",properties:{},geometry:{type:"LineString",coordinates:[[],[]]}},
+      polygonGeoJson: {type:"Feature",properties:{},geometry:{type:"Polygon",coordinates:[[[],[],[],[]]]}},
       epsgCodes: {"經緯度": 4326, "全球座標": 3857, "TWD97": 3826},      
     };
   },
