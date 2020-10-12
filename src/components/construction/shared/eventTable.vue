@@ -128,9 +128,7 @@ export default {
     handleNewFormSubmit() {
       this.$emit("handleNewFormSubmit", this.newEvent)
     },
-    handleSearch() {
-
-    },
+    handleSearch() {},
     togglePopup() {
       this.$emit("togglePopup", true)
     }

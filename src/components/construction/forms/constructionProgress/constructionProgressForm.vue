@@ -1,25 +1,35 @@
 <template>
-  <div class="form-cont">
-    <form class="form">
-      <div class="form-row-cont" v-for="(field, index) in fields" :key="index">
-        <FormField :field="field" @handleInput="handleInput" />
+  <div class="function-content">
+    <div class="content-Style shadow">
+      <div class="form-cont">
+        <form class="form">
+          <div class="form-row-cont" v-for="(field, index) in fields" :key="index">
+            <FormField :field="field" @handleInput="handleInput" />
+          </div>
+        </form>
+        <div class="submit-button" @click="handleNewFormSubmit">
+          <span class="button-text">送出</span>
+        </div>
       </div>
-    </form>
-    <div class="submit-button" @click="handleNewFormSubmit">
-      <span class="button-text">送出</span>
     </div>
+    <div class="content-Style shadow">
+      <FormList :device="device" :disasterList="disasterList" @popup="popup" />
+    </div>
+    <!-- <FormPopup :openedPopup="openedPopup" :fields="fields" @togglePopup="togglePopup" /> -->
   </div>
 </template>
 
 <script>
 /* eslint-disable no-console */
 import FormField from "@/components/construction/shared/formField.vue"
+import FormList from '@/components/construction/forms/constructionProgress/component/list.vue'
 
 export default {
   name: "constructionProgressForm",
   props: ["newEvent"],
   components: {
-    FormField
+    FormField,
+    FormList
   },
   computed: {},
   data() {
@@ -92,10 +102,75 @@ export default {
           inputName: "fileUploads"
         }
       ],
-      inputs: {}
+      inputs: {},
+      device: "",
+      disasterList: [],
+      popup_view: {
+        update: false,
+        add: false
+      }
     };
   },
+  created(){
+    this.prepareList();
+  },
+  mounted() {
+    let vue = this;
+    this.checkDevice()
+    this.$nextTick(() => {
+      window.addEventListener('resize', () => {
+        vue.checkDevice()
+      });
+    });
+  },
   methods: {
+    checkDevice(){
+      this.windowsWidth = window.innerWidth
+      if( this.windowsWidth < 768 ){
+        this.device = "mobile"
+      } else if(this.windowsWidth < 1280){
+        this.device = "tablet"
+      }else{
+        this.device = "desktop"
+      }
+    },
+    async prepareList(){
+      this.disasterList.push({
+        case_name: '雲林淹水整治',
+        commit_Log: 1,
+        created_date: '108/09/10',
+        case_description: '雲林縣淹水整治',
+        project_going: '已清淤，完成50%',
+        Packaged: true
+      })
+      this.disasterList.push({
+        case_name: '雲林淹水整治',
+        commit_Log: 20,
+        created_date: '108/09/10',
+        case_description: '雲林縣淹水整治',
+        project_going: '已清淤，完成50%',
+        Packaged: true
+      })
+      this.disasterList.push({
+        case_name: '雲林淹水整治',
+        commit_Log: 0,
+        created_date: '108/09/10',
+        case_description: '雲林縣淹水整治',
+        project_going: '已清淤，完成50%',
+        Packaged: false
+      })
+      this.disasterList.push({
+        case_name: '雲林淹水整治',
+        commit_Log: 0,
+        created_date: '108/09/10',
+        case_description: '雲林縣淹水整治',
+        project_going: '已清淤，完成50%',
+        Packaged: false
+      })
+    },
+    popup(data){
+      this.popup_view.update = !this.popup_view.update;
+    },
     handleNewFormSubmit() {
       console.log(this.inputs)
       // this.$emit("handleNewFormSubmit", this.inputs)
@@ -119,8 +194,10 @@ export default {
   .submit-button {
     background-color: #3FA893;
     border-radius: 35px;
-    width: 200px;
-    height: 40px;
+    width: auto;
+    height: auto;
+    max-width: 200px;
+    max-height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -129,6 +206,7 @@ export default {
     font-weight: bold;
     cursor: pointer;
     margin: 20px auto 0 auto;
+    padding: 1% 0;
   }
 
   /* Mobile Button */
@@ -181,5 +259,29 @@ export default {
     top: 20px;
     right: 20px;
   }
+  
+  .function-content {
+    width: 100%;
+    height: auto;
+    padding: 35px;
+    position: relative;
+  }
+  .content-Style {
+    border-radius: 20px;
+    margin: 0 0 17.5px;
+  }
 
+  @media (max-width: 767px){
+    .function-content {
+      padding: 5%;
+    }
+    .content-Style {
+      margin: 0;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .function-content {
+      padding: 15px;
+    }
+  }
 </style>
