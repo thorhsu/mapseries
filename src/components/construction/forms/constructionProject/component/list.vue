@@ -31,14 +31,14 @@
         <div class="data-outer">
           <div class="dataList-Text dataList-commit" :class="{'text-align': data.commit_Log === 0}">
             <div class="commit_Log" v-html="data.commit_Log" v-if="data.commit_Log !== 0" />
-            <div v-html="data.construction_name" />
+            <div v-html="data.projectName" />
           </div>
-          <div class="dataList-Text text-align" v-html="data.year" />
-          <div class="dataList-Text text-align" v-html="data.case_officer" />
-          <div class="dataList-Text text-align" v-if="device === 'desktop'" v-html="data.company" />
+          <div class="dataList-Text text-align" v-html="data.constructionYear" />
+          <div class="dataList-Text text-align" v-html="data.assignee" />
+          <div class="dataList-Text text-align" v-if="device === 'desktop'" v-html="data.contractor" />
           <div class="dataList-Text text-align Warranty-text" v-if="device !== 'tablet'" v-html="data.Warranty" />
           <div class="data-function">
-            <img src="@/assets/icons/edit.svg" class="function-img edit-icon" @click="handleEditPopup(data)">
+            <img src="@/assets/icons/edit.svg" class="function-img edit-icon" @click="openEditPopup(data)">
             <img src="@/assets/icons/location.svg" class="function-img location-icon">
             <img src="@/assets/icons/download.svg" class="function-img download-icon" :class="{'notHaveFunction': !data.Packaged}" @click="download(data)">
             <img src="@/assets/icons/delete.svg" class="function-img delete-icon" @click="deleteData(data)">
@@ -70,11 +70,17 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    handleEditPopup(data) {
-      this.$emit('popup', data)
+    openEditPopup(data) {
+      this.$emit('openEditPopup', data)
     },
-    async download(data){},
-    async deleteData(data){}
+    async download(data){
+      // Call Download API
+      console.log('download => ', data)
+    },
+    async deleteData(data){
+      // Call Delete API
+      console.log('delete => ', data)
+    }
   }
 };
 </script>
@@ -84,15 +90,8 @@ export default {
     border-radius: 10px;
     background-color: white;
   }
-  .img-Style {
-    width: 100%;
-    height: auto;
-  }
   .font-Style{
     margin: 0;
-  }
-  .input-img {
-    padding: 0 3%;
   }
   .title {
     width: 100%;
@@ -131,13 +130,6 @@ export default {
     border: 0;
     border-radius: 20px;
   }
-  .button-download{
-    cursor: pointer;
-    background-color: #3FA893;
-    color: white;
-    border-radius: 30px;
-    padding: .5% 2%;
-  }
   .banner-title-outer {
     display: flex;
     padding: 0;
@@ -168,10 +160,6 @@ export default {
     border-bottom: 3px solid #4E8D80;
     padding: .5% 0;
     align-items: center;
-  }
-  .data-time {
-    display: flex;
-    justify-content: space-between;
   }
   .function-img {
     width: 100%;
@@ -234,9 +222,6 @@ export default {
       width: 40%;
       justify-content: flex-start;
     }
-    .button-download {
-      justify-content: center;
-    }
     .dataList-outer {
       padding: 3%;
     }
@@ -272,12 +257,6 @@ export default {
     }
     .dataList-outer {
       padding: 5% 10%;
-    }
-    .data-time {
-      justify-content: flex-start;
-    }
-    .dataList-Text {
-      
     }
     .text-align {
       padding: 0 0 0 calc(30px + 4%);

@@ -1,52 +1,21 @@
 <template>
-  <div class="form-popup-cont" v-show="openedPopup">
-    <div class="popup-background"></div>
-
+  <div class="form-popup-cont">
+    <div class="popup-background" @click="closePopup"/>
     <div class="popup-cont">
-      <img src="@/assets/icons/close.svg" class="close-icon" 
-        @click="togglePopup"/>
-      <form class="form">
-        <div class="form-row-cont">
-          <div class="form-rows">
-            <label for="date">日期區間</label>
-            <input type="date" id="date-start-edit" name="date-start">
-            <span> ~ </span>
-            <input type="date" id="date-end-edit" name="date-end">
-          </div>
-
-          <div class="form-rows">
-            <label for="contractor-edit">發包廠商</label>
-            <input type="text" id="contractor-edit" name="contractor">
-          </div>
-
-          <div class="form-rows">
-            <label for="location-edit">施工地點</label>
-            <img src="@/assets/icons/construction/upload.png" class="upload-icon" />
-            <span>上傳KML</span>
-          </div>
-        </div>
-
-        <div class="form-row-cont">
-          <div class="form-rows">
-            <label for="content-edit" class="
-            content-label">內容說明</label>
-            <textarea id="content-edit" name="content" rows="6"></textarea>
-          </div>
-        </div>
-      </form>
-      <div class="submit-button">
-        <span>+</span>
-        <span class="button-text">新增工程表單</span>
-      </div>
+      <img src="@/assets/icons/close.svg" class="close-icon" @click="closePopup" />
+      <Form :fields="fields" :state="state" @closePopup="closePopup" />
     </div>
   </div>
 </template>
 
 <script>
+import Form from "@/components/construction/shared/form.vue"
 export default {
   name: "formPopup",
-  props: ["events", "openedPopup"],
-  components: {},
+  props: ["fields", 'state'],
+  components: {
+    Form
+  },
   computed: {},
   data() {
     return {
@@ -55,11 +24,8 @@ export default {
   },
   mounted() {},
   methods: {
-    handleNewFormSubmit() {
-      this.$emit("handleNewFormSubmit", this.newEvent)
-    },
-    togglePopup() {
-      this.$emit("togglePopup", false)
+    closePopup() {
+      this.$emit("closePopup")
     },
   }
 };
@@ -69,7 +35,7 @@ export default {
 
   .form-cont {
     background-color: white;
-    padding: 40px 50px;
+    padding: 0;
     border-radius: 10px;
   }
   .form {
@@ -132,6 +98,7 @@ export default {
     position: absolute;
     top: 20px;
     right: 20px;
+    z-index: 5;
   }
   .upload-icon {
     width: 40px;
