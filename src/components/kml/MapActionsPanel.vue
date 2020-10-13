@@ -52,11 +52,13 @@
         </div>      
       </div>
     </l-control>
-    <el-dialog v-dialogDragAble :visible.sync="isDraw" @close="back" title="畫面工具"
+    <DrawDialog :functionName="functionName" :dialogOpen.sync="dialogOpen" :geoJson="geoJson" 
+      @updateGeoJson="updateGeojson" @close="dialogOpen=false"/>
+    <el-dialog v-dialogDragAble :visible.sync="isDraw" @close="back" :title="functionText"
           width="30%" center>
       <el-row type="flex" justify="space-around">
         <el-col class="text-center" :span="9">
-          <el-button type="success" plain size="medium">
+          <el-button type="success" plain size="medium" @click="openDrawDialog">
             <el-row style="margin-bottom: 10px">
               <el-col :span="24">
                 輸入座標
@@ -71,7 +73,7 @@
           </el-button>
         </el-col>
         <el-col class="text-center" :span="9">
-          <el-button type="success" plain size="medium" @click.stop.prevent="fire(true, functionName)">
+          <el-button type="success" plain size="medium" @click.stop.prevent="fire(true)">
             <el-row style="margin-bottom: 10px">
               <el-col :span="24">
                 手動繪製
@@ -91,6 +93,7 @@
 
 <script>
 import { LControl } from 'vue2-leaflet';
+import DrawDialog from '@/components/kml/drawDialog/DrawDialog.vue';
 export default {
   name: "mapActionsPanel",
   props: {
@@ -101,6 +104,10 @@ export default {
     isEditing: {
       type:Boolean,
       default: false
+    },
+    geoJson: {
+      type: Object,
+      default: () => {}
     }
   },
   watch: {
@@ -112,7 +119,8 @@ export default {
     }
   },
   components: {
-    LControl
+    LControl,
+    DrawDialog
   },
   computed: {
     mapActionsActivity() {
@@ -134,6 +142,8 @@ export default {
       activedIndex: -1,
       isDraw: false,
       functionName: "",
+      functionText: "",
+      dialogOpen: false,
       mapActions: [
         {
           img: "edit-location",
@@ -208,8 +218,11 @@ export default {
       this.dragMode = false
     },
     back() {
-      console.log("back");
-
+      // 關閉draw視窗      
+      this.isDraw = false;
+      this.$emit("update:modifying", false);
+      this.functionName = "";
+      this.activedIndex = -1;
     },
     activateHover (i) {
       this.mapActions[i].img = this.mapActions[i].imgHover
@@ -217,13 +230,18 @@ export default {
     deactivateHover (i) {
       this.mapActions[i].img = this.mapActions[i].imgUnhover
     },
-    fire(modifying, functionName) {
+    openDrawDialog() {      
+      this.dialogOpen = true;
+      // 控制是不是在編輯中
+      this.$emit("update:modifying", true);
+    },
+    fire(modifying) {
       // 關閉draw視窗      
       this.isDraw = false;
       // 控制是不是在編輯中
       this.$emit("update:modifying", modifying);
       // 事件控制
-      this.$emit("handleFunctionCall", functionName);
+      this.$emit("handleFunctionCall", this.functionName);
     },
     handleFunctionCall(functionName, index=-1) {       
       let modifying = false;    
@@ -231,7 +249,8 @@ export default {
       if(this.activedIndex === -1 && index !== -1){        
         // 開始動作
         modifying = true; 
-        this.functionName = functionName;                     
+        this.functionName = functionName;   
+        this.functionText = this.mapActions[index]? this.mapActions[index].text : ''               
         if(functionName === "edit" && this.dragMode === false) {
           // 拖曳模式
           this.dragMode = true
@@ -243,7 +262,7 @@ export default {
           modifying = false;
           index = -1;
         } else if (functionName === "drawMarker" || functionName==="drawLine" || functionName === "drawPolygon") {
-          // 要先跳出視窗           
+          // 要先跳出視窗，所以不向上傳遞事件          
           fire = false;
           this.isDraw = true;
         }        
@@ -263,13 +282,19 @@ export default {
         return;
       } else {
         // 只剩下index === -1時了，代表是完成或取消
+        this.functionName = functionName;                     
         this.dragMode = false;
         this.deleteMode = false;
+
       }
       this.activedIndex = index;
       if(fire){
-        this.fire(modifying, functionName);        
+        this.fire(modifying);        
       }
+    },
+    updateGeojson(geoJson) {
+      this.dialogOpen = false;
+      this.$emit("update:geoJson", geoJson);
     }
   }
 };

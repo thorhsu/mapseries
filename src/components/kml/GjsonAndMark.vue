@@ -5,7 +5,7 @@
           :lat-lng="coordinate" :key="'marker_' + index" :options="{'zIndexOffset': 1000, 'opacity': 1.0, 'riseOnHover': true}">          
           <l-popup  :options="options">
             <div style="cursor:pointer" @click="showLatLng(coordinate)" >
-              校正座標 {{index}}
+              校正座標 
             </div>
           </l-popup>
       </l-marker>   

@@ -8,7 +8,9 @@
       :options="{zoomControl: false}"
     >     
       
-      <MapActionsPanel @handleFunctionCall="handleFunctionCall" :modifying.sync="modifying" :isEditing.sync="isEditing" />
+      <MapActionsPanel @handleFunctionCall="handleFunctionCall" 
+        :modifying.sync="modifying" :isEditing.sync="isEditing" 
+        :geoJson.sync="editingGeoJson"  />
       
       <l-control position="topright">
 
@@ -101,18 +103,29 @@ export default {
     },
   },
   computed: { 
-    editingGeoJson() {
-      const editingGeojson = this.geoJsons.filter(geojson => {
-        return geojson.isEditing;
-      });
-      if(editingGeojson && editingGeojson.length > 0) {  
+    editingGeoJson: {
+      get(){ 
+        const editingGeojson = this.geoJsons.filter(geojson => {
+          return geojson.isEditing;
+        });
+        if(editingGeojson && editingGeojson.length > 0) {  
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.isEditing = true;      
+          return editingGeojson[0].geojson;
+        }
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.isEditing = true;      
-        return editingGeojson[0].geojson;
+        this.isEditing = false;      
+        return {};
+      },
+      set(geojson) {
+        this.geoJsons = this.geoJsons.map(geoJson => {
+          if(geoJson.isEditing){
+            geoJson.geojson = geojson;
+          }
+          return geoJson;
+        });
+        this.$emit("update:geoJsons", this.geoJsons);
       }
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.isEditing = false;      
-      return {};
     },   
     modified() {
       return this.geoJsons.filter(geoJson => geoJson.modified).length
@@ -207,6 +220,7 @@ export default {
       this.editLayer.disable();      
     },
     save(editing=true) {
+      console.log("save");
       // 確認完成拖曳模式            
       var geoJson = this.editableLayers.toGeoJSON();
       // console.log("geojson", JSON.stringify(geoJson.features[2]), );
