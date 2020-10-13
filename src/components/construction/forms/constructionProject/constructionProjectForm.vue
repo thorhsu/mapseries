@@ -26,7 +26,7 @@ import FormList from '@/components/construction/forms/constructionProject/compon
 
 export default {
   name: "constructionProjectForm",
-  props: ["newEvent"],
+  props: [],
   components: {
     FormField,
     FormList
@@ -222,7 +222,6 @@ export default {
     },
     handleNewFormSubmit() {
       console.log(this.inputs)
-      // this.$emit("handleNewFormSubmit", this.inputs)
     },
     handleMobilePopup() {
       this.mobilePopup = !this.mobilePopup

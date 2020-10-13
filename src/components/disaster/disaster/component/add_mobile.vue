@@ -4,28 +4,26 @@
       <div class="popup-background" @click="closePopup" />
       <div class="form-cont-edit">
         <img src="@/assets/icons/close.svg" class="close-icon" @click="closePopup"/>
-        <div class="inner">
-          <div class="item-outer">
-            <div class="outer-flex">
-              <p class="font-Style item-title">日期區間</p>
-              <div class="function-outer">
-                <input class="input-box" type="date" v-model="time.start" required>
-                ～
-                <input class="input-box" type="date" v-model="time.end" required>
-              </div>
-            </div>
-            <div class="outer-flex">
-              <p class="font-Style item-title">事件名稱</p>
-              <div class="function-outer">
-                <input class="input-box" type="text" v-model="disasterName" required>
-              </div>
+        <div class="item-outer">
+          <div class="outer-flex">
+            <p class="font-Style item-title">日期區間</p>
+            <div class="function-outer">
+              <input class="input-box" type="date" v-model="time.start" required>
+              ～
+              <input class="input-box" type="date" v-model="time.end" required>
             </div>
           </div>
-          <div class="button-outer">
-            <div class="button-Add shadow" @click="disaster_update">
-              <img class="button-img" src="@/assets/icons/disaster/plus.svg">
-              <p class="font-Style">更新事件</p>
+          <div class="outer-flex">
+            <p class="font-Style item-title">事件名稱</p>
+            <div class="function-outer">
+              <input class="input-box" type="text" v-model="disasterName" required>
             </div>
+          </div>
+        </div>
+        <div class="button-outer">
+          <div class="button-Add shadow" @click="disaster_add">
+            <img class="button-img" src="@/assets/icons/disaster/plus.svg">
+            <p class="font-Style">新增事件</p>
           </div>
         </div>
       </div>
@@ -37,7 +35,7 @@
 const axios = require('axios');
 export default {
   name: "disaster_popup",
-  props: ['editData'],
+  props: [],
   components: {},
   computed: {},
   data() {
@@ -54,10 +52,9 @@ export default {
     closePopup() {
       this.$emit('closePopup')
     },
-    async disaster_update(){
+    async disaster_add(){
       try {
-        let Id = this.editData.Id
-        let response = await axios.put(`https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${Id}`, {
+        let response = await axios.post('https://yliflood.yunlin.gov.tw/v2/api/FloodEvent', {
           Name: this.disasterName,
           Start: new Date(this.time.start).toISOString(),
           End: new Date(this.time.end).toISOString()
@@ -77,11 +74,6 @@ export default {
     background-color: white;
     display: flex;
   }
-  .inner{
-    border-radius: 10px;
-    background-color: white;
-    display: flex;
-  }
   .img-Style {
     width: 100%;
     height: auto;
@@ -91,7 +83,7 @@ export default {
   }
   .item-title {
     width: 100%;
-    text-align: center;
+    text-align: start;
     flex: 1;
   }
   .item-outer {
@@ -100,12 +92,12 @@ export default {
     padding: 20px 0;
   }
   .function-outer {
-    display: flex;
+    display: block;
     align-items: center;
     flex: 2;
   }
   .outer-flex {
-    display: flex;
+    display: block;
     align-items: center;
     margin: 3% 0;
   }
@@ -117,7 +109,7 @@ export default {
     position: relative;
   }
   .button-Add {
-    margin: 0 10% 3%;
+    margin: 0 25% 3%;
     position: absolute;
     right: 0;
     bottom: 0;
@@ -128,6 +120,7 @@ export default {
     border-radius: 30px;
     display: flex;
     align-items: center;
+    justify-content: center;
   }
   .button-img {
     padding-right: 30px;
@@ -136,9 +129,6 @@ export default {
     .outer {
       display: block;
       padding: 5%;
-    }
-    .inner {
-      display: block;
     }
     .item-outer {
       padding: 0;
@@ -160,9 +150,6 @@ export default {
       display: block;
       padding: 1% 5%;
       background-color: white;
-    }
-    .inner {
-      display: block;
     }
     .button-Add {
       position: relative;
@@ -200,5 +187,4 @@ export default {
     top: 20px;
     right: 20px;
   }
-
 </style>

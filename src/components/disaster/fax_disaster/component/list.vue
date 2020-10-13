@@ -1,6 +1,6 @@
 <template>
   <div class="outer">
-    <p class="title" v-if="device !== 'mobile'">災情事件列表</p>
+    <p class="title" v-if="device !== 'mobile'">傳真通報列表</p>
     <div class="function-outer">
       <div v-if="device === 'mobile'" class="paging-cont function-item">
         <el-pagination :page-size="10" :pager-count="5" layout="prev, pager, next" :total="50" :hide-on-single-page="true" />
@@ -17,20 +17,29 @@
         <el-input v-model="keyWord" placeholder="輸入關鍵字" class="key-word-Style" />
         <img style="margin-right: 5%;" src="@/assets/icons/disaster/search_icon.svg">
       </div>
-      <div class="function-item button-download" v-if="device !== 'mobile'">下載所有資料</div>
     </div>
     <div class="dataList-outer">
+      <div class="banner-title-outer" v-if="device === 'desktop'">
+        <div class="banner-title">(對方)通報單編號</div>
+        <div class="banner-title">發通報單單位</div>
+        <div class="banner-title text-center">內容大要</div>
+        <div class="banner-title text-center">(本府)流水號</div>
+        <div class="banner-title text-center">備註(受通報單位、承辦人員)</div>
+        <div class="banner-title" />
+      </div>
       <div v-for="(data, index) of disasterList" :key="index" class="data-outer">
-        <div class="data-title" v-html="data.Name" />
-        <div class="data-time">
-          <div v-html="data.Start" />
-          <p class="font-Style">～</p>
-          <div v-html="data.End" />
+        <div class="dataList-Text dataList-commit">
+          <div class="commit_Log" v-html="data.commit_Log" v-if="data.commit_Log !== 0" />
+          <div v-html="data.disaster_number" />
         </div>
+        <span class="dataList-Text" v-html="data.senderGroup" />
+        <span class="dataList-Text dataList-content" v-html="data.content" v-if="device === 'desktop'" />
+        <span class="dataList-Text text-center" v-html="data.government_number" v-if="device === 'desktop'" />
+        <span class="dataList-Text text-center" v-html="data.remark" v-if="device === 'desktop'" />
         <div class="data-function">
-          <img src="@/assets/icons/edit.svg" class="function-img" style="background-color: #5d9cec;" @click="handleEditPopup(data)">
+          <img src="@/assets/icons/edit.svg" class="function-img" style="background-color: #5d9cec;" @click="openEditPopup(data)">
           <img src="@/assets/icons/location.svg" class="function-img" style="background-color: #5d9cec;">
-          <img src="@/assets/icons/download.svg" class="function-img" style="background-color: #5fbeaa;" v-if='data.Packaged' @click="download(data)">
+          <img src="@/assets/icons/download.svg" class="function-img" style="background-color: #5fbeaa;" @click="download(data)">
           <img src="@/assets/icons/delete.svg" class="function-img" style="background-color: #f05050;" @click="deleteData(data)">
         </div>
       </div>
@@ -52,38 +61,17 @@ export default {
     return {
       data_count: 10,
       keyWord: null,
-      editPopup: false,
+      editPopup: false
     };
   },
   created() {},
   mounted() {},
   methods: {
-    handleEditPopup(data) {
-      this.$emit('popup', data)
+    openEditPopup(data) {
+      this.$emit('openEditPopup', data)
     },
-    async download(data){
-      try {
-        let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvents/${data.Id}/File`
-        let response = await axios.get(endpoint,{ responseType: 'blob' })
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `${data.Name}.zip`);
-        document.body.appendChild(link);
-        link.click();
-      } catch (error) {
-        alert(error)
-      }
-    },
-    async deleteData(data){
-      try {
-        let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${data.Id}`
-        let response = await axios.delete(endpoint)
-        this.$emit('update_List') 
-      } catch (error) {
-        alert(error)
-      }
-    }
+    async download(data){},
+    async deleteData(data){}
   }
 };
 </script>
@@ -109,6 +97,7 @@ export default {
     color: #247262;
     padding: 30px 70px;
     margin: 0;
+    font-weight: bold;
   }
   .function-outer{
     width: 100%;
@@ -146,19 +135,32 @@ export default {
     border-radius: 30px;
     padding: .5% 2%;
   }
+  .banner-title-outer {
+    display: flex;
+    padding: 0;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 3px solid #4E8D80;
+  }
+  .banner-title {
+    flex: 1;
+    padding: 1% 0;
+  }
   .dataList-outer {
-    padding: 3% 12%;
+    padding: 0 10% 3%;
   }
   .data-function {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
+    flex: 1;
   }
   .data-outer {
     width: 100%;
     height: auto;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     border-bottom: 3px solid #4E8D80;
     padding: .5% 0;
     align-items: center;
@@ -169,10 +171,34 @@ export default {
   }
   .function-img {
     width: 100%;
-    margin: 5% 5% 0;
+    margin: 0 2%;
     cursor: pointer;
     border-radius: 50%;
     padding: 3%;
+  }
+  .dataList-Text {
+    flex: 1;
+    text-align: start;
+  }
+  .dataList-content {
+    text-overflow: ellipsis;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .dataList-commit {
+    display: flex;
+    align-items: center;
+  }
+  .commit_Log {
+    color: white;
+    margin-right: 2%;
+    border-radius: 50%;
+    background-color: rgb(93, 156, 236);
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
   }
   @media (min-width: 768px) and (max-width: 1280px){
     .title {
@@ -194,7 +220,11 @@ export default {
       padding: 3%;
     }
     .function-img {
-      margin: 2%;
+      width: auto;
+      padding: 2%;
+    }
+    .paging-cont {
+      justify-content: flex-end;
     }
   }
 
@@ -210,13 +240,28 @@ export default {
     }
     .data-outer {
       display: block;
-      padding: 5% 0;
+      padding: 5% 0 0;
     }
     .dataList-outer {
       padding: 5% 10%;
     }
     .data-time {
       justify-content: flex-start;
+    }
+    .function-img {
+      width: auto;
+      padding: 2%;
+      margin: 2%;
+    }
+    .dataList-commit {
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+    .commit_Log {
+      margin-left: 2%;
+    }
+    .data-function {
+      margin-top: 5%;
     }
   }
 

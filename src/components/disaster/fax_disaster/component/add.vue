@@ -62,7 +62,7 @@
 <script>
 export default {
   name: "fax_disaster_add",
-  props: [],
+  props: ['editData', 'state'],
   components: {},
   computed: {},
   data() {
@@ -87,16 +87,36 @@ export default {
       }
     };
   },
-  created(){
-    this.prepareTime()
+  created(){},
+  mounted() {
+    this.prepareData()
   },
-  mounted() {},
   methods: {
-    prepareTime(){
+    prepareData(){
+      console.log('state => ', this.state)
+      if(this.state === 'add'){
+        // let now = new Date();
+        // this.form_data.time = now.toISOString().split('T')[0] + 'T' + now.toTimeString().split(' ')[0]
+      }else{
+        this.form_data.num = this.editData.disaster_number
+        this.form_data.sender = this.editData.senderGroup
+        this.form_data.content = this.editData.content
+        this.form_data.recipient = this.editData.remark
+        this.form_data.cc = this.editData.remark
+        this.form_data.toGroup = this.editData.remark
+        this.form_data.toName = this.editData.remark
+      }
       let now = new Date();
       this.form_data.time = now.toISOString().split('T')[0] + 'T' + now.toTimeString().split(' ')[0]
     },
     submitClick(){
+      if(this.state === 'add'){
+        // call add API
+        console.log('add API')
+      }else if(this.state === 'edit'){
+        // call edit API
+        console.log('edit API')
+      }
       console.log(this.form_data)
     }
   }
@@ -284,5 +304,8 @@ export default {
     .submit-button {
       width: 40vw;
     }
+  }
+  textarea, input{
+    border-radius: 0;
   }
 </style>

@@ -2,43 +2,32 @@
   <div class="disaster-outer">
     <BannerMenu :title="banner.title" :visible="functionMenu.visible" @visible="changeVisible" />
     <div class="function-outer">
-      <FunctionMenu v-if="functionMenu.visible" :dataList="functionMenu.data_list" />
-      <div class="function-content">
-        <div class="content-Style shadow">
-          <DisasterAdd v-if="device !== 'mobile'" @update_List="update_List" />
-        </div>
-        <div class="content-Style shadow">
-          <DisasterList :device="device" :disasterList="disasterList" @popup="popup" @update_List="update_List"/>
-        </div>
-        <DisasterPopup v-if="editPopup" :editData="editData" @update_List="update_List" @closePopup="closePopup" />
-        <DisasterPopupAddMobile v-if="mobile_addPopup" @update_List="update_List" @closePopup="closePopup" />
-      </div>
+      <FunctionMenu v-if="functionMenu.visible" :formList="functionMenu.form_list" :selectedForm="functionMenu.selected" @change="changeForm" />
+      <Disaster :disasterList="disasterList" :mobile_add_popup_visible="popup_view.mobile" @closePopup="closePopup" @update_List="update_List" v-if="functionMenu.selected === '事件列表'"/>
+      <FaxDisaster :mobile_add_popup_visible="popup_view.mobile" @closePopup="closePopup" v-else-if="functionMenu.selected === '傳真通報'" />
     </div>
-    <div v-if="device === 'mobile'" class="mobile-add" @click="mobile_addPopup = !mobile_addPopup">
+    <div v-if="device === 'mobile'" class="mobile-add" @click="popup_view.mobile = !popup_view.mobile">
       <img class="mobile-button" src="@/assets/icons/disaster/plus.svg">
     </div>
   </div>
 </template>
 
 <script>
-/* eslint-disable no-console */
-const axios = require('axios');
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import DisasterAdd from '@/components/disaster/disaster/add.vue'
-import DisasterList from '@/components/disaster/disaster/list.vue'
-import DisasterPopup from '@/components/disaster/disaster/update.vue'
-import DisasterPopupAddMobile from '@/components/disaster/disaster/add_mobile.vue'
+// 事件列表
+import Disaster from '@/components/disaster/disaster/disaster.vue'
+// 傳真通報
+import FaxDisaster from '@/components/disaster/fax_disaster/fax_disaster.vue'
 
+const axios = require('axios');
 export default {
-  name: "Disaster",
+  name: "Fax_Disaster",
   components: {
     BannerMenu,
     FunctionMenu,
-    DisasterAdd,
-    DisasterList,
-    DisasterPopup,
-    DisasterPopupAddMobile
+    Disaster,
+    FaxDisaster
   },
   computed: {},
   data() {
@@ -48,22 +37,24 @@ export default {
       },
       functionMenu: {
         visible: false,
-        data_list: []
+        form_list: [],
+        selected: '事件列表',
+        waitLoad: false,
       },
-      editPopup: false,
-      mobile_addPopup: false,
+      popup_view: {
+        update: false,
+        mobile: false
+      },
       windowsWidth: 0,
       device: "",
-      disasterList: [],
-      editData: null
+      disasterList: []
     };
   },
-  created(){
-    this.prepareList()
+  created() {
+    this.prepare_FormList();
+    this.prepareList();
   },
   mounted() {
-    this.prepare_FunctionList();
-    
     let vue = this;
     this.checkDevice()
     this.$nextTick(() => {
@@ -85,13 +76,13 @@ export default {
         this.device = "desktop"
       }
     },
-    prepare_FunctionList(){
-      this.functionMenu.data_list.push({
+    prepare_FormList(){
+      this.functionMenu.form_list.push({
         name: "事件列表",
-        img: require('@/assets/icons/disaster/event_icon1.svg')
+        img: require('@/assets/icons/disaster/event_icon1.svg'),
       })
-      this.functionMenu.data_list.push({
-        name: "傳真填報",
+      this.functionMenu.form_list.push({
+        name: "傳真通報",
         img: require('@/assets/icons/disaster/fax/function-menu.svg')
       })
     },
@@ -99,28 +90,42 @@ export default {
       this.functionMenu.visible = value
     },
     popup(data){
-      this.editPopup = !this.editPopup;
-      this.editData = data;
+      this.popup_view.update = !this.popup_view.update;
     },
     closePopup(){
-      this.editPopup = false;
-      this.mobile_addPopup = false;
+      this.popup_view.update = false;
+      this.popup_view.mobile = false;
+    },
+    changeForm(form_Name){
+      if(this.functionMenu.waitLoad){
+        alert('正在存取Data，停止切換表單功能')
+        return 0;
+      }
+      this.functionMenu.selected = form_Name;
+      this.prepareList()
     },
     async prepareList(){
-      this.disasterList = []
-      try {
-        let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
-        console.log(response.data)
-        for(let data of response.data){
-          data.Start = data.Start.split('T')[0].replaceAll('-', '/')
-          data.End = data.End.split('T')[0].replaceAll('-', '/')
-          this.disasterList.push(data)
-        }
-        this.closePopup()
-      } catch (error) {
-        alert(error)
+      if(this.functionMenu.waitLoad){
+        return 0;
       }
-      
+      this.disasterList = []
+      this.functionMenu.waitLoad = true
+      if(this.functionMenu.selected === '事件列表'){
+        try {
+          let response = await axios.get('https://yliflood.yunlin.gov.tw/v2/api/FloodEvents')
+          for(let data of response.data){
+            data.time = {
+              Start: data.Start.split('T')[0].replaceAll('-', '/'),
+              End: data.End.split('T')[0].replaceAll('-', '/')
+            }
+            this.disasterList.push(data)
+          }
+          this.closePopup()
+        } catch (error) {
+          alert(error)
+        }
+      }
+      this.functionMenu.waitLoad = false
     },
     update_List(){
       this.prepareList();

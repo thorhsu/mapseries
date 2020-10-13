@@ -3,50 +3,28 @@
     <div class="popup-background" @click="closePopup" />
     <div class="form-cont-edit">
       <img src="@/assets/icons/close.svg" class="close-icon" @click="closePopup"/>
-      <FaxDisasterAdd @updateFaxDisaster="updateFaxDisaster" />
+      <FaxDisasterAdd :state="state" :editData="editData" />
     </div>
   </div>
 </template>
 
 <script>
-import FaxDisasterAdd from '@/components/disaster/fax_disaster/add.vue'
+import FaxDisasterAdd from '@/components/disaster/fax_disaster/component/add.vue'
 const axios = require('axios');
 export default {
   name: "disaster_popup",
-  props: ['editData'],
+  props: ['editData', 'state'],
   components: {
     FaxDisasterAdd
   },
   computed: {},
   data() {
-    return {
-      title: '傳真通報',
-      form_info: [
-        '雲林縣政府水利署',
-        '地址：雲林縣斗六市雲林路二段 515 號',
-        '電話：05-5522309，5522310',
-        '傳真：05-5340546'
-      ],
-      form_data: {
-        num: '',
-        recipient: '',
-        cc: '',
-        sender: '',
-        time: '',
-        content: '',
-        toGroup: '',
-        toName: '',
-        toDate: ''
-      }
-    };
+    return {};
   },
   mounted() {},
   methods: {
     closePopup() {
       this.$emit('closePopup')
-    },
-    async updateFaxDisaster(){
-
     },
   }
 };
@@ -68,6 +46,7 @@ export default {
     left: 0;
     right: 0;
     opacity: 0.7;
+    height: calc(100% + 4vw);
   }
   .form-cont-edit {
     background-color: white;
