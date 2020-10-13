@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="button-outer">
-          <div class="button-Add shadow" @click="disaster_add">
+          <div class="button-Add shadow" @click="disaster_update">
             <img class="button-img" src="@/assets/icons/disaster/plus.svg">
             <p class="font-Style">新增事件</p>
           </div>
@@ -35,7 +35,7 @@
 const axios = require('axios');
 export default {
   name: "disaster_popup",
-  props: [],
+  props: ['editData'],
   components: {},
   computed: {},
   data() {
@@ -47,14 +47,22 @@ export default {
       disasterName: ''
     };
   },
-  mounted() {},
+  mounted() {
+    this.prepareData();
+  },
   methods: {
     closePopup() {
       this.$emit('closePopup')
     },
-    async disaster_add(){
+    prepareData(){
+      this.time.start = this.editData.Start.split('T')[0]
+      this.time.end = this.editData.End.split('T')[0]
+      this.disasterName = this.editData.Name
+    },
+    async disaster_update(){
       try {
-        let response = await axios.post('https://yliflood.yunlin.gov.tw/v2/api/FloodEvent', {
+        let Id = this.editData.Id
+        let response = await axios.put(`https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${Id}`, {
           Name: this.disasterName,
           Start: new Date(this.time.start).toISOString(),
           End: new Date(this.time.end).toISOString()
@@ -187,5 +195,4 @@ export default {
     top: 20px;
     right: 20px;
   }
-
 </style>

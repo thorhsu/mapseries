@@ -19,25 +19,13 @@
       </div>
     </div>
     <div class="dataList-outer">
-      <div class="banner-title-outer" v-if="device === 'desktop'">
-        <div class="banner-title">(對方)通報單編號</div>
-        <div class="banner-title">發通報單單位</div>
-        <div class="banner-title text-center">內容大要</div>
-        <div class="banner-title text-center">(本府)流水號</div>
-        <div class="banner-title text-center">備註(受通報單位、承辦人員)</div>
-        <div class="banner-title" />
-      </div>
       <div v-for="(data, index) of disasterList" :key="index" class="data-outer">
-        <div class="dataList-Text dataList-commit">
-          <div class="commit_Log" v-html="data.commit_Log" v-if="data.commit_Log !== 0" />
-          <div v-html="data.disaster_number" />
+        <div class="dataList-Text" v-html="data.Name" />
+        <div class="dataList-Text">
+          <div v-html="data.time.Start + ' ～ ' + data.time.End" />
         </div>
-        <span class="dataList-Text" v-html="data.senderGroup" />
-        <span class="dataList-Text dataList-content" v-html="data.content" v-if="device === 'desktop'" />
-        <span class="dataList-Text text-center" v-html="data.government_number" v-if="device === 'desktop'" />
-        <span class="dataList-Text text-center" v-html="data.remark" v-if="device === 'desktop'" />
         <div class="data-function">
-          <img src="@/assets/icons/edit.svg" class="function-img" style="background-color: #5d9cec;" @click="handleEditPopup(data)">
+          <img src="@/assets/icons/edit.svg" class="function-img" style="background-color: #5d9cec;" @click="openEditPopup(data)">
           <img src="@/assets/icons/location.svg" class="function-img" style="background-color: #5d9cec;">
           <img src="@/assets/icons/download.svg" class="function-img" style="background-color: #5fbeaa;" @click="download(data)">
           <img src="@/assets/icons/delete.svg" class="function-img" style="background-color: #f05050;" @click="deleteData(data)">
@@ -67,11 +55,32 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    handleEditPopup(data) {
-      this.$emit('popup', data)
+    openEditPopup(data) {
+      this.$emit('openEditPopup', data)
     },
-    async download(data){},
-    async deleteData(data){}
+    async download(data){
+      try {
+        let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvents/${data.Id}/File`
+        let response = await axios.get(endpoint,{ responseType: 'blob' })
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${data.Name}.zip`);
+        document.body.appendChild(link);
+        link.click();
+      } catch (error) {
+        alert(error)
+      }
+    },
+    async deleteData(data){
+      try {
+        let endpoint = `https://yliflood.yunlin.gov.tw/v2/api/FloodEvent/${data.Id}`
+        let response = await axios.delete(endpoint)
+        this.$emit('update_List') 
+      } catch (error) {
+        alert(error)
+      }
+    }
   }
 };
 </script>
@@ -179,7 +188,7 @@ export default {
   }
   .dataList-Text {
     flex: 1;
-    text-align: start;
+    text-align: center;
   }
   .dataList-content {
     text-overflow: ellipsis;
@@ -263,6 +272,9 @@ export default {
     }
     .data-function {
       margin-top: 5%;
+    }
+    .dataList-Text {
+      text-align: start;
     }
   }
 

@@ -5,15 +5,15 @@
       <FunctionMenu v-if="functionMenu.visible" :formList="functionMenu.form_list" :selectedForm="functionMenu.selected" @change="changeForm" />
 
       <!-- 工程案件詳細資訊 -->
-      <ConstructionProjectForm v-if="functionMenu.selected === '工程案件詳細資訊'" @handleNewFormSubmit="handleNewFormSubmit" />
+      <ConstructionProjectForm v-if="functionMenu.selected === '工程案件詳細資訊'" />
       <!-- 疏濬案件進度控管 -->
-      <DredgingProgressForm v-else-if="functionMenu.selected === '疏濬案件進度控管'" @handleNewFormSubmit="handleNewFormSubmit" />
+      <DredgingProgressForm v-else-if="functionMenu.selected === '疏濬案件進度控管'" />
       <!-- 業務進度控管 -->
-      <BusinessProgressForm v-else-if="functionMenu.selected === '業務進度控管'" @handleNewFormSubmit="handleNewFormSubmit" />
+      <BusinessProgressForm v-else-if="functionMenu.selected === '業務進度控管'" />
       <!-- 工作報告進度控管 -->
-      <ConstructionProgressForm v-else-if="functionMenu.selected === '工作報告進度控管'" @handleNewFormSubmit="handleNewFormSubmit" />
+      <ConstructionProgressForm v-else-if="functionMenu.selected === '工作報告進度控管'" />
       <!-- 年度標案進度控管 -->
-      <AnnualProjectProgressForm v-if="functionMenu.selected === '年度標案進度控管'" @handleNewFormSubmit="handleNewFormSubmit" />
+      <AnnualProjectProgressForm v-if="functionMenu.selected === '年度標案進度控管'" />
     </div>   
   </div>
 </template>
@@ -53,7 +53,7 @@ export default {
       functionMenu: {
         visible: false,
         form_list: [],
-        selected: '年度標案進度控管',
+        selected: '工程案件詳細資訊',
         waitLoad: false
       },
       events: [
@@ -66,14 +66,6 @@ export default {
         },
       ],
       openedPopup: false,
-      newEvent: {
-        time: {
-          start: "",
-          end: ""
-        },
-        eventName: "",
-        eventData: ""
-      }
     };
   },
   mounted() {
@@ -107,17 +99,6 @@ export default {
     },
     togglePopup(value) {
       this.openedPopup = value
-    },
-    handleNewFormSubmit(newevent) {
-      // this.events.push(newevent)
-      // this.newEvent = {
-      //   time: {
-      //     start: "",
-      //     end: ""
-      //   },
-      //   eventName: "",
-      //   eventData: ""
-      // }
     },
     changeForm(form_Name){
       if(this.functionMenu.waitLoad){

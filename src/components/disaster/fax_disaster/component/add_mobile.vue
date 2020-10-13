@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import FaxDisasterAdd from '@/components/disaster/fax_disaster/add.vue'
+import FaxDisasterAdd from '@/components/disaster/fax_disaster/component/add.vue'
 const axios = require('axios');
 export default {
   name: "disaster_popup",
