@@ -19,7 +19,7 @@
         :key="`rainfall_${index}`" :url="layer.url" :bounds="layer.bounds" />      
        
       <l-control position="topleft" >        
-        <MapSidePanel v-if="device !== 'mobile' && visible" :map="map" class="map-cont-desktop" @selectHistory="selectHistory"/>
+        <MapSidePanel v-if="device !== 'mobile'" :map="map" class="map-cont-desktop" @selectHistory="selectHistory"/>
       </l-control>
       <l-control position="topright">
         <div class="data-closed-cont" @click="toggleLayerPanel" v-show="!layerPanelExpanded">

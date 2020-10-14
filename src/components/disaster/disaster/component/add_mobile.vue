@@ -71,12 +71,9 @@ export default {
 <style scoped>
   .outer{
     border-radius: 10px;
+    display: block;
+    padding: 1% 5%;
     background-color: white;
-    display: flex;
-  }
-  .img-Style {
-    width: 100%;
-    height: auto;
   }
   .font-Style {
     margin: 0;
@@ -94,7 +91,7 @@ export default {
   .function-outer {
     display: block;
     align-items: center;
-    flex: 2;
+    flex: 3;
   }
   .outer-flex {
     display: block;
@@ -110,9 +107,7 @@ export default {
   }
   .button-Add {
     margin: 0 25% 3%;
-    position: absolute;
-    right: 0;
-    bottom: 0;
+    position: relative;
     cursor: pointer;
     background-color: #3FA893;
     color: white;
@@ -124,39 +119,6 @@ export default {
   }
   .button-img {
     padding-right: 30px;
-  }
-  @media (min-width: 768px) and (max-width: 1280px){
-    .outer {
-      display: block;
-      padding: 5%;
-    }
-    .item-outer {
-      padding: 0;
-    }
-    .function-outer {
-      flex: 4;
-    }
-    .button-outer {
-      padding: 0 35% 1%;
-    }
-    .button-Add {
-      position: relative;
-      margin: 0;
-    }
-  }
-
-  @media (max-width: 767px){
-    .outer {
-      display: block;
-      padding: 1% 5%;
-      background-color: white;
-    }
-    .button-Add {
-      position: relative;
-    }
-    .function-outer {
-      flex: 3;
-    }
   }
 
   /* Edit Popup */

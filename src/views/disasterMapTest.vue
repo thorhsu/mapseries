@@ -2,7 +2,7 @@
   <div class="test-page">
     <BannerMenu :title="banner.title" :visible="functionMenu.visible" @visible="changeVisible" />
     <div class="function-outer">
-      <FunctionMenu v-if="functionMenu.visible" :form_list="functionMenu.form_list" />
+      <FunctionMenu v-if="functionMenu.visible" :formList="functionMenu.form_list" :selectedForm="functionMenu.selected" @change="changeForm" />
       <MapSidePanel v-if="device === 'mobile'" @selectHistory="selectHistory"/>
       <div class="function-content">
         <div class="map-cont">
@@ -36,7 +36,9 @@ export default {
       },
       functionMenu: {
         visible: false,
-        form_list: []
+        form_list: [],
+        selected: '事件總覽',
+        waitLoad: false
       },
       windowsWidth: 0,
       device: "",
@@ -101,7 +103,15 @@ export default {
     },
     selectHistory(data){
       this.selectedHistory = data
-    }
+    },
+    changeForm(form_Name){
+      if(this.functionMenu.waitLoad){
+        alert('正在存取Data，停止切換表單功能')
+        return 0;
+      }
+      this.functionMenu.selected = form_Name;
+      // this.prepareList()
+    },
   }
 };
 </script>

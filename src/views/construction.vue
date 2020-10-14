@@ -22,8 +22,6 @@
 /* eslint-disable no-console */
 import BannerMenu from '@/components/disaster/banner.vue'
 import FunctionMenu from '@/components/disaster/functionMenu.vue'
-import EventTable from '@/components/construction/shared/eventTable.vue'
-import FormPopup from '@/components/construction/shared/formPopup.vue'
 
 import ConstructionProjectForm from '@/components/construction/forms/constructionProject/constructionProjectForm.vue'
 import DredgingProgressForm from '@/components/construction/forms/dredgingProgress/dredgingProgressForm.vue'
@@ -37,8 +35,6 @@ export default {
   components: {
     BannerMenu,
     FunctionMenu,
-    EventTable,
-    FormPopup,
     ConstructionProjectForm,
     DredgingProgressForm,
     BusinessProgressForm,

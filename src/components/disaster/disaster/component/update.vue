@@ -1,29 +1,31 @@
 <template>
-  <div class="outer">
+  <div class="popup-outer">
     <div class="edit-popup-cont">
       <div class="popup-background" @click="closePopup" />
       <div class="form-cont-edit">
         <img src="@/assets/icons/close.svg" class="close-icon" @click="closePopup"/>
-        <div class="item-outer">
-          <div class="outer-flex">
-            <p class="font-Style item-title">日期區間</p>
-            <div class="function-outer">
-              <input class="input-box" type="date" v-model="time.start" required>
-              ～
-              <input class="input-box" type="date" v-model="time.end" required>
+        <div class="outer">
+          <div class="item-outer">
+            <div class="outer-flex">
+              <p class="font-Style item-title">日期區間</p>
+              <div class="function-outer">
+                <input class="input-box" type="date" v-model="time.start" required>
+                ～
+                <input class="input-box" type="date" v-model="time.end" required>
+              </div>
+            </div>
+            <div class="outer-flex">
+              <p class="font-Style item-title">事件名稱</p>
+              <div class="function-outer">
+                <input class="input-box" type="text" v-model="disasterName" required>
+              </div>
             </div>
           </div>
-          <div class="outer-flex">
-            <p class="font-Style item-title">事件名稱</p>
-            <div class="function-outer">
-              <input class="input-box" type="text" v-model="disasterName" required>
+          <div class="button-outer">
+            <div class="button-Add shadow" @click="disaster_update">
+              <img class="button-img" src="@/assets/icons/disaster/plus.svg">
+              <p class="font-Style">修改事件</p>
             </div>
-          </div>
-        </div>
-        <div class="button-outer">
-          <div class="button-Add shadow" @click="disaster_update">
-            <img class="button-img" src="@/assets/icons/disaster/plus.svg">
-            <p class="font-Style">新增事件</p>
           </div>
         </div>
       </div>
@@ -77,6 +79,12 @@ export default {
 </script>
 
 <style scoped>
+  .popup-outer{
+    border-radius: 10px;
+    display: block;
+    padding: 1% 5%;
+    background-color: white;
+  }
   .outer{
     border-radius: 10px;
     background-color: white;
@@ -91,21 +99,20 @@ export default {
   }
   .item-title {
     width: 100%;
-    text-align: start;
+    text-align: center;
     flex: 1;
   }
   .item-outer {
     width: 100%;
     height: auto;
-    padding: 20px 0;
   }
   .function-outer {
-    display: block;
+    display: flex;
     align-items: center;
     flex: 2;
   }
   .outer-flex {
-    display: block;
+    display: flex;
     align-items: center;
     margin: 3% 0;
   }
@@ -117,29 +124,29 @@ export default {
     position: relative;
   }
   .button-Add {
-    margin: 0 25% 3%;
+    /* margin: 0 10% 3%; */
+    width: 20%;
+    margin: 0 auto;
+    bottom: 10%;
+    right: 5%;
+
     position: absolute;
-    right: 0;
-    bottom: 0;
     cursor: pointer;
     background-color: #3FA893;
     color: white;
-    padding: 1% 7%;
+    padding: 1%;
     border-radius: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .button-img {
-    padding-right: 30px;
+    padding-right: 25px;
   }
   @media (min-width: 768px) and (max-width: 1280px){
     .outer {
       display: block;
-      padding: 5%;
-    }
-    .item-outer {
-      padding: 0;
+      padding: 1% 5%;
     }
     .function-outer {
       flex: 4;
@@ -149,24 +156,32 @@ export default {
     }
     .button-Add {
       position: relative;
-      margin: 0;
+      width: 100%;
     }
   }
-
   @media (max-width: 767px){
     .outer {
       display: block;
-      padding: 1% 5%;
-      background-color: white;
+    }
+    .outer-flex {
+      display: block;
+    }
+    .form-cont-edit {
+      padding: 5%;
+    }
+    .function-outer {
+      display: block;
+    }
+    .button-outer {
+      padding-top: 5%;
     }
     .button-Add {
       position: relative;
-    }
-    .function-outer {
-      flex: 3;
+      bottom: 0;
+      right: 0;
+      width: 75%;
     }
   }
-
   /* Edit Popup */
   .popup-background {
     background-color: #080808;
@@ -179,7 +194,7 @@ export default {
   }
   .form-cont-edit {
     background-color: white;
-    padding: 3.5vw 3.5vw 2vw 3.5vw;
+    /* padding: 3.5vw 3.5vw 2vw 3.5vw; */
     border-radius: 10px;
     position: absolute;
     top: 0;
@@ -194,5 +209,6 @@ export default {
     position: absolute;
     top: 20px;
     right: 20px;
+    z-index: 5;
   }
 </style>

@@ -1,35 +1,43 @@
 <template>
   <div class="function-content">
-    <div class="content-Style shadow">
-      <div class="form-cont">
-        <form class="form">
-          <div class="form-row-cont" v-for="(field, index) in fields" :key="index">
-            <FormField :field="field" @handleInput="handleInput" />
-          </div>
-        </form>
-        <div class="submit-button" @click="handleNewFormSubmit">
-          <span class="button-text">送出</span>
+    <div class="content-Style shadow" v-if="device !== 'mobile'">
+      <Form :fields="fields" :state="state" v-if="show_view.add" />
+      <div class="hide-add-outer" v-else @click="show_view.add = !show_view.add">
+        <div class="show-add">
+          工程案件詳細資訊
+          <img class="close-img" v-if="device === 'desktop'" src="@/assets/icons/close.svg">
+          <img class="close-img" v-else src="@/assets/icons/disaster/plus.svg">
         </div>
       </div>
     </div>
     <div class="content-Style shadow">
-      <FormList :device="device" :disasterList="disasterList" @popup="popup" />
+      <FormList :device="device" :disasterList="disasterList" @openEditPopup="openEditPopup" v-if="!show_view.add" />
+      <div class="hide-add-outer" v-else @click="show_view.add = !show_view.add">
+        <div class="show-List">
+          工程案件詳細資訊列表
+          <img class="arrow-img" src="@/assets/icons/downArrow.svg">
+        </div>
+      </div>
     </div>
-    <!-- <FormPopup :openedPopup="openedPopup" :fields="fields" @togglePopup="togglePopup" /> -->
+    <FormPopup v-if="FormPopupVisible" :state="state" :fields="fields" @closePopup="closePopup" />
+    <div v-if="device === 'mobile' && !FormPopupVisible" class="mobile-add" @click="FormPopupVisible = !FormPopupVisible">
+      <img class="mobile-button" src="@/assets/icons/disaster/plus.svg">
+    </div>
   </div>
 </template>
 
 <script>
-import FormField from "@/components/construction/shared/formField.vue"
+import Form from "@/components/construction/shared/form.vue"
 import FormList from '@/components/construction/forms/constructionProject/component/list.vue'
-// import FormPopup from '@/components/construction/shared/formPopup.vue'
+import FormPopup from '@/components/construction/shared/formPopup.vue'
 
 export default {
   name: "constructionProjectForm",
   props: [],
   components: {
-    FormField,
-    FormList
+    Form,
+    FormList,
+    FormPopup
   },
   computed: {},
   data() {
@@ -44,7 +52,7 @@ export default {
         {
           title: "施工年度",
           input: "",
-          inputType: "month",
+          inputType: "text",
           inputName: "constructionYear"
         },
         {
@@ -147,13 +155,14 @@ export default {
           inputName: "kmlUploads"
         }
       ],
+      state: 'add',
       inputs: {},
       device: "",
       disasterList: [],
-      popup_view: {
-        update: false,
-        add: false
-      }
+      FormPopupVisible: false,
+      show_view: {
+        add: false,
+      },
     };
   },
   created(){
@@ -181,133 +190,87 @@ export default {
     },
     async prepareList(){
       this.disasterList.push({
-        construction_name: '雲林淹水整治',
+        projectName: '雲林淹水整治',
         commit_Log: 1,
-        year: '108',
-        case_officer: '雲林縣政府',
-        company: '很棒的營造',
+        constructionYear: '108',
+        assignee: '雲林縣政府',
+        contractor: '很棒的營造',
         Warranty: '保固將到期',
         Packaged: true
       })
       this.disasterList.push({
-        construction_name: '雲林淹水整治',
+        projectName: '雲林淹水整治',
         commit_Log: 20,
-        year: '108',
-        case_officer: '雲林縣政府',
-        company: '很棒的營造',
+        constructionYear: '108',
+        assignee: '雲林縣政府',
+        contractor: '很棒的營造',
         Warranty: '',
         Packaged: true
       })
       this.disasterList.push({
-        construction_name: '雲林淹水整治',
+        projectName: '雲林淹水整治',
         commit_Log: 0,
-        year: '108',
-        case_officer: '雲林縣政府',
-        company: '很棒的營造',
+        constructionYear: '108',
+        assignee: '雲林縣政府',
+        contractor: '很棒的營造',
         Warranty: '',
         Packaged: false
       })
       this.disasterList.push({
-        construction_name: '雲林淹水整治',
+        projectName: '雲林淹水整治',
         commit_Log: 0,
-        year: '108',
-        case_officer: '雲林縣政府',
-        company: '很棒的營造',
+        constructionYear: '108',
+        assignee: '雲林縣政府',
+        contractor: '很棒的營造',
         Warranty: '',
         Packaged: false
       })
     },
-    popup(data){
-      this.popup_view.update = !this.popup_view.update;
+    initFields(){
+      for(let field of this.fields){
+        if(field.inputType === 'date'){
+          field.input = new Date().toISOString().split('T')[0]
+        }else if(field.inputType === 'radio'){
+          field.input = "no"
+        }else{
+          field.input = ""
+        }
+      }
+    },
+    initFields_For_Edit(data){
+      for(let field of this.fields){
+        if(data.hasOwnProperty(field.inputName)){
+          field.input = data[field.inputName]
+        }
+        // field.input = data[field.inputName]
+      }
+    },
+    openEditPopup(data){
+      this.state = 'edit';
+      this.initFields_For_Edit(data);
+      this.FormPopupVisible = true;
+      console.log("edit => ", data)
     },
     handleNewFormSubmit() {
-      console.log(this.inputs)
+      // Call Add API
+      console.log('add => ', this.inputs)
     },
     handleMobilePopup() {
       this.mobilePopup = !this.mobilePopup
     },
     handleInput(field, input) {
       this.inputs[field] = input
+    },
+    closePopup(){
+      this.state = 'add'
+      this.FormPopupVisible = false;
+      this.initFields()
     }
   }
 };
 </script>
 
 <style scoped>
-  .form-cont {
-    background-color: white;
-    padding: 40px 50px;
-    border-radius: 10px;
-  }
-  .submit-button {
-    background-color: #3FA893;
-    border-radius: 35px;
-    width: auto;
-    height: auto;
-    max-width: 200px;
-    max-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    font-size: 18px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 20px auto 0 auto;
-    padding: 1% 0;
-  }
-
-  /* Mobile Button */
-  .add-button-mobile {
-    background-color: #3FA893;
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    cursor: pointer;
-  }
-  .add-button-mobile span {
-    font-size: 40px;
-    color: white;
-    font-weight: bold;
-    position: relative;
-    top: -5px;
-  }
-
-  /* Mobile Popup */
-  .popup-background {
-    background-color: #080808;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    opacity: 0.7;
-  }
-  .form-cont-mobile {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 2vw;
-    width: calc(100% - 4vw);
-  }
-  .close-icon {
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-  }
-  
   .function-content {
     width: 100%;
     height: auto;
@@ -318,7 +281,70 @@ export default {
     border-radius: 20px;
     margin: 0 0 17.5px;
   }
-
+  .hide-add-outer {
+    border-radius: 10px;
+    background-color: white;
+  }
+  .show-add {
+    width: 100%;
+    padding: 20px 42px 20px 87px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .show-List {
+    width: 100%;
+    padding: 20px 42px 20px 87px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .close-img {
+    width: 1.5%;
+    transform: rotate(45deg);
+  }
+  .arrow-img {
+    width: auto;
+  }
+  .mobile-add {
+    z-index: 1;
+    position: fixed;
+    right: 3%;
+    bottom: 3%;
+    width: 15%;
+  }
+  .mobile-button {
+    width: 100%;
+    height: auto;
+    background: #3FA893;
+    border-radius: 50%;
+    padding: 25%;
+  }
+  @media (min-width: 768px) and (max-width: 1280px){
+    .hide-add-outer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2% 0;
+    }
+    .show-add {
+      width: 25%;
+      padding: 1% 2%;
+      border-radius: 30px;
+      flex-direction: row-reverse;
+      justify-content: center;
+      color: white;
+      background-color: #3FA893;
+    }
+    .show-List {
+      padding: 1.5% 5%;
+    }
+    .close-img {
+      width: 10%;
+      padding: 0 3%;
+      transform: rotate(0deg);
+    }
+  }
   @media (max-width: 767px){
     .function-content {
       padding: 5%;

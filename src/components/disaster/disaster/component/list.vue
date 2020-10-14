@@ -20,13 +20,13 @@
     </div>
     <div class="dataList-outer">
       <div v-for="(data, index) of disasterList" :key="index" class="data-outer">
-        <div class="dataList-Text" v-html="data.Name" />
-        <div class="dataList-Text">
+        <div class="dataList-Text dataList-name" v-html="data.Name" />
+        <div class="dataList-Text dataList-time">
           <div v-html="data.time.Start + ' ～ ' + data.time.End" />
         </div>
         <div class="data-function">
           <img src="@/assets/icons/edit.svg" class="function-img" style="background-color: #5d9cec;" @click="openEditPopup(data)">
-          <img src="@/assets/icons/location.svg" class="function-img" style="background-color: #5d9cec;">
+          <img src="@/assets/icons/location.svg" class="function-img" style="background-color: #5d9cec;" @click="map_location(data)">
           <img src="@/assets/icons/download.svg" class="function-img" style="background-color: #5fbeaa;" @click="download(data)">
           <img src="@/assets/icons/delete.svg" class="function-img" style="background-color: #f05050;" @click="deleteData(data)">
         </div>
@@ -80,6 +80,10 @@ export default {
       } catch (error) {
         alert(error)
       }
+    },
+    map_location(data){
+      window.open('/#/disasterMapTest', '_blank')
+      console.log('map location => ', data)
     }
   }
 };
@@ -209,6 +213,13 @@ export default {
     height: 30px;
     line-height: 30px;
     text-align: center;
+  }
+  .dataList-name {
+    flex: 2;
+  }
+  .dataList-time {
+    flex: 2;
+    text-align: start;
   }
   @media (min-width: 768px) and (max-width: 1280px){
     .title {
