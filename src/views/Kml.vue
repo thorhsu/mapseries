@@ -82,7 +82,7 @@ export default {
       this.geoJson = "";
       if(isKml) {
         var parsedKml = new DOMParser().parseFromString(await this.getKmlTxt(file), "text/xml");
-        this.geoJson = {url: file, modified: false, file: file, 
+        this.geoJson = {url: `/kml/${file}.kml`, modified: false, file: file, 
                         isEditing: false, visible: true, 
                         geojson: kml(parsedKml)};         
         let put = false;

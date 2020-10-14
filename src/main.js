@@ -11,6 +11,7 @@ Vue.config.productionTip = false;
 // eslint-disable-next-line  
 delete L.Icon.Default.prototype._getIconUrl
 
+// 設定預設的marker icon
 // eslint-disable-next-line  
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),

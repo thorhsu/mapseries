@@ -207,6 +207,14 @@ export default {
         lon = this.newLongtitude;
         lat = this.newLatitude;
       }
+      if(lon > 180 || lon < -180){
+        alert("經度超過範圍")
+        return;
+      }
+      if(lat > 85 || lat < -85){
+        alert("緯度超過範圍")
+        return;
+      }
       this.newLongtitude = this.newLongtitude.toFixed(7);
       this.newLatitude = this.newLatitude.toFixed(7);
       this.coordinates.push([lon, lat]);

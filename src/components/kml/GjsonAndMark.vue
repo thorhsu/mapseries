@@ -151,7 +151,8 @@ export default {
     // Would benefit from https://github.com/Leaflet/Leaflet/issues/4461
     addNonGroupLayers(sourceLayer, editableLayers=[]) {
       // 有eachLayer時必須往下再找
-      if (sourceLayer.eachLayer) {
+      if (sourceLayer instanceof L.LayerGroup || 
+        sourceLayer instanceof L.FeatureGroup) {
         sourceLayer.eachLayer(layer =>{           
           this.addNonGroupLayers(layer, editableLayers)
         });
@@ -162,7 +163,7 @@ export default {
     },  
     fitBounds() {
       if(this.gjsonVisible)
-        this.map.fitBounds(this.$refs.geoLayer.mapObject.getBounds())
+        this.map.fitBounds(this.$refs.geoLayer.mapObject.getBounds());
     },
     showLatLng(latlng){
       this.form.epsgCode= ["經緯度"];
@@ -177,6 +178,14 @@ export default {
                 this.epsgCodes[this.epsgCode[0]], 
                 4326, 
                 [this.newLongtitude, this.newLatitude]);
+      }
+      if(this.newLongtitude > 180 || this.newLongtitude < -180){
+        alert("經度超過範圍")
+        return;
+      }
+      if(this.newLatitude > 85 || this.newLatitude < -85){
+        alert("緯度超過範圍")
+        return;
       }
       let geojsonCopy = _.cloneDeep(this.geoJson);      
       for(let feature of geojsonCopy.features) {        
