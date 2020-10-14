@@ -249,7 +249,7 @@ export default {
               maintainColor: false
           },
           poly: {
-              allowIntersection: false
+              allowIntersection: true
           }
       });
       console.log("edit layer", this.editLayer.enable, this.editLayer);
@@ -292,8 +292,9 @@ export default {
       this.polygonDrawer.enable();
     },
     upload(){
-      const completedGeoJson = this.editableLayers.toGeoJSON();
-      const kmlTxt = tokml(completedGeoJson);
+      const completedGeoJson = this.editableLayers.toGeoJSON();      
+      const kmlTxt = tokml(JSON.stringify(completedGeoJson));
+      
       this.geoJsons.forEach(geoJson => {
         if(geoJson.isEditing){
           geoJson.modified = false;
@@ -323,8 +324,13 @@ export default {
     },
     exit() {      
       let exit = false;
-      if(this.modified && confirm("尚未上傳儲存，確認離開？")){        
-        exit = true;        
+      if(this.modified ){
+        this.$confirm("尚未上傳儲存，確認離開？", "", {
+          confirmButtonText: '確定',
+          cancelButtonText: '取消',
+        }).then(
+          () => exit = true
+        )                
       } else if(!this.modified) {
         exit = true;
       }

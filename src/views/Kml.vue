@@ -2,7 +2,14 @@
   <div class="container mt-4">
     <div class="map-container border rounded">
       <div class="col-12">
-        <ul class="nav row justify-content-center border-bottom">                                 
+        <ul class="nav row justify-content-center border-bottom">                                           
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :class="{active: $route.params.kmlFile === 'example1' || !$route.params.kmlFile}"
+              :to="'/kml/example1'"
+            >example1</router-link>
+          </li>
           <li class="nav-item">
             <router-link
               class="nav-link"
@@ -13,9 +20,10 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :class="{active: $route.params.kmlFile === 'example1' || !$route.params.kmlFile}"
-              :to="'/kml/example1'"
-            >example1</router-link>
+              :class="{active: $route.params.kmlFile === 'example3' || !$route.params.kmlFile}"
+              :to="'/kml/example3'"
+            >example3
+            </router-link>
           </li>
         </ul> 
       </div>

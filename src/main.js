@@ -5,8 +5,8 @@ import store from './store';
 import ElementUI from 'element-ui';
 import './directives';
 import 'element-ui/lib/theme-chalk/index.css';
-Vue.use(ElementUI);
 
+Vue.use(ElementUI);
 Vue.config.productionTip = false;
 // eslint-disable-next-line  
 delete L.Icon.Default.prototype._getIconUrl

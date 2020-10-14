@@ -118,7 +118,7 @@ export default {
       emptyGeoJson: {"type": "FeatureCollection", "features": []},
       epsgCodes: {"經緯度": 4326, "全球座標": 3857, "TWD97": 3826},
       currentTime: new Date().getTime(),
-      markerDemo: null
+      markerDemo: null,      
     };
   },
   mounted() {
@@ -179,12 +179,12 @@ export default {
                 4326, 
                 [this.newLongtitude, this.newLatitude]);
       }
-      if(this.newLongtitude > 180 || this.newLongtitude < -180){
-        alert("經度超過範圍")
+      if(this.newLongtitude > 180 || this.newLongtitude < -180){        
+        this.$alert("經度超過範圍", "Error", 'error');
         return;
       }
-      if(this.newLatitude > 85 || this.newLatitude < -85){
-        alert("緯度超過範圍")
+      if(this.newLatitude > 85 || this.newLatitude < -85){        
+        this.$alert("緯度超過範圍", "Error", 'error');        
         return;
       }
       let geojsonCopy = _.cloneDeep(this.geoJson);      

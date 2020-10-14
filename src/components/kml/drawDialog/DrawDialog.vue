@@ -82,7 +82,7 @@ export default {
       },
       set(value) { 
         if(this.coordinates.length){
-          alert("不可變換座標系統輸入");        
+          this.$alert("不可變換座標系統輸入", "提醒", 'info');                  
           this.epsgcode = [value[0]];        
         } else {
           this.epsgcode = [value[value.length - 1]];        
@@ -135,20 +135,20 @@ export default {
               this.epsgCodes[newValue], 
               [lon, lat]);          
       } else if (this.newLongtitude || this.newLatitude) {        
-        alert("無法轉換，X及Y座標均需輸入合格數字");
+        this.$alert("無法轉換，X及Y座標均需輸入合格數字", "Error", 'error');
         this.newLatitude = "";
         this.newLongtitude = "";
       }     
     },
     newLatitude(newVal){
       if(newVal != "" && !parseFloat(newVal)){
-        alert("Y座標請輸入合格數字");
+        this.$alert("Y座標請輸入合格數字", "Error", 'error');
         this.newLatitude = "";
       }
     },
     newLongtitude(newVal){
       if(newVal != "" && !parseFloat(newVal)){
-        alert("X座標請輸入合格數字");
+        this.$alert("X座標請輸入合格數字", "Error", 'error');
         this.newLongtitude = "";
       }
     }
@@ -168,7 +168,7 @@ export default {
         }
         case "drawLine": {
           if(this.coordinates.length < 2){
-            alert("少於兩點無法構成線，請至少輸入兩點");
+            this.$alert("少於兩點無法構成線，請至少輸入兩點", "提醒", 'info');
             return;
           }
           let lineGeoJson = _.cloneDeep(this.lineGeoJson);
@@ -179,7 +179,7 @@ export default {
         }
         case "drawPolygon": {
           if(this.coordinates.length < 3){
-            alert("少於三點無法構成面，請至少輸入三點");
+            this.$alert("少於三點無法構成面，請至少輸入三點", "提醒", 'info');
             return;
           }
           // 頭尾的點必須相同
@@ -208,11 +208,11 @@ export default {
         lat = this.newLatitude;
       }
       if(lon > 180 || lon < -180){
-        alert("經度超過範圍")
+        this.$alert("經度超過範圍", "Error", 'error');
         return;
       }
       if(lat > 85 || lat < -85){
-        alert("緯度超過範圍")
+        this.$alert("緯度超過範圍", "Error", 'error');
         return;
       }
       this.newLongtitude = this.newLongtitude.toFixed(7);
